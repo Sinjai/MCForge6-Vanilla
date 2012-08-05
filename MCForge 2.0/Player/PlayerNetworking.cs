@@ -891,9 +891,20 @@ namespace MCForge.Entity
         /// <param name="z"> The position the block will be placed in (z)</param>
         /// <param name="y"> The position the block will be placed in (y)</param>
         /// <param name="type"> The type of block that will be placed.</param>
+        public void SendBlockChange(short x, short z, short y, byte type) {
+            if (x < 0 || y < 0 || z < 0) return; //rest gets checked in the next function
+            SendBlockChange((ushort)x, (ushort)z, (ushort)y, type);
+        }
+        /// <summary>
+        /// This send a blockchange to the player only. (Not other players)
+        /// </summary>
+        /// <param name="x">The position the block will be placed in (x)</param>
+        /// <param name="z"> The position the block will be placed in (z)</param>
+        /// <param name="y"> The position the block will be placed in (y)</param>
+        /// <param name="type"> The type of block that will be placed.</param>
         public void SendBlockChange(ushort x, ushort z, ushort y, byte type)
         {
-            if (x < 0 || y < 0 || z < 0 || x >= Level.Size.x || y >= Level.Size.y || z >= Level.Size.z) return;
+            if (x >= Level.Size.x || y >= Level.Size.y || z >= Level.Size.z) return;
 
             Packet pa = new Packet();
             pa.Add(Packet.Types.SendBlockchange);
@@ -936,6 +947,38 @@ namespace MCForge.Entity
         public void ResendBlockChange(Vector3S[] blocks, Vector3S offset) {
             foreach (Vector3S v in blocks) {
                 SendBlockChange((ushort)(v.x + offset.x), (ushort)(v.z + offset.z), (ushort)(v.y + offset.y), Level.GetBlock(v + offset));
+            }
+        }
+        /// <summary>
+        /// Sends necessary blockchanges where the current block is air
+        /// </summary>
+        /// <param name="blocks">The blocks releative to the offsets</param>
+        /// <param name="oldOffset">The previous offset (blocks well be resent according to this position</param>
+        /// <param name="newOffset">The new offset (new blocks will be sent according to this position)</param>
+        /// <param name="toReplace">The block type to replace</param>
+        /// <param name="newType">The type of the blocks</param>
+        public void SendReplaceNecessaryBlocksWhere(Vector3S[] blocks, Vector3S oldOffset, Vector3S newOffset, byte toReplace, byte newType) {
+            Vector3S diff = newOffset - oldOffset;
+            foreach (Vector3S v in blocks) {
+                int i = 0;
+                Vector3S tmp = v + diff;
+                for (i = 0; i < blocks.Length; i++) {
+                    if (blocks[i] == tmp) break;
+                }
+                if (i == blocks.Length) {
+                    Vector3S theNew = v + newOffset;
+                    if (Level.GetBlock(theNew) == toReplace) SendBlockChange(theNew.x, theNew.z, theNew.y, newType);
+                }
+
+                tmp = v - diff;
+                for (i = 0; i < blocks.Length; i++) {
+                    if (blocks[i] == tmp) break;
+                }
+                if (i == blocks.Length) {
+                    Vector3S theOld = v + oldOffset;
+                    if (Level.GetBlock(theOld) == toReplace) SendBlockChange(theOld.x, theOld.z, theOld.y, toReplace);
+                }
+
             }
         }
         private void SendKick(string message)
