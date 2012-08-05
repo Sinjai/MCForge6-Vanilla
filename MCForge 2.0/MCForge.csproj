@@ -223,6 +223,7 @@
     <Compile Include="World\Blocks\DefaultBlocks\BrownShroom.cs" />
     <Compile Include="World\Blocks\DefaultBlocks\Coal.cs" />
     <Compile Include="World\Blocks\DefaultBlocks\Cyan.cs" />
+    <Compile Include="World\Blocks\DefaultBlocks\Dirt.cs" />
     <Compile Include="World\Blocks\DefaultBlocks\DoubleStair.cs" />
     <Compile Include="World\Blocks\DefaultBlocks\Glass.cs" />
     <Compile Include="World\Blocks\DefaultBlocks\Gold.cs" />
@@ -272,7 +273,6 @@
     <Compile Include="World\Blocks\DefaultBlocks\Stone.cs" />
     <Compile Include="World\Blocks\DefaultBlocks\Water.cs" />
     <Compile Include="World\Blocks\DefaultBlocks\Wood.cs" />
-    <Compile Include="World\Blocks\Physics\DefaultPhysicBlocks\Dirt.cs" />
     <Compile Include="World\Blocks\Physics\DefaultPhysicBlocks\Door.cs" />
     <Compile Include="World\Blocks\Physics\DefaultPhysicBlocks\Gravel.cs" />
     <Compile Include="World\Blocks\Physics\DefaultPhysicBlocks\Sand.cs" />
