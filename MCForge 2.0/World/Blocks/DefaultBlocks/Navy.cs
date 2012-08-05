@@ -15,15 +15,15 @@ permissions and limitations under the Licenses.
 
 namespace MCForge.World.Blocks
 {
-    public class BlueViolet : Block
+    public class Navy : Block
     {
         public override string Name
         {
-            get { return "blueviolet"; }
+            get { return "navy"; }
         }
         public override byte VisibleBlock
         {
-            get { return 30; }
+            get { return 29; }
         }
         public override byte Permission
         {
