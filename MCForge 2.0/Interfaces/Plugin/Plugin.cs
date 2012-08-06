@@ -190,11 +190,21 @@ namespace MCForge.Interface.Plugin {
         /// </summary>
         /// <param name="name">The name of the interface</param>
         /// <returns></returns>
-        public static IPlugin getByInterface(string name)
-        {
-            foreach (var ip in Plugins)
-            {
+        public static IPlugin getByInterface(string name) {
+            foreach (var ip in Plugins) {
                 if (ip.GetType().GetInterface(name) != null)
+                    return ip;
+            }
+            return null;
+        }
+        /// <summary>
+        /// Gets a plugin by type.
+        /// </summary>
+        /// <param name="name">The name of the type</param>
+        /// <returns></returns>
+        public static IPlugin getByType(string name) {
+            foreach (var ip in Plugins) {
+                if (ip.GetType().Name == name)
                     return ip;
             }
             return null;

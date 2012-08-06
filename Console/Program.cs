@@ -95,9 +95,8 @@ namespace MCForge.Core {
         static void Main(string[] args) {
             Logger.Init();
             ServerSettings.Init();
-            cp = new ConsolePlayer(cio);
             bool checker = CheckArgs(args);
-            Console.Title = ServerSettings.GetSetting("ServerName") + " - MCForge 6"; //Don't know what MCForge version we are using yet.
+            Console.Title = ServerSettings.GetSetting("ServerName") + " - MCForge 6"; //TODO: Do know what MCForge version we are using yet.
             if (!checker)
                 new Thread(new ThreadStart(Server.Init)).Start();
             else
@@ -168,8 +167,12 @@ namespace MCForge.Core {
                     WriteLine("Command not found!");
                     return false; // cannot run the command
                 }
-
-                cmd.Use(cp, args);
+                if (cp == null)
+                    cp = new ConsolePlayer(cio);
+                try {
+                    cmd.Use(cp, args);
+                }
+                catch { Logger.Log("Command aborted"); }
                 Logger.Log("CONSOLE used: /" + commandSplit[0]);
             }
             else if (input.ToLower() == "!stop") {

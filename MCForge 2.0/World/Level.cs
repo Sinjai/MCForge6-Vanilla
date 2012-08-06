@@ -309,9 +309,9 @@ namespace MCForge.World {
         /// </summary>
         /// <param name="save">Whether the level will be saved or not.</param>
         public void Unload(bool save = false) {
+            OnLevelUnload.Call(this, new LevelLoadEventArgs(false), OnAllLevelsUnload);
             if (save)
                 SaveToBinary();
-            OnLevelUnload.Call(this, new LevelLoadEventArgs(false), OnAllLevelsUnload);
             Levels.Remove(this);
         }
 

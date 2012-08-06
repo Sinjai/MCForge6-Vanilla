@@ -23,6 +23,7 @@ using System.Reflection;
 namespace MCForge.Entity {
     public class ConsolePlayer : Player {
         public ConsolePlayer(IIOProvider io) {
+            Group = Groups.PlayerGroup.Find("owner");
             this.IO = io;
             base.OnCommandEnd.OnRegister += new EventHandler<EventRegisterArgs>(OnRegister);
             base.OnPlayerBigMove.OnRegister += new EventHandler<EventRegisterArgs>(OnRegister);

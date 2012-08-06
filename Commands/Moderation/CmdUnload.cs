@@ -39,7 +39,7 @@ namespace MCForge.Commands {
                     if (z.Level == isLoaded)
                         z.Level = Server.Mainlevel;
                 }
-                Level.Levels.Remove(isLoaded);
+                isLoaded.Unload(true);
                 Player.UniversalChat(args[0] + " has been unloaded.");
             }
         }

@@ -112,21 +112,19 @@ namespace MCForge.Commands
                 cmdran = Command.All[evt.Command];
             }
             catch { cmdran = null; }
-            if (cmdran == null)
+            if (cmdran == null || cmdran != Command.All["goto"])
                 return; // no use running this unless it exists
-            else if (cmdran != Command.All["goto"])
-                return; //yet again, no use to run this if the command aint /goto or a variant
 
             l = Level.FindLevel(evt.Args[0]);
-
-            if (l.ExtraData.ContainsKey("pervisitmax"))
-            {
-                try
-                {
+            if (l == null && Level.UnloadedLevels.TrueForAll((s) => { return !s.ToLower().Contains(evt.Args[0].ToLower()); })) {
+                cmdran.Use(sender, evt.Args);
+                return;
+            }
+            if (l != null && l.ExtraData.ContainsKey("pervisitmax")) {
+                try {
                     PerVisitMax = (byte)l.ExtraData["pervisitmax"];
                 }
-                catch
-                {
+                catch {
                     PerVisitMax = byte.MaxValue;
                 }
             }
