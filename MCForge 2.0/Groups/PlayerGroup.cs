@@ -19,6 +19,7 @@ using MCForge.Core;
 using MCForge.Entity;
 using MCForge.Interface.Command;
 using MCForge.Utils;
+using MCForge.World;
 
 namespace MCForge.Groups
 {
@@ -243,6 +244,15 @@ namespace MCForge.Groups
             if (command.Permission <= Permission && !CommandPermissionOverrides.overrides.ContainsKey(command))
                 return true;
             return false;
+        }
+
+        /// <summary>
+        /// Determines whether this instance can build the specified block.
+        /// </summary>
+        /// <param name="b">The block.</param>
+        /// <returns><c>true</c> if this instance can build the specified block; otherwise, <c>false</c>.</returns>
+        public bool CanBuild(Block b) {
+            return b.Permission <= Permission;
         }
 
         /// <summary>

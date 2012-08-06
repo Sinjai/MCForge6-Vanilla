@@ -43,7 +43,7 @@ namespace MCForge.Commands
                     case 0:
                         x = (ushort)(pos.x / 32);
                         z = (ushort)(pos.z / 32);
-                        y = (ushort)(pos.y / 32 - 2);
+                        y = (ushort)(pos.y / 32 - 1);
                         b = Block.BlockList.STONE;
                         break;
                     case 1:
@@ -56,6 +56,7 @@ namespace MCForge.Commands
                         x = Convert.ToUInt16(args[0]);
                         z = Convert.ToUInt16(args[1]);
                         y = Convert.ToUInt16(args[2]);
+                        b = Block.BlockList.STONE;
                         break;
                     case 4:
                         b = Block.NameToBlock(args[0]);
@@ -73,7 +74,14 @@ namespace MCForge.Commands
                 p.SendMessage("Invalid parameters.");
                 return;
             }
-            //Need to wait for permissions for cannot place that block type.
+            if (b == Block.BlockList.UNKNOWN) {
+                p.SendMessage("Unknown block type");
+                return;
+            }
+            if (!p.Group.CanBuild(b)) {
+                p.SendMessage("You're not allowed to build this block!");
+                return;
+            }
             if (y >= p.Level.Size.y)
             {
                 y = (ushort)(p.Level.Size.y - 1);
