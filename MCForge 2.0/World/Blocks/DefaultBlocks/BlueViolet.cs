@@ -23,7 +23,7 @@ namespace MCForge.World.Blocks
         }
         public override byte VisibleBlock
         {
-            get { return 29; }
+            get { return 30; }
         }
         public override byte Permission
         {

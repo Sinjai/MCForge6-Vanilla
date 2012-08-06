@@ -236,6 +236,7 @@
     <Compile Include="World\Blocks\DefaultBlocks\Leaves.cs" />
     <Compile Include="World\Blocks\DefaultBlocks\Magenta.cs" />
     <Compile Include="World\Blocks\DefaultBlocks\MossyCobbleStone.cs" />
+    <Compile Include="World\Blocks\DefaultBlocks\Navy.cs" />
     <Compile Include="World\Blocks\DefaultBlocks\Obsidian.cs" />
     <Compile Include="World\Blocks\DefaultBlocks\Orange.cs" />
     <Compile Include="World\Blocks\DefaultBlocks\Pink.cs" />

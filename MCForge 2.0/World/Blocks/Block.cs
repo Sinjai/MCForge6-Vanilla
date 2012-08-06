@@ -54,6 +54,7 @@ namespace MCForge.World {
              new SpringGreen(),
              new Cyan(),
              new Blue(),
+             new Navy(),
              new BlueViolet(),
              new Purple(),
              new Magenta(),

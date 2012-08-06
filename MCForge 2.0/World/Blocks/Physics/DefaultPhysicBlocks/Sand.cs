@@ -50,9 +50,9 @@ namespace MCForge.World.Physics
         {
             if (l.GetBlock(X, Z, Y - 1) == Block.BlockList.AIR)
             {
+                Remove(l);
                 Add(l, new Sand(X, Z, Y - 1));
                 l.BlockChange((ushort)X, (ushort)Z, (ushort)Y, Block.BlockList.AIR);
-                Remove(l);
             }
         }
     }
