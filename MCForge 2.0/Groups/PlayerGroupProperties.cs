@@ -82,7 +82,7 @@ namespace MCForge.Groups
                                     break;
                             }
                         }
-                        else if (!string.IsNullOrWhitespace(group.Name))
+                        else if (!string.IsNullOrWhiteSpace(group.Name))
                         {
                             try { 
                                 group.add(); group = new PlayerGroup(); }
