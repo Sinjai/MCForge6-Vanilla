@@ -101,7 +101,13 @@ namespace MCForge.Utils.Settings {
                     new SettingNode("DefaultColor", "&a", "Determines the server's default color"),
                     new SettingNode("BackupFiles", "true", "If set to true, files will be backed up to the backup folder"),
                     new SettingNode("BackupInterval", "300", "the interval to backup your files (in seconds)"),
-                    new SettingNode("PhysicsInterval","100","the interval to do physics ticks in milliseconds")
+                    new SettingNode("PhysicsInterval","100","the interval to do physics ticks in milliseconds"),
+                    new SettingNode("AutoTimeout", "30", "if during this amount of seconds no data is sent from the client to the server, the player gets kicked (use 0 to disable this behavior)"),
+                    new SettingNode("StartFlyMessage", "You are now flying. &cJump!","can be empty"),
+                    new SettingNode("StopFlyMessage", "You're not flying anymore","can be empty"),
+                    new SettingNode("FlyGlassSize", "5, 2", "The size of the glass panel. The first value describes width and length. The second value describes the height (default: 2)."),
+                    new SettingNode("Fly+", "true", "'true' allows players to use '/fly +' which displays an aditional block at the players position"),
+                    new SettingNode("FlyWaterSize", "5, 5, 5", "The size of the water cuboid to swim in the air. Use one number to set all dimension to the same size or use three numbers for different sizes. If it is set to false '/fly water' will be disabled")
                };
 
 

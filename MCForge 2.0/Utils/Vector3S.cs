@@ -114,6 +114,9 @@ namespace MCForge.Utils {
         public static bool operator <( Vector3S a, Vector3S b ) {
             return a.x * a.x + a.y * a.y + a.z * a.z < b.x * b.x + b.y * b.y + b.z * b.z;
         }
+        public static implicit operator string  (Vector3S a){
+            return a.ToString();
+        }
         public Vector2S Horizontal {
             get { return new Vector2S( x, z ); }
             set {

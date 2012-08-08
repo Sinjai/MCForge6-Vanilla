@@ -309,9 +309,9 @@ namespace MCForge.World {
         /// </summary>
         /// <param name="save">Whether the level will be saved or not.</param>
         public void Unload(bool save = false) {
+            OnLevelUnload.Call(this, new LevelLoadEventArgs(false), OnAllLevelsUnload);
             if (save)
                 SaveToBinary();
-            OnLevelUnload.Call(this, new LevelLoadEventArgs(false), OnAllLevelsUnload);
             Levels.Remove(this);
         }
 
@@ -416,18 +416,11 @@ namespace MCForge.World {
             if (block == 0) {
                 pblocks.ForEach(pb =>
                                 {
-                                    if (pb.X == x && pb.Y == y && pb.Z == z)
+                                    if (pb.X == x && pb.Y == y && pb.Z == z) {
                                         pblocks.Remove(pb);
+                                        return;
+                                    }
                                 });
-                if (GetBlock(x, z, y - 1) == Block.BlockList.DIRT)
-                    BlockChange(x, z, (ushort)(y - 1), Block.BlockList.GRASS, p);
-            }
-            else
-            {
-                if (!Block.CanPassLight(block) && GetBlock(x, z, y - 1) == Block.BlockList.GRASS)
-                    BlockChange(x, z, (ushort)(y - 1), Block.BlockList.DIRT, p);
-                else if (Block.CanPassLight(block) && GetBlock(x, z, y - 1) == Block.BlockList.DIRT)
-                    BlockChange(x, z, (ushort)(y - 1), Block.BlockList.GRASS, p);
             }
             if (block == currentType) return;
             if (p != null) {

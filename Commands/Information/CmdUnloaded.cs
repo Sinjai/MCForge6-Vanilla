@@ -39,6 +39,7 @@ namespace MCForge.Commands
             {
                 p.SendMessage("Unloaded levels: &4" + string.Join(Server.DefaultColor + ", &4", Level.UnloadedLevels));
                 if (Level.UnloadedLevels.Count > 50) p.SendMessage("Use &b/unloaded <1/2/3...> " + Server.DefaultColor + "for a more structured list!");
+                return;
             }
 
             string search = args[0];

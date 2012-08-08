@@ -18,7 +18,7 @@ namespace MCForge.Utils {
                 if (_basepath == null) {
                     _basepath = ServerSettings.GetSetting("BlockChangeHistoryPath");
                     if (_basepath == null) _basepath = "" + Path.DirectorySeparatorChar;
-                    else _basepath = ""+Path.DirectorySeparatorChar;
+                    else _basepath = "" + Path.DirectorySeparatorChar;
                     _basepath = System.Windows.Forms.Application.StartupPath + _basepath;
                 }
                 if (_basepath.Length > 0 && _basepath[_basepath.Length - 1] != Path.DirectorySeparatorChar)
@@ -28,6 +28,12 @@ namespace MCForge.Utils {
         }
         string GetFullPath(Level l) {
             return basepath + l.Name + Path.DirectorySeparatorChar + player.UID + Path.DirectorySeparatorChar; //TODO: make sure renaming a level moves undo histroy files to new folder.
+        }
+        static string GetFullPath(long UID, Level l) {
+            return basepath + l.Name + Path.DirectorySeparatorChar + UID + Path.DirectorySeparatorChar;
+        }
+        static string GetLevelPath(Level l) {
+            return basepath + l.Name + Path.DirectorySeparatorChar;
         }
 
         /// <summary>
@@ -40,23 +46,22 @@ namespace MCForge.Utils {
         static string futureEnding = ".bcf";
         public BlockChangeHistory(Player p) {
             player = p;
-            
         }
         Player player;
         List<long> recentTimes = new List<long>();
         /// <summary>
-        /// Item1: Position
+        /// Item1: Position&lt;x,z,y&gt;
         /// Item2: BlockOld
         /// Item3: BlockNew
         /// </summary>
-        List<Tuple<Tuple<short,short,short>, byte, byte>> recentChanges = new List<Tuple<Tuple<short,short,short>, byte, byte>>();
+        List<Tuple<Tuple<short, short, short>, byte, byte>> recentChanges = new List<Tuple<Tuple<short, short, short>, byte, byte>>();
         private readonly object lock_recent = new object();
         private static readonly object lock_archive = new object();
         #region Public Add
-        public void Add(Tuple<short,short,short> pos, byte oldBlock, byte newBlock) {
+        public void Add(Tuple<short, short, short> pos, byte oldBlock, byte newBlock) {
             lock (lock_recent) {
                 recentTimes.Add(DateTime.Now.Ticks);
-                recentChanges.Add(new Tuple<Tuple<short,short,short>, byte, byte>(pos, oldBlock, newBlock));
+                recentChanges.Add(new Tuple<Tuple<short, short, short>, byte, byte>(pos, oldBlock, newBlock));
             }
         }
         #endregion
@@ -71,7 +76,7 @@ namespace MCForge.Utils {
                     toChange = p.history.redoRecentOthersUndo(toChange, since, l);
             }
             toChange = redoArchiveOthersUndoForAllPlayers(toChange, since, l);
-            string path=GetFullPath(l);
+            string path = GetFullPath(l);
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
             string tmppath = GetFullPath(l) + DateTime.Now.Ticks + futureEnding;
             FileStream fs = new FileStream(tmppath, FileMode.Create, FileAccess.Write);
@@ -79,13 +84,13 @@ namespace MCForge.Utils {
             BinaryWriter bw = new BinaryWriter(gz);
             foreach (Tuple<short, short, short> v in toChange.Keys) {
                 //all changes are associated to the time in the filename
-                byte tmp = l.GetBlock(v.Item1,v.Item2,v.Item3);
+                byte tmp = l.GetBlock(v.Item1, v.Item2, v.Item3);
                 if (tmp != toChange[v].Item2) {
                     bw.Write(v.Item1);//coords
                     bw.Write(v.Item2);
                     bw.Write(v.Item3);
                     bw.Write(toChange[v].Item2);//after undo
-                    l.BlockChange(new Vector3S(v.Item1,v.Item2,v.Item3), toChange[v].Item2);
+                    l.BlockChange(new Vector3S(v.Item1, v.Item2, v.Item3), toChange[v].Item2);
                 }
             }
             bw.Close();
@@ -98,28 +103,85 @@ namespace MCForge.Utils {
         public void Redo(DateTime since, Level l) { Redo(since.Ticks, l); }
         public void Redo(long since, Level l) {
             ExtraData<Tuple<short, short, short>, Tuple<long, byte>> toChange = new ExtraData<Tuple<short, short, short>, Tuple<long, byte>>();
+            toChange = redo(player.UID, since, l);
+            redo(toChange, l, player.UID, player);
+        }
+        private static void redo(ExtraData<Tuple<short, short, short>, Tuple<long, byte>> toChange, Level l, long UID, Player p = null) {
+            MemoryStream ms = new MemoryStream();
+            BinaryWriter bw = new BinaryWriter(ms);
+            foreach (Tuple<short, short, short> v in toChange.Keys) {
+                byte currentBlock = l.GetBlock(v.Item1, v.Item2, v.Item3);
+                byte newBlock = toChange[v].Item2;
+                if (currentBlock != newBlock) {
+                    if (p != null && p.Level == l) {
+                        lock (p.history.lock_recent) {
+                            p.history.recentTimes.Add(DateTime.Now.Ticks);
+                            p.history.recentChanges.Add(new Tuple<Tuple<short, short, short>, byte, byte>(v, currentBlock, newBlock));
+                        }
+                    }
+                    else {
+                        bw.Write(DateTime.Now.Ticks);
+                        bw.Write(v.Item1);
+                        bw.Write(v.Item2);
+                        bw.Write(v.Item3);
+                        bw.Write(currentBlock);
+                        bw.Write(newBlock);
+                    }
+                    l.BlockChange(new Vector3S(v.Item1, v.Item2, v.Item3), newBlock); //TODO: Create BlockChange(short,short,short);
+                }
+            }
+            if (ms.Length != 0) {
+                string path = GetFullPath((p == null) ? UID : p.UID, l);
+                ms.Position = 0;
+                BinaryReader br = new BinaryReader(ms);
+                long initialTime = br.ReadInt64();
+                br.Close();
+                FileStream fs = new FileStream(path + initialTime + historyEnding, FileMode.Create, FileAccess.Write);
+                GZipStream gz = new GZipStream(fs, CompressionMode.Compress);
+                gz.Write(ms.ToArray(), 0, (int)ms.Length);
+                gz.Close();
+                fs.Close();
+            }
+            bw.Close();
+            ms.Close();
+        }
+        public static void Redo(long UID, long since, Level l) {
+            foreach (Player p in MCForge.Core.Server.Players) {
+                if (p.UID == UID) {
+                    p.history.Redo(since, l);
+                    return;
+                }
+            }
+            redo(redo(UID, since, l), l, UID);
+
+        }
+        private static ExtraData<Tuple<short, short, short>, Tuple<long, byte>> redo(long UID, long since, Level l) {
+            ExtraData<Tuple<short, short, short>, Tuple<long, byte>> toChange = new ExtraData<Tuple<short, short, short>, Tuple<long, byte>>();
             lock (lock_archive) {
-                string path = GetFullPath(l);
+                string path = GetFullPath(UID, l);
                 if (Directory.Exists(path)) {
-                    string[] files = Directory.GetFiles(path, futureEnding);
+                    string[] files = Directory.GetFiles(path, "*" + futureEnding);
                     List<string> toRedo = new List<string>();
                     foreach (string file in files) {
                         if (!file.EndsWith(futureEnding)) continue;
+                        FileInfo fi = new FileInfo(file);
                         try {
-                            long time = long.Parse(file.Split('.')[0]);
+                            long time = long.Parse(fi.Name.Split('.')[0]);
                             if (time >= since) toRedo.Add(file);
                         }
                         catch { }
                     }
+                    //toRedo.Sort();
                     foreach (string file in toRedo) {
                         try {
-                            long time = long.Parse(file.Split('.')[0]);
-                            FileStream fs = new FileStream(path + file, FileMode.Open, FileAccess.Read);
+                            FileInfo fi = new FileInfo(file);
+                            long time = long.Parse(fi.Name.Split('.')[0]);
+                            FileStream fs = new FileStream(file, FileMode.Open, FileAccess.Read);
                             GZipStream gz = new GZipStream(fs, CompressionMode.Decompress);
                             MemoryStream ms = new MemoryStream();
                             int r = 0;
                             byte[] buffer = new byte[1024];
-                            while ((r = gz.Read(buffer, 0, buffer.Length)) != -1) {
+                            while ((r = gz.Read(buffer, 0, buffer.Length)) > 0) {
                                 ms.Write(buffer, 0, r);
                             }
                             gz.Close();
@@ -134,22 +196,13 @@ namespace MCForge.Utils {
                             }
                             br.Close();
                             ms.Close();
+                            File.Delete(file);
                         }
                         catch { }
                     }
                 }
             }
-            lock (lock_recent) {
-                foreach (Tuple<short, short, short> v in toChange.Keys) {
-                    byte currentBlock = l.GetBlock(v.Item1, v.Item2, v.Item3);
-                    byte newBlock = toChange[v].Item2;
-                    if (currentBlock != newBlock) {
-                        recentTimes.Add(DateTime.Now.Ticks);
-                        recentChanges.Add(new Tuple<Tuple<short,short,short> , byte, byte>(v, currentBlock, newBlock));
-                        l.BlockChange(new Vector3S(v.Item1,v.Item2,v.Item3), newBlock); //TODO: Create BlockChange(short,short,short);
-                    }
-                }
-            }
+            return toChange;
         }
         #endregion
 
@@ -165,7 +218,7 @@ namespace MCForge.Utils {
                 if (l == player.Level && recentTimes.Count > 0 && recentTimes[0] < since) {
                     int i;
                     for (i = recentTimes.Count - 1; recentTimes[i] >= since; i--) { //looping back in time
-                        ret[recentChanges[i].Item1] = new Tuple<long, byte>(recentTimes[i], recentChanges[i].Item2); //if vector already exists it gets replaced else added
+                        ret[recentChanges[i].Item1] = new Tuple<long, byte>(0, recentChanges[i].Item2); //if vector already exists it gets replaced else added
                     }
                     if (i < recentTimes.Count - 1) {
                         recentTimes.RemoveRange(i + 1, recentTimes.Count - 1 - i);
@@ -177,19 +230,23 @@ namespace MCForge.Utils {
             lock (lock_recent) {
                 if (l == player.Level) {
                     for (int i = recentTimes.Count - 1; i >= 0; i--) {
-                        ret[recentChanges[i].Item1] = new Tuple<long, byte>(recentTimes[i], recentChanges[i].Item2);
+                        ret[recentChanges[i].Item1] = new Tuple<long, byte>(0, recentChanges[i].Item2);
                     }
                     recentTimes = new List<long>();
                     recentChanges = new List<Tuple<Tuple<short, short, short>, byte, byte>>();
                 }
             }
+            return ret;
+        }
+        static ExtraData<Tuple<short, short, short>, Tuple<long, byte>> GetOriginalBlocksFromArchive(long UID, long since, Level l, ExtraData<Tuple<short, short, short>, Tuple<long, byte>> ret = null) {
+            if (ret == null) ret = new ExtraData<Tuple<short, short, short>, Tuple<long, byte>>();
             lock (lock_archive) {
-                string path = GetFullPath(l);
+                string path = GetFullPath(UID, l);
                 if (Directory.Exists(path)) {
                     Tuple<long, string> partialFile = null;
                     List<Tuple<long, string>> completeFiles = new List<Tuple<long, string>>();
                     //checking file times
-                    foreach (string s in Directory.GetFiles(path, historyEnding)) {
+                    foreach (string s in Directory.GetFiles(path, "*" + historyEnding)) {
                         if (s.EndsWith(historyEnding)) {
                             long filetime = 0;
                             try {
@@ -223,7 +280,7 @@ namespace MCForge.Utils {
                         MemoryStream ms = new MemoryStream();
                         int r = 0;
                         byte[] buffer = new byte[1024];
-                        while ((r = gz.Read(buffer, 0, buffer.Length)) != -1) {
+                        while ((r = gz.Read(buffer, 0, buffer.Length)) > 0) {
                             ms.Write(buffer, 0, r);
                         }
                         gz.Close();
@@ -249,7 +306,7 @@ namespace MCForge.Utils {
                         MemoryStream ms = new MemoryStream();
                         int r = 0;
                         byte[] buffer = new byte[1024];
-                        while ((r = gz.Read(buffer, 0, buffer.Length)) != -1) {
+                        while ((r = gz.Read(buffer, 0, buffer.Length)) > 0) {
                             ms.Write(buffer, 0, r);
                         }
                         buffer = null;
@@ -307,7 +364,7 @@ namespace MCForge.Utils {
                 }
                 if (l == player.Level) {
                     for (int i = recentTimes.Count - 1; i >= 0; i--) {
-                        ret[recentChanges[i].Item1] = new Tuple<long, byte>(recentTimes[i], recentChanges[i].Item2);
+                        ret[recentChanges[i].Item1] = new Tuple<long, byte>(recentTimes[i], recentChanges[i].Item3);
                     }
                 }
             }
@@ -324,7 +381,7 @@ namespace MCForge.Utils {
                         List<Tuple<long, string>> completeFiles = new List<Tuple<long, string>>();
 
                         //checking file times
-                        foreach (string s in Directory.GetFiles(playerPath)) {
+                        foreach (string s in Directory.GetFiles(playerPath, "*" + historyEnding)) {
                             if (s.EndsWith(historyEnding)) {
                                 long filetime = 0;
                                 try {
@@ -409,19 +466,80 @@ namespace MCForge.Utils {
         }
         #endregion
 
+        #region about
+        public string[] About(Vector3S v, Level l, long since = 0, int max = 20) {
+            string lvlPath = GetLevelPath(l);
+            if (Directory.Exists(lvlPath)) {
+                ExtraData<long, Tuple<long, byte>> collection = new ExtraData<long, Tuple<long, byte>>();
+                lock (lock_archive) {
+                    ExtraData<long, string> files = new ExtraData<long, string>();
+                    foreach (string playerPath in Directory.GetDirectories(lvlPath)) {
+                        //TODO: see if checking ../. is needed
+                        foreach (string filename in Directory.GetFiles(playerPath, "*" + historyEnding)) {
+                            FileInfo fi = new FileInfo(filename);
+                            try {
+                                files[long.Parse(fi.Name.Split('.')[0])] = filename;
+                            }
+                            catch { }
+                        }
+                    }
+                    foreach (long time in files.Keys) {
+                        long uid = long.Parse(Directory.GetParent(files[time]).Name);
+                        FileStream fs = new FileStream(files[time], FileMode.Open, FileAccess.Read);
+                        GZipStream gz = new GZipStream(fs, CompressionMode.Decompress);
+                        MemoryStream ms = new MemoryStream();
+                        int r = 0;
+                        byte[] buffer = new byte[1024];
+                        while ((r = gz.Read(buffer, 0, buffer.Length)) > 0) {
+                            ms.Write(buffer, 0, r);
+                        }
+                        gz.Close();
+                        fs.Close();
+                        BinaryReader br = new BinaryReader(ms);
+                        for (int pos = 8; pos < ms.Length; pos += 16) {
+                            ms.Position = pos;
+                            if (br.ReadInt16() == v.x && br.ReadInt16() == v.z && br.ReadInt16() == v.y) {
+                                ms.Position = pos - 8;
+                                long t = br.ReadInt64(); //time;
+                                ms.Position = pos + 7;
+                                byte b = br.ReadByte(); //block;
+                                collection[t] = new Tuple<long, byte>(uid, b);
+                            }
+                        }
+                    }
+                    foreach (Player p in l.Players) {
+                        lock (p.history.lock_recent) {
+                            for (int i = 0; i < p.history.recentChanges.Count; i++) {
+                                if (p.history.recentChanges[i].Item1.Item1 == v.x && p.history.recentChanges[i].Item1.Item2 == v.z && p.history.recentChanges[i].Item1.Item3 == v.y) {
+                                    collection[p.history.recentTimes[i]] = new Tuple<long, byte>(p.UID, p.history.recentChanges[i].Item3);
+                                }
+                            }
+                        }
+                    }
+                }
+                List<long> keys = collection.Keys.ToList();
+                keys.Sort((a, b) => { /*if (a == b) return 0;*/ return (a > b) ? -1 : 1; });
+                string[] ret = new string[max];
+                for (int i = keys.Count - 1; i > 0 && -i + keys.Count - 1 < ret.Length; i--) {
+                    //TODO: get colored names from uid
+                    ret[-i + keys.Count - 1] = new DateTime(keys[i]).ToString() + collection[keys[i]].Item1 + " " + ((Block)collection[keys[i]].Item2).Name;
+                }
+                return ret;
+            }
+            return new string[0];
+        }
+        #endregion
+
         /// <summary>
         /// Needs to be called before player changes level.
         /// </summary>
-        private void WriteOut() {
-            lock (lock_recent) {
-                if (recentTimes.Count > 0) {
-                    lock (lock_archive) { 
-                        //this is a static lock! it could cause a deadlock if a function gets called between the lock(this.lock_recent) and
-                        //lock(lock_archive) if and it locks lock_archive and awaits the unlock of this.lock_recent
-                        //TODO: Don't lock(lock_archive) before lock(this.lock_recent) anywhere else!
+        public void WriteOut() {
+            lock (lock_archive) {
+                lock (lock_recent) {
+                    if (recentTimes.Count > 0) {
                         string path = GetFullPath(player.Level);
                         if (!Directory.Exists(path)) Directory.CreateDirectory(path);
-                        FileStream fs = new FileStream(recentTimes[0] + historyEnding, FileMode.Create, FileAccess.Write);
+                        FileStream fs = new FileStream(path + recentTimes[0] + historyEnding, FileMode.Create, FileAccess.Write);
                         GZipStream zs = new GZipStream(fs, CompressionMode.Compress);
                         BinaryWriter bw = new BinaryWriter(zs);
                         for (int i = 0; i < recentTimes.Count; i++) { //writing old changes first because for each undo several redos need to be done
@@ -434,9 +552,7 @@ namespace MCForge.Utils {
                         }
                         bw.Flush();
                         bw.Close();
-                        zs.Flush();
                         zs.Close();
-                        fs.Flush();
                         fs.Close();
                         recentTimes = new List<long>();
                         recentChanges = new List<Tuple<Tuple<short, short, short>, byte, byte>>();

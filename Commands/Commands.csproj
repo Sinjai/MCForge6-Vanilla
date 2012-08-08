@@ -77,6 +77,7 @@
     <Compile Include="Information\CmdAbout.cs" />
     <Compile Include="Information\CmdLevels.cs" />
     <Compile Include="Information\CmdUnloaded.cs" />
+    <Compile Include="Misc\CmdEconomy.cs" />
     <Compile Include="Moderation\CmdClearBlockChanges.cs" />
     <Compile Include="Moderation\CmdPerBuild.cs" />
     <Compile Include="Information\CmdVips.cs" />
@@ -89,6 +90,7 @@
     <Compile Include="Moderation\CmdFollow.cs" />
     <Compile Include="Moderation\CmdHide.cs" />
     <Compile Include="Moderation\CmdPerVisit.cs" />
+    <Compile Include="Moderation\CmdRedo.cs" />
     <Compile Include="Moderation\CmdRestart.cs" />
     <Compile Include="Moderation\CmdShutdown.cs" />
     <Compile Include="Moderation\CmdUndo.cs" />

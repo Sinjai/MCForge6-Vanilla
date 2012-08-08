@@ -329,6 +329,26 @@ namespace MCForge.Core {
                 IRC.Start();
             }
             catch { }
+            PlayerConnectionTimeoutChecker = new Thread(() => {
+                int sleep = ServerSettings.GetSettingInt("AutoTimeout");
+                if (sleep < 0) sleep = 30;
+                if (sleep != 0) {
+                    while (Running) {
+                        for (int i = 0; i < sleep && Running; i++) {
+                            Thread.Sleep(1000);
+                        }
+                        if (!Running) break;
+                        foreach (Player p in Players) {
+                            if (p.lastReceived.AddSeconds(sleep) < DateTime.Now) {
+#if !DEBUG
+                                p.Kick("The connection timed out");
+#endif
+                            }
+                        }
+                    }
+                }
+            });
+            PlayerConnectionTimeoutChecker.Start();
         }
         static Thread HeartThread;
         static void Update() {
@@ -353,12 +373,16 @@ namespace MCForge.Core {
             }
         }
 
+        static Thread PlayerConnectionTimeoutChecker;
+
         static void CreateCoreFiles() {
 
             //Directories first
             FileUtils.CreateDirIfNotExist("bans");
             FileUtils.CreateDirIfNotExist("text");
             FileUtils.CreateDirIfNotExist("levels");
+
+            if (!File.Exists("properties/economy.properties")) Economy.CreateFile();
 
             FileUtils.CreateFileIfNotExist("text/badwords.txt");
             FileUtils.CreateFileIfNotExist("text/replacementwords.txt");

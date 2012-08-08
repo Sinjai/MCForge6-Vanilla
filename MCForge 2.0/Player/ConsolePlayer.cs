@@ -23,6 +23,8 @@ using System.Reflection;
 namespace MCForge.Entity {
     public class ConsolePlayer : Player {
         public ConsolePlayer(IIOProvider io) {
+            Group = new Groups.PlayerGroup();
+            Group.Permission = byte.MaxValue;
             this.IO = io;
             base.OnCommandEnd.OnRegister += new EventHandler<EventRegisterArgs>(OnRegister);
             base.OnPlayerBigMove.OnRegister += new EventHandler<EventRegisterArgs>(OnRegister);

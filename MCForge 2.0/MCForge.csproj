@@ -187,6 +187,7 @@
     <Compile Include="Robot\PathFinder.cs" />
     <Compile Include="Robot\Point3D.cs" />
     <Compile Include="System\Backup.cs" />
+    <Compile Include="System\Economy.cs" />
     <Compile Include="System\Updater.cs" />
     <Compile Include="Utils\BinaryUtils.cs" />
     <Compile Include="Utils\BlockChangeHistory.cs" />
@@ -222,6 +223,7 @@
     <Compile Include="World\Blocks\DefaultBlocks\BrownShroom.cs" />
     <Compile Include="World\Blocks\DefaultBlocks\Coal.cs" />
     <Compile Include="World\Blocks\DefaultBlocks\Cyan.cs" />
+    <Compile Include="World\Blocks\DefaultBlocks\Dirt.cs" />
     <Compile Include="World\Blocks\DefaultBlocks\DoubleStair.cs" />
     <Compile Include="World\Blocks\DefaultBlocks\Glass.cs" />
     <Compile Include="World\Blocks\DefaultBlocks\Gold.cs" />
@@ -234,6 +236,7 @@
     <Compile Include="World\Blocks\DefaultBlocks\Leaves.cs" />
     <Compile Include="World\Blocks\DefaultBlocks\Magenta.cs" />
     <Compile Include="World\Blocks\DefaultBlocks\MossyCobbleStone.cs" />
+    <Compile Include="World\Blocks\DefaultBlocks\Navy.cs" />
     <Compile Include="World\Blocks\DefaultBlocks\Obsidian.cs" />
     <Compile Include="World\Blocks\DefaultBlocks\Orange.cs" />
     <Compile Include="World\Blocks\DefaultBlocks\Pink.cs" />
@@ -271,7 +274,6 @@
     <Compile Include="World\Blocks\DefaultBlocks\Stone.cs" />
     <Compile Include="World\Blocks\DefaultBlocks\Water.cs" />
     <Compile Include="World\Blocks\DefaultBlocks\Wood.cs" />
-    <Compile Include="World\Blocks\Physics\DefaultPhysicBlocks\Dirt.cs" />
     <Compile Include="World\Blocks\Physics\DefaultPhysicBlocks\Door.cs" />
     <Compile Include="World\Blocks\Physics\DefaultPhysicBlocks\Gravel.cs" />
     <Compile Include="World\Blocks\Physics\DefaultPhysicBlocks\Sand.cs" />

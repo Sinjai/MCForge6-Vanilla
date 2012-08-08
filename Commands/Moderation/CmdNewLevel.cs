@@ -46,7 +46,7 @@ namespace MCForge.Commands
                     break;
                 default: Help(p); return;
             }
-            if (Level.FindLevel(args[0]) != null)
+            if (Level.FindLevel(args[0]) != null || !Level.UnloadedLevels.TrueForAll((s) => { return !s.ToLower().Contains(args[0].ToLower()); }))
             {
                 p.SendMessage("This level already exists!");
                 return;
@@ -64,8 +64,9 @@ namespace MCForge.Commands
             }
 
             if (temp == null) { p.SendMessage("Level creation failed"); return; } // something is wrong if you get this
-            Level.Levels.Add(temp);
             temp.SaveToBinary();
+            temp=Level.LoadLevel(args[0]); //calls level load event
+            Level.AddLevel(temp);
             Player.UniversalChat("Created level " + args[0] + "!");
         }
 
