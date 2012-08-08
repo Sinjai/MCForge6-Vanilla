@@ -43,3 +43,5 @@ Console/obj/
 /SQLite/bin/
 /SQLite/obj/
 /_ReSharper.MCForge/
+*.exe
+*.pdb
