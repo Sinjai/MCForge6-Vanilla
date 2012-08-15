@@ -150,7 +150,7 @@ namespace MCForge.Utils {
         public int Count { get { return data.Count; } }
 
         Tuple<byte?, bool> Undo(uint uid, uint since) {
-            Tuple<byte?, bool> ret = new Tuple<byte?, bool>(null, true);
+            Tuple<byte?, bool> ret = new Tuple<byte?, bool>(null, false);
             bool firstUID = true;
             byte current = (byte)data[data.Count - 1];
             for (int i = data.Count - 1; i >= 0; i--) {
@@ -158,12 +158,13 @@ namespace MCForge.Utils {
                     uint? cTime = whenIs(i);
                     uint? cUid = whoIs(i);
                     if (cTime == null || cTime < since) {
-                        if (ret.Item1 == current) return new Tuple<byte?, bool>(null, false);
+                        if (ret.Item1 == current) return new Tuple<byte?, bool>(null, ret.Item2);
                         return ret;
                     }
                     if (cUid != null && cUid == uid) {
                         if (firstUID) {
-                            ret = new Tuple<byte?, bool>(getPreviousByte(i - 1), false);
+                            byte? tmp = getPreviousByte(i - 1);
+                            ret = new Tuple<byte?, bool>(tmp, tmp == null);
                         }
                         drop(ref i);
                     }
