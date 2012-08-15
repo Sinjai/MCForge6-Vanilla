@@ -20,6 +20,14 @@ namespace MCForge.Utils {
         public static void SetLevel(string level, ushort sizeX, ushort sizeZ, ushort sizeY, byte[] originalLevel) {
             history[level] = new MultiChange(sizeX, sizeZ, sizeY, originalLevel);
         }
+
+
+        public static IEnumerable<Tuple<ushort, ushort, ushort, byte>> GetCurrentIfUID(string level, uint uid, long since) {
+            MultiChange tmp = history[level];
+            if (tmp == null) yield break;
+            else foreach (var ret in tmp.GetCurrentIfUID(uid, since)) yield return ret;
+        }
+
         public static void WriteOut(string level, bool clear) {
             MultiChange tmp = history[level];
             if (tmp != null) {
@@ -143,6 +151,16 @@ namespace MCForge.Utils {
         }
         uint lastUID = 0xffffffff;
         uint lastTime = 0;
+        public byte? GetCurrentIfUID(uint uid, long since) {
+            return GetCurrentIfUID(uid, (uint)(since / 50000000));
+        }
+        public byte? GetCurrentIfUID(uint uid, uint since) {
+            if (whoIs(data.Count - 1) != uid || since > whenIs(data.Count - 1)) {
+                return null;
+            }
+            else return (byte)data[data.Count - 1];
+        }
+
         public Tuple<byte?, bool> Undo(uint uid, long since) {
             return Undo(uid, (uint)(since / 50000000));
         }
@@ -457,6 +475,29 @@ namespace MCForge.Utils {
             }
             yield break;
         }
+
+        public IEnumerable<Tuple<ushort, ushort, ushort, byte>> GetCurrentIfUID(uint uid, long since) {
+            ExtraData<ushort, ExtraData<ushort, SpecialList>> xLevel;
+            ExtraData<ushort, SpecialList> zLevel;
+            SpecialList yLevel;
+            for (int a = 0; a < changes.Keys.Count; a++) {
+                ushort x = changes.Keys.ElementAt(a);
+                xLevel = changes[x];
+                for (int b = 0; b < xLevel.Keys.Count; b++) {
+                    ushort z = xLevel.Keys.ElementAt(b);
+                    zLevel = xLevel[z];
+                    for (int c = 0; c < zLevel.Keys.Count; c++) {
+                        ushort y = zLevel.Keys.ElementAt(c);
+                        yLevel = zLevel[y];
+                        byte? tmp = yLevel.GetCurrentIfUID(uid, since);
+                        if (tmp != null) {
+                            yield return new Tuple<ushort, ushort, ushort, byte>(x, z, y, (byte)tmp);
+                        }
+                    }
+                }
+            }
+        }
+
         long Count() {
             long ret = 0;
             foreach (var a in changes)

@@ -83,12 +83,7 @@ namespace MCForge.Commands.Moderation {
 
                 if (who == null) {
                 	//Try getting offline player
-                	DataTable playerDb = Database.fillData("SELECT * FROM _players WHERE Name='" + args[0] + "'");
-                	if (playerDb.Rows.Count == 0) {
-                		p.SendMessage("Player doesn't exist");
-                		return;
-                	}
-                	UID = long.Parse(playerDb.Rows[0]["UID"].ToString());
+                    UID = Player.GetUID(args[0]);
                 }
 
                 if (args[1].ToLower() == "all") {

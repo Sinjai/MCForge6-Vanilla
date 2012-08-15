@@ -79,6 +79,7 @@
     <Compile Include="Information\CmdUnloaded.cs" />
     <Compile Include="Misc\CmdEconomy.cs" />
     <Compile Include="Moderation\CmdClearBlockChanges.cs" />
+    <Compile Include="Moderation\CmdHighlight.cs" />
     <Compile Include="Moderation\CmdPerBuild.cs" />
     <Compile Include="Information\CmdVips.cs" />
     <Compile Include="Misc\CmdCursor.cs" />

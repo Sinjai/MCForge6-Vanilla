@@ -621,6 +621,7 @@ namespace MCForge.Entity {
             const string allowedchars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234567890._";
             foreach (char ch in name) { if (allowedchars.IndexOf(ch) == -1) { return false; } } return true;
         }
+        #endregion
 
         /// <summary>
         /// Attempts to find the player in the list of online players. Returns null if no players are found.
@@ -633,7 +634,20 @@ namespace MCForge.Entity {
                     return p;
             return null;
         }
-        #endregion
+
+        public static long GetUID(string name) {
+            Player f = Find(name);
+            if (f != null) {
+                return f.UID;
+            }
+            else {
+                DataTable playerDb = Database.fillData("SELECT * FROM _players WHERE Name='" +name.MySqlEscape() + "'");
+                if (playerDb.Rows.Count == 0) {
+                    return -1;
+                }
+                return long.Parse(playerDb.Rows[0]["UID"].ToString());
+            }
+        }
 
 
         private readonly Dictionary<string, object> DataPasses = new Dictionary<string, object>();
