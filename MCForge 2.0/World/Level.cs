@@ -190,6 +190,7 @@ namespace MCForge.World {
                     break;
             }
             OnAllLevelsLoad.Call(newlevel, new LevelLoadEventArgs(true));
+            newlevel.LoadUndoHistory();
             return newlevel;
         }
 
@@ -298,10 +299,18 @@ namespace MCForge.World {
                 finalLevel.HandleMetaData();
                 Level.OnAllLevelsLoad.Call(finalLevel, new LevelLoadEventArgs(true));
                 Logger.Log("[Level] " + levelName + " was loaded");
+                finalLevel.LoadUndoHistory();
                 return finalLevel;
             }
             catch (Exception e) { 
                 Logger.Log(e.Message); Logger.Log(e.StackTrace); } return null;
+        }
+
+        /// <summary>
+        /// lies
+        /// </summary>
+        public void LoadUndoHistory() {
+            BlockChangeHistory.SetLevel(Name, (ushort)Size.x, (ushort)Size.z, (ushort)Size.z, Data);
         }
 
         /// <summary>
@@ -425,8 +434,7 @@ namespace MCForge.World {
             if (block == currentType) return;
             if (p != null) {
                 byte blockFrom = GetBlock(x, z, y);
-                p.history.Add(new Tuple<short, short, short>((short)x, (short)z, (short)y), blockFrom, block);
-                //Database.QueueCommand("INSERT INTO Blocks (UID, X, Y, Z, Level, Deleted, Block, Date, Was) VALUES (" + p.UID + ", " + x + ", " + y + ", " + z + ", '" + Name.MySqlEscape() + "', '" + (block == 0 ? "true" : "false") + "', '" + block.ToString() + "','" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff") + "', '" + blockFrom.ToString() + "')");
+                BlockChangeHistory.Add(p.Level.Name, (uint)p.UID, x, z, y, block);
             }
 
             SetBlock(x, z, y, block);

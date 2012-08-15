@@ -61,18 +61,7 @@ namespace MCForge.Commands.Moderation {
             int _time = 30;
             Player who = p;
             long UID = -1;
-#if DEBUG
-            if (args.Length == 1 && args[0] == "write") {
-                p.history.WriteOut();
-                p.SendMessage("BlockChangeHistroy written to filesystem");
-                return;
-            }
-            if (args.Length == 1 && args[0] == "about") {
-                p.OnPlayerBlockChange.Normal += OnPlayerBlockChange_Normal;
-                p.SendMessage("Click!");
-                return;
-            }
-#endif
+
             //undo <seconds>
             if (args.Length == 1) {
                 try {
@@ -138,45 +127,14 @@ namespace MCForge.Commands.Moderation {
             }
         }
 
-        void OnPlayerBlockChange_Normal(Player sender, API.Events.BlockChangeEventArgs args) {
-            sender.OnPlayerBlockChange.Normal -= OnPlayerBlockChange_Normal;
-            string[] about=sender.history.About(new Vector3S(args.X, args.Z, args.Y), sender.Level);
-            sender.SendMessage("ABOUT:");
-            for (int i = 0; i < about.Length; i++) {
-                sender.SendMessage(about[i]);
+        void Undo(long UID, int time, Level l, Player online) {
+            int count = 0;
+            foreach (var ch in BlockChangeHistory.Undo(l.Name, (uint)UID, DateTime.Now.AddSeconds(-time).Ticks)) {
+                l.BlockChange(ch.Item1, ch.Item2, ch.Item3, ch.Item4);
+                count++;
             }
-        }
-
-
-        void Undo(long UID, int time, Level l, Player online)
-        {
-            if (online != null) {
-                online.history.Undo(DateTime.Now.AddSeconds(-time).Ticks, l);
-            }
+            online.SendMessage("&e" + count + Server.DefaultColor + " Blocks changed");
             return;
-        	if (UID == -1)
-        		return;
-            string datetime = DateTime.Now.AddSeconds(time * -1).ToString("yyyy-MM-dd HH:mm:ss.fff");
-           // DataTable blockchanges = Database.fillData("SElECT * FROM Blocks WHERE UID=" + UID + " AND Date > '" + datetime + "' ORDER BY Date");
-            	int x = 0;
-            	int y = 0;
-            	int z = 0;
-            	byte was = 0;
-                Stopwatch s = new Stopwatch();
-                s.Start();
-                int i = 0;
-            	foreach(NameValueCollection nvm in Database.getData("SElECT X, Y, Z, Was, Date FROM Blocks WHERE UID=" + UID + " AND Date > '" + datetime + "' ORDER BY Date DESC")){
-                    i++;
-                    x = int.Parse(nvm["X"].ToString());
-            		y = int.Parse(nvm["Y"].ToString());
-            		z = int.Parse(nvm["Z"].ToString());
-            		was = byte.Parse(nvm["Was"].ToString());
-                    l.BlockChange((ushort)x, (ushort)z, (ushort)y, was);
-            	}
-                Database.executeQuery("DELETE FROM Blocks WHERE DATE > '" + datetime + "'");
-                s.Stop();
-                Logger.Log("used " + s.Elapsed + " for " + i + " undos");
-           // blockchanges.Dispose();
         }
         void Undo(Player p, int time = 30) {
         	Undo(p.UID, time, p.Level, p);

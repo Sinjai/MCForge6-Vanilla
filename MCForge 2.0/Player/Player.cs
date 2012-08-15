@@ -298,9 +298,6 @@ namespace MCForge.Entity {
                 Socket.BeginReceive(tempBuffer, 0, tempBuffer.Length, SocketFlags.None, new AsyncCallback(Incoming), this);
 
                 playerRandom = new Random();
-                //BlockChanges = new List<BlockChange>();
-                history = new BlockChangeHistory(this);
-
             }
             catch (Exception e) {
                 SKick("There has been an Error.");

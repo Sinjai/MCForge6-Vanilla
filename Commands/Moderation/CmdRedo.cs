@@ -76,16 +76,16 @@ namespace MCForge.Commands.Moderation {
             }
             if (where != null) {
                 if (who != null)
-                    who.history.Redo(DateTime.Now.AddSeconds(-time).Ticks, where);
+                    ;//who.history.Redo(DateTime.Now.AddSeconds(-time).Ticks, where);
                 else
-                    BlockChangeHistory.Redo(uid, DateTime.Now.AddSeconds(-time).Ticks, where);
+                    ;// BlockChangeHistory.Redo(uid, DateTime.Now.AddSeconds(-time).Ticks, where);
             }
             else {
                 foreach (Level l in Level.Levels) {
                     if (who != null)
-                        who.history.Redo(DateTime.Now.AddSeconds(-time).Ticks, l);
+                        ;//who.history.Redo(DateTime.Now.AddSeconds(-time).Ticks, l);
                     else
-                        BlockChangeHistory.Redo(uid, DateTime.Now.AddSeconds(-time).Ticks, where);
+                        ;// BlockChangeHistory.Redo(uid, DateTime.Now.AddSeconds(-time).Ticks, where);
                 }
             }
         }
