@@ -1,5 +1,0 @@
-C:\Users\Brayden\Forks\MCForge-Vanilla\Test\obj\x86\Debug\ResolveAssemblyReference.cache
-C:\Users\Brayden\Forks\MCForge-Vanilla\Test\bin\Debug\Test.exe
-C:\Users\Brayden\Forks\MCForge-Vanilla\Test\bin\Debug\Test.pdb
-C:\Users\Brayden\Forks\MCForge-Vanilla\Test\obj\x86\Debug\Test.exe
-C:\Users\Brayden\Forks\MCForge-Vanilla\Test\obj\x86\Debug\Test.pdb

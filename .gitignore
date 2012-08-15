@@ -17,6 +17,8 @@
 /Blocks/bin/
 /Blocks/ProfilingSessions/
 /Blocks/obj/
+/Test/bin/
+/Test/obj/
 
 *.suo
 *.vsp
@@ -43,5 +45,3 @@ Console/obj/
 /SQLite/bin/
 /SQLite/obj/
 /_ReSharper.MCForge/
-*.exe
-*.pdb
