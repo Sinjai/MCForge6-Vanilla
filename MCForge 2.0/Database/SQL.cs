@@ -32,6 +32,7 @@ namespace MCForge.SQL
         public virtual IEnumerable<NameValueCollection> getData(string queryString) {
             yield return null;
         }
+        public virtual string EscapeString(string toEscape) { return toEscape; }
 		public virtual void Dispose()
 		{
 			if (!_disposed)

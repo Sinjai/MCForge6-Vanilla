@@ -123,12 +123,12 @@ namespace MCForge.Utils {
         /// <param name="p">The player that has the data</param>
         /// <param name="key">The key to locate the value</param>
         public static void Save(this Dictionary<object, object> dict, Player p, object key) {
-            var cleanedMessage = key.ToString().MySqlEscape();
+            var cleanedMessage = key.ToString().SqlEscape();
             if (dict.ContainsKey(cleanedMessage)) {
                 if (!p.IsInTable(cleanedMessage))
-                    Database.executeQuery("INSERT INTO extra (setting, value, UID) VALUES ('" + cleanedMessage + "', '" + dict[cleanedMessage].ToString() + "', " + p.UID + ")");
+                    Database.executeQuery("INSERT INTO extra (setting, value, UID) VALUES ('" + cleanedMessage.SqlEscape() + "', '" + dict[cleanedMessage].ToString().SqlEscape() + "', " + p.UID + ")");
                 else
-                    Database.executeQuery("UPDATE extra SET value='" + dict[cleanedMessage].ToString() + "' WHERE setting='" + cleanedMessage + "' AND UID=" + p.UID);
+                    Database.executeQuery("UPDATE extra SET value='" + dict[cleanedMessage].ToString().SqlEscape() + "' WHERE setting='" + cleanedMessage.SqlEscape() + "' AND UID=" + p.UID);
             }
         }
 
@@ -163,11 +163,9 @@ namespace MCForge.Utils {
         /// <param name="stringToClean">The string to clean.</param>
         /// <returns>A cleaned string</returns>
         [DebuggerStepThrough]
-        public static string MySqlEscape(this string stringToClean) {
-            if (stringToClean == null) {
-                return null;
-            }
-            return Regex.Replace(stringToClean, @"[\r\n\x00\x1a\\'""]", @"\$0");
+        public static string SqlEscape(this string stringToClean) {
+            if (stringToClean == null) return null;
+            return Database.EscapeString(stringToClean);
         }
 
         /// <summary>

@@ -395,21 +395,21 @@ namespace MCForge.Entity {
         public void Save() {
             Logger.Log("Saving " + Username + " to the database", LogType.Debug);
             List<string> commands = new List<string>();
-            commands.Add("UPDATE _players SET money=" + Money + ", lastlogin='" + LastLogin.ToString("yyyy-MM-dd HH:mm:ss") + "', firstlogin='" + FirstLogin.ToString("yyyy-MM-dd HH:mm:ss") + "' WHERE UID=" + UID);
-            commands.Add("UPDATE _players SET color='" + Color + "' WHERE UID=" + UID);
+            commands.Add("UPDATE _players SET money=" + Money + ", lastlogin='" + LastLogin.ToString("yyyy-MM-dd HH:mm:ss").SqlEscape() + "', firstlogin='" + FirstLogin.ToString("yyyy-MM-dd HH:mm:ss").SqlEscape() + "' WHERE UID=" + UID);
+            commands.Add("UPDATE _players SET color='" + Color.SqlEscape() + "' WHERE UID=" + UID);
             DataSaved.Call(this, new DataSavedEventArgs(UID));
             Database.executeQuery(commands.ToArray());
         }
 
         public void Load() {
             Logger.Log("Loading " + Username + " from the database", LogType.Debug);
-            DataTable playerdb = Database.fillData("SELECT * FROM _players WHERE Name='" + Username + "'");
+            DataTable playerdb = Database.fillData("SELECT * FROM _players WHERE Name='" + Username.SqlEscape() + "'");
             if (playerdb.Rows.Count == 0) {
                 FirstLogin = DateTime.Now;
                 LastLogin = DateTime.Now;
                 Money = 0;
-                Database.executeQuery("INSERT INTO _players (Name, IP, firstlogin, lastlogin, money, color) VALUES ('" + Username + "', '" + Ip + "', '" + FirstLogin.ToString("yyyy-MM-dd HH:mm:ss") + "', '" + LastLogin.ToString("yyyy-MM-dd HH:mm:ss") + "', 0, '" + Color + "')");
-                DataTable temp = Database.fillData("SELECT * FROM _players WHERE Name='" + Username + "'");
+                Database.executeQuery("INSERT INTO _players (Name, IP, firstlogin, lastlogin, money, color) VALUES ('" + Username.SqlEscape() + "', '" + Ip.SqlEscape() + "', '" + FirstLogin.ToString("yyyy-MM-dd HH:mm:ss").SqlEscape() + "', '" + LastLogin.ToString("yyyy-MM-dd HH:mm:ss").SqlEscape() + "', 0, '" + Color.SqlEscape() + "')");
+                DataTable temp = Database.fillData("SELECT * FROM _players WHERE Name='" + Username.SqlEscape() + "'");
                 if (temp.Rows.Count != 0)
                     UID = int.Parse(temp.Rows[0]["UID"].ToString());
                 temp.Dispose();
@@ -457,7 +457,7 @@ namespace MCForge.Entity {
         /// <param name="key">The key to check</param>
         /// <returns>If true, then they key is in the table and doesnt need to be added, if false, then the key needs to be added</returns>
         internal bool IsInTable(object key) {
-            DataTable temp = Database.fillData("SELECT * FROM extra WHERE setting='" + key.ToString() + "' AND UID=" + UID);
+            DataTable temp = Database.fillData("SELECT * FROM extra WHERE setting='" + key.ToString().SqlEscape() + "' AND UID=" + UID);
             bool return1 = false;
             if (temp.Rows.Count >= 1)
                 return1 = true;
@@ -641,7 +641,7 @@ namespace MCForge.Entity {
                 return f.UID;
             }
             else {
-                DataTable playerDb = Database.fillData("SELECT * FROM _players WHERE Name='" +name.MySqlEscape() + "'");
+                DataTable playerDb = Database.fillData("SELECT * FROM _players WHERE Name='" +name.SqlEscape() + "'");
                 if (playerDb.Rows.Count == 0) {
                     return -1;
                 }

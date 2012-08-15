@@ -201,7 +201,7 @@ namespace MCForge.Utils.Settings {
             if (pair == null)
                 return -1;
             if (!int.TryParse(GetNode(key).Value, out i)) {
-                Logger.Log("ServerSettings: integer expected as first value for '" + key + "'", Color.Red, Color.Black);
+                Logger.Log("ServerSettings: integer expected as first value for '" + key.SqlEscape() + "'", Color.Red, Color.Black);
                 return -1;
             }
             return i;

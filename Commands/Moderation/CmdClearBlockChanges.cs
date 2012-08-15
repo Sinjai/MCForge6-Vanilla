@@ -32,7 +32,7 @@ namespace MCForge.Commands
 
         public void Use(Player p, string[] args)
         {
-            Database.executeQuery("DELETE FROM Blocks WHERE Level = '" + p.Level.Name.MySqlEscape() + "';");
+            Database.executeQuery("DELETE FROM Blocks WHERE Level = '" + p.Level.Name.SqlEscape() + "';");
             p.SendMessage("Successfully cleared block changes for " + Colors.red + p.Level.Name + "!");
         }
 

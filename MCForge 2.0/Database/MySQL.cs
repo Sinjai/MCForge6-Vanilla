@@ -89,6 +89,10 @@ namespace MCForge.SQL
 			}
 			return db;
 		}
+
+        public override string EscapeString(string toEscape) {
+            return MySqlHelper.EscapeString(toEscape);
+        }
 		
 		public void Open()
 		{

@@ -69,7 +69,7 @@ namespace MCForge.Commands.Information {
         void OnBlockChange(Player sender, BlockChangeEventArgs e) {
             sender.OnPlayerBlockChange.Normal -= OnBlockChange;
             e.Cancel();
-            using (var data = Database.fillData("SELECT * FROM Blocks WHERE X = '" + e.X + "' AND Y = '" + e.Y + "' AND Z = '" + e.Z + "' AND Level = '" + sender.Level.Name.MySqlEscape() + "';")) {
+            using (var data = Database.fillData("SELECT * FROM Blocks WHERE X = '" + e.X + "' AND Y = '" + e.Y + "' AND Z = '" + e.Z + "' AND Level = '" + sender.Level.Name.SqlEscape() + "';")) {
 
                 if (data.Rows.Count == 0) {
                     sender.SendMessage("This block has not been modified since the map was cleared or created.");
@@ -83,7 +83,7 @@ namespace MCForge.Commands.Information {
                     string time;
                     bool deleted;
 
-                    using (var playerData = Database.fillData("SELECT * FROM _players WHERE UID = " + data.Rows[i]["UID"].ToString())) {
+                    using (var playerData = Database.fillData("SELECT * FROM _players WHERE UID = " + data.Rows[i]["UID"].ToString().SqlEscape())) {
                         username = playerData.Rows[0]["Name"].ToString();
                         color = playerData.Rows[0]["color"].ToString();
                     }

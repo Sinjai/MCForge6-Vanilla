@@ -178,5 +178,14 @@ namespace MCForge.SQL
                 yield return nvm;
             }
         }
+
+        /// <summary>
+        /// Escapes a string to be used as parameter for the current SQL database.
+        /// </summary>
+        /// <param name="toEscape">The string to escape</param>
+        /// <returns>An sql escaped string</returns>
+        public static string EscapeString(string toEscape) {
+            return SQL.EscapeString(toEscape);
+        }
 	}
 }

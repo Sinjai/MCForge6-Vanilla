@@ -188,6 +188,10 @@ namespace MCForge.SQL {
             }
         }
 
+        public override string EscapeString(string toEscape) {
+            return toEscape.Replace("'", "''");
+        }
+
         public void Open() {
             if (_closed) {
                 try {
@@ -222,6 +226,7 @@ namespace MCForge.SQL {
                 base.Dispose();
             }
         }
+
 
     }
 }
