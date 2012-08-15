@@ -190,7 +190,6 @@ namespace MCForge.World {
                     break;
             }
             OnAllLevelsLoad.Call(newlevel, new LevelLoadEventArgs(true));
-            newlevel.LoadUndoHistory();
             return newlevel;
         }
 
@@ -299,18 +298,10 @@ namespace MCForge.World {
                 finalLevel.HandleMetaData();
                 Level.OnAllLevelsLoad.Call(finalLevel, new LevelLoadEventArgs(true));
                 Logger.Log("[Level] " + levelName + " was loaded");
-                finalLevel.LoadUndoHistory();
                 return finalLevel;
             }
             catch (Exception e) { 
                 Logger.Log(e.Message); Logger.Log(e.StackTrace); } return null;
-        }
-
-        /// <summary>
-        /// lies
-        /// </summary>
-        public void LoadUndoHistory() {
-            BlockChangeHistory.SetLevel(Name, (ushort)Size.x, (ushort)Size.z, (ushort)Size.z, Data);
         }
 
         /// <summary>

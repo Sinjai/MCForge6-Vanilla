@@ -190,10 +190,6 @@ namespace MCForge.Entity {
             }
         }
         /// <summary>
-        /// The BlockChangeHistory of this player.
-        /// </summary>
-        public BlockChangeHistory history;
-        /// <summary>
         /// The players MC Id, this changes each time the player logs in
         /// </summary>
         public byte ID { get; set; }

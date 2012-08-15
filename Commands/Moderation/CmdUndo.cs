@@ -148,7 +148,19 @@ namespace MCForge.Commands.Moderation {
         }
 
         public void Initialize() {
+            Level.OnAllLevelsLoad.Normal += OnAllLevelsLoadUnload_Normal;
+            Level.OnAllLevelsUnload.Normal += OnAllLevelsLoadUnload_Normal;
             Command.AddReference(this, "undo");
+        }
+
+        void OnAllLevelsLoadUnload_Normal(Level sender, API.Events.LevelLoadEventArgs args) {
+            if (args.Loaded) {
+                if (!BlockChangeHistory.Load(sender.Name)) {
+                    BlockChangeHistory.SetLevel(sender.Name, (ushort)sender.Size.x, (ushort)sender.Size.z, (ushort)sender.Size.y, sender.Data);
+                }
+            }
+            else
+                BlockChangeHistory.WriteOut(sender.Name, true);
         }
 
         #endregion
