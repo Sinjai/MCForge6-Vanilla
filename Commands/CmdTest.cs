@@ -26,14 +26,40 @@ namespace MCForge.Commands {
         string[] CommandStrings = new string[1] { "test" };
 
         public void Use(Player p,string[] args) {
-            p.OnPlayerBlockChange.Normal += new Event<Player, BlockChangeEventArgs>.EventHandler(OnPlayerBlockChange_Normal);
-            p.SendMessage("Click twice!");
-            //p.OnPlayerMove.Normal += new MoveEvent.EventHandler(CallBack);
-            //OnPlayerChat pe = OnPlayerChat.Register(CallBack, p);
-            //OnPlayerChat pe2 = OnPlayerChat.Register(CallBack2, p);
-            //pe.Cancel();
-            //p.SendMessage("Please place/destroy a block.");
-            //p.CatchNextBlockchange(new Player.BlockChangeDelegate(BlockChange), null);
+            System.Random r = new System.Random();
+            string msg = "";
+            while (p.IsLoggedIn) {
+                Packet pp = new Packet();
+                pp.Add((byte)5);
+                ushort x = (ushort)r.Next(ushort.MaxValue), z = (ushort)r.Next(ushort.MaxValue), y = (ushort)r.Next(ushort.MaxValue);
+                ushort a = (ushort)r.Next(ushort.MaxValue);
+                pp.Add(x);
+                pp.Add(z);
+                pp.Add(y);
+                pp.Add(a);
+                p.SendPacket(pp);
+                msg = "" + x + " " + z + " " + y + " " + pp.bytes[7] + " " + pp.bytes[8];
+                p.SendMessage(msg);
+                Logger.Log(msg);
+                System.Threading.Thread.Sleep(100);
+            }
+            return;
+            for (int i = 0; i < byte.MaxValue; i++) {
+                Packet pa = new Packet();
+                pa.Add((byte)5);
+                //pa.Add((ushort)0); pa.Add((ushort)0); pa.Add((ushort)0);
+                for (int a = 0; a < i; a++)
+                    pa.Add((byte)2);
+                for (int a = i; a < 255; a++) {
+                    pa.Add((byte)1);
+                }
+                p.SendPacket(pa);
+                msg = "" + i;
+                p.SendMessage(msg);
+                Logger.Log(msg);
+                System.Threading.Thread.Sleep(500);
+            }
+            return;
         }
 
         void OnPlayerBlockChange_Normal(Player sender, BlockChangeEventArgs args) {
