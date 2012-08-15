@@ -22,6 +22,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Upgrader", "Upgrader\Upgrad
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Updater", "Updater\Updater.csproj", "{394F99F2-6F70-4225-9B02-3169BF9139D9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", "{4921C457-33F6-496D-9400-DF9BB6E1E242}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -108,8 +110,21 @@ Global
 		{2BA59FB7-13B4-42A7-A915-F68B2032EE7C}.Release|Mixed Platforms.Build.0 = Release|x86
 		{2BA59FB7-13B4-42A7-A915-F68B2032EE7C}.Release|x86.ActiveCfg = Release|x86
 		{2BA59FB7-13B4-42A7-A915-F68B2032EE7C}.Release|x86.Build.0 = Release|x86
+<<<<<<< HEAD
+		{4921C457-33F6-496D-9400-DF9BB6E1E242}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{4921C457-33F6-496D-9400-DF9BB6E1E242}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{4921C457-33F6-496D-9400-DF9BB6E1E242}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{4921C457-33F6-496D-9400-DF9BB6E1E242}.Debug|x86.ActiveCfg = Debug|x86
+		{4921C457-33F6-496D-9400-DF9BB6E1E242}.Debug|x86.Build.0 = Debug|x86
+		{4921C457-33F6-496D-9400-DF9BB6E1E242}.Release|Any CPU.ActiveCfg = Release|x86
+		{4921C457-33F6-496D-9400-DF9BB6E1E242}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{4921C457-33F6-496D-9400-DF9BB6E1E242}.Release|Mixed Platforms.Build.0 = Release|x86
+		{4921C457-33F6-496D-9400-DF9BB6E1E242}.Release|x86.ActiveCfg = Release|x86
+		{4921C457-33F6-496D-9400-DF9BB6E1E242}.Release|x86.Build.0 = Release|x86
+=======
 		{12597DB0-7C34-4DE1-88EA-9250FF3372EB}.Debug|x86.Build.0 = Debug|x86
 		{12597DB0-7C34-4DE1-88EA-9250FF3372EB}.Release|x86.Build.0 = Release|x86
+>>>>>>> 91f08dfeb65fa78becbca1fd6c566696a746a6e6
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
