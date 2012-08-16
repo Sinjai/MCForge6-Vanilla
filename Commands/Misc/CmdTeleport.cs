@@ -35,7 +35,7 @@ namespace MCForge.Commands
             switch (args.Length)
             {
                 case 0:
-                    Vector3S meep = new Vector3S((short)(0.5 + p.Level.SpawnPos.x * 32), (short)(0.5 + p.Level.SpawnPos.z * 32), (short)(1 + p.Level.SpawnPos.y * 32));
+                    Vector3S meep = new Vector3S((short)(p.Level.SpawnPos.x * 32 + 16), (short)(p.Level.SpawnPos.z * 32 + 16), (short)(p.Level.SpawnPos.y * 32));
                     p.SendToPos(meep, p.Level.SpawnRot);
                     break;
                 case 1:

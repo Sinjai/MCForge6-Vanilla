@@ -178,7 +178,7 @@ namespace MCForge.World {
                     for (int i = newlevel.Size.y / 2; i >= 0; i--)
                         gen.FillPlaneXZ(i, Block.BlockList.DIRT);
                     gen.FillPlaneXZ(newlevel.Size.y / 2, Block.BlockList.GRASS);
-                    gen.SetPosition(new Vector3S((short)(newlevel.Size.x / 2 + 1), (short)(newlevel.Size.z / 2 + 1), (short)(newlevel.Size.y / 2 + 1)), new Vector2S());
+                    gen.SetPosition(new Vector3S((short)(newlevel.Size.x / 2 + 1), (short)(newlevel.Size.z / 2 + 1), (short)(newlevel.Size.y / 2 + 2)), new Vector2S());
                     break;
                 case LevelTypes.Pixel:
                     newlevel.CreatePixelArtLevel();

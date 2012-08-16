@@ -874,7 +874,7 @@ namespace MCForge.Entity
             pa.Add((byte)ID);
             pa.Add(p._displayName, 64);
             pa.Add(p.Pos.x);
-            pa.Add(p.Pos.y);
+            pa.Add((ushort)(p.Pos.y + ((ID == 0xFF) ? -21 : 3)));
             pa.Add(p.Pos.z);
             pa.Add(p.Rot);
             SendPacket(pa);
@@ -1114,7 +1114,7 @@ namespace MCForge.Entity
                 pa.Add(Packet.Types.SendTeleport);
                 pa.Add(ID);
                 pa.Add(tempPos.x);
-                pa.Add(tempPos.y);
+                pa.Add((short)(tempPos.y + 3));
                 pa.Add(tempPos.z);
                 pa.Add(tempRot);
             }
