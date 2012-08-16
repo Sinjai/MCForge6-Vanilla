@@ -52,7 +52,7 @@ namespace MCForge.Utils {
 
 
         public static string CurrentLogFile {
-            get { return _lastTime.ToString("MM-dd-yyyy") + "-MCForge.log"; }
+            get { return _lastTime.ToString("yyyy-MM-dd") + "-MCForge.log"; }
         }
 
 
@@ -66,17 +66,19 @@ namespace MCForge.Utils {
 
             _flushQueue = new Queue<LogEventArgs>();
             _flushErrorQueue = new Queue<ErrorLogEventArgs>();
+            mem_buffer = new MemoryStream();
+            mem_writer = new StreamWriter(mem_buffer);
+            FileUtils.CreateDirIfNotExist(FileUtils.LogsPath);
+            _lastTime = DateTime.Now;
+            FileUtils.CreateFileIfNotExist(FileUtils.LogsPath + CurrentLogFile, "--MCForge: Version: " + Assembly.GetExecutingAssembly().GetName().Version + ", OS:" + Environment.OSVersion + ", ARCH:" + (Environment.Is64BitOperatingSystem ? "x64" : "x86") + ", CULTURE: " + CultureInfo.CurrentCulture + Environment.NewLine);
 
             _workerThread = new Thread(Flush);
             _workerThread.Start();
             _errorWorkerThread = new Thread(FlushErrors);
             _errorWorkerThread.Start();
+            _fileFlusher = new Thread(FlushToFile);
+            _fileFlusher.Start();
 
-
-            _lastTime = DateTime.Now;
-            FileUtils.CreateDirIfNotExist(FileUtils.LogsPath);
-            FileUtils.CreateFileIfNotExist(FileUtils.LogsPath + CurrentLogFile, "--MCForge: Version: " + Assembly.GetExecutingAssembly().GetName().Version + ", OS:" + Environment.OSVersion + ", ARCH:" + ( Environment.Is64BitOperatingSystem ? "x64" : "x86" ) + ", CULTURE: " + CultureInfo.CurrentCulture + Environment.NewLine);
-            writer = new StreamWriter(FileUtils.LogsPath + CurrentLogFile, true);
         }
 
         /// <summary>
@@ -85,8 +87,6 @@ namespace MCForge.Utils {
         public static void DeInit() {
             _flushMessages = false;
             _flushErrorMessages = false;
-            writer.Flush();
-            writer.Close();
         }
 
         /// <summary>
@@ -132,32 +132,47 @@ namespace MCForge.Utils {
             _flushErrorQueue.Enqueue(new ErrorLogEventArgs(e));
         }
 
-        private static int count;
-        private static StreamWriter writer;
+        private static MemoryStream mem_buffer;
+        private static StreamWriter mem_writer;
+        private static object mem_lock=new object();
+        private static Thread _fileFlusher;
+
+        internal static void FlushToFile() {
+            _lastTime = DateTime.Now;
+            while (_flushErrorMessages || _flushMessages) {
+                for (int i = 0; (_flushErrorMessages || _flushMessages) && (i < 10 || mem_buffer.Length == 0); i++) {
+                    Thread.Sleep(1000);
+                    mem_writer.Flush();
+                }
+                lock (mem_lock) {
+                    mem_writer.Flush();
+                    if (_lastTime.Day != DateTime.Now.Day) {
+                        _lastTime = DateTime.Now;
+                        FileUtils.CreateFileIfNotExist(FileUtils.LogsPath + CurrentLogFile, "--MCForge: Version: " + Assembly.GetExecutingAssembly().GetName().Version + ", OS:" + Environment.OSVersion + ", ARCH:" + (Environment.Is64BitOperatingSystem ? "x64" : "x86") + ", CULTURE: " + CultureInfo.CurrentCulture + Environment.NewLine);
+                    }
+                    try {
+                        FileStream fs = new FileStream(FileUtils.LogsPath + CurrentLogFile, FileMode.Append, FileAccess.Write);
+                        BinaryWriter file_writer = new BinaryWriter(fs);
+                        file_writer.Write(mem_buffer.ToArray());
+                        file_writer.Flush();
+                        fs.Flush();
+                        fs.Close();
+                        mem_buffer = new MemoryStream();
+                        mem_writer = new StreamWriter(mem_buffer);
+                    }
+                    catch { Console.WriteLine("Logger failed flushing to file"); }
+                }
+            }
+        }
         
         /// <summary>
         /// Writes the log message to the log file
         /// </summary>
         /// <param name="log">Message to log</param>
         public static void WriteLog(string log) {
-            if ( count != 0 ) {
-                int c = count;
-                while ( count >= c ) Thread.Sleep(200);
+            lock (mem_lock) {
+                    mem_writer.WriteLine(log);
             }
-            count++;
-            if (_lastTime.Day != DateTime.Now.Day) {
-                writer.Flush();
-                writer.Close();
-                FileUtils.CreateFileIfNotExist(FileUtils.LogsPath + CurrentLogFile, "--MCForge: Version: " + Assembly.GetExecutingAssembly().GetName().Version + ", OS:" + Environment.OSVersion + ", ARCH:" + (Environment.Is64BitOperatingSystem ? "x64" : "x86") + ", CULTURE: " + CultureInfo.CurrentCulture + Environment.NewLine);
-                writer = new StreamWriter(FileUtils.LogsPath + CurrentLogFile, true);
-                _lastTime = DateTime.Now;
-            }
-
-            try {
-                    writer.WriteLine(log);
-            }
-            catch { }
-            count--;
         }
 
         internal static void Flush() {
