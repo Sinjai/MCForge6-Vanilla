@@ -50,7 +50,7 @@ namespace MCForge.SQL
 		private static bool flushcommands;
 		private static Queue<string> commands = new Queue<string>();
 		public static ISQL SQL { get { return SQLType; } }
-		internal static void init()
+		internal static void Init()
 		{
 			if (SQLType == null)
 			{
@@ -79,6 +79,9 @@ namespace MCForge.SQL
 				_worker.Start();
 			}
 		}
+        internal static void DeInit() {
+            flushcommands = false;
+        }
 		/// <summary>
 		/// Add a sql command to the queue
 		/// </summary>
@@ -108,8 +111,7 @@ namespace MCForge.SQL
 		{
 			while (flushcommands)
 			{
-                if (Server.ShuttingDown) return;
-				Thread.Sleep(FlushWait);
+                while (commands.Count == 0 && flushcommands) Thread.Sleep(FlushWait);
                 if (commands.Count > 0) {
                     string[] cmds;
                     lock (commands) {

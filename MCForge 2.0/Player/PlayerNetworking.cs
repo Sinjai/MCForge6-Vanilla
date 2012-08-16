@@ -733,40 +733,36 @@ namespace MCForge.Entity
         #endregion
 
         #region Outgoing Packets
-        public override void SendPacket(Packet pa)
-        {
-            PacketEventArgs args = new PacketEventArgs(pa.bytes, false, (Packet.Types)pa.bytes[0]);
-            bool Canceled = OnPlayerSendPacket.Call(this, args, OnAllPlayersSendPacket).Canceled;
-            if (pa.bytes != args.Data)
-                pa.bytes = args.Data;
-            if (!Canceled)
-            {
-                try
-                {
-                    lastPacket = (Packet.Types)pa.bytes[0];
-                }
-                catch (Exception e) { Logger.LogError(e); }
-                for (int i = 0; i < 3; i++)
-                {
-                    try
-                    {
+        private object sendLock = new object();
+        public override void SendPacket(Packet pa) {
+            lock (sendLock) {
+                if (!IsLoggedIn && !IsLoading) return;
+                PacketEventArgs args = new PacketEventArgs(pa.bytes, false, (Packet.Types)pa.bytes[0]);
+                bool Canceled = OnPlayerSendPacket.Call(this, args, OnAllPlayersSendPacket).Canceled;
+                if (pa.bytes != args.Data)
+                    pa.bytes = args.Data;
+                if (!Canceled) {
+                    try {
                         lastPacket = (Packet.Types)pa.bytes[0];
                     }
                     catch (Exception e) { Logger.LogError(e); }
-                    for (int z = 0; z < 3; z++)
-                    {
-                        try
-                        {
-                            Socket.BeginSend(pa.bytes, 0, pa.bytes.Length, SocketFlags.None, delegate(IAsyncResult result) { }, null);
+                    for (int i = 0; i < 3; i++) {
+                        try {
+                            lastPacket = (Packet.Types)pa.bytes[0];
+                        }
+                        catch (Exception e) { Logger.LogError(e); }
+                        for (int z = 0; z < 3; z++) {
+                            try {
+                                Socket.BeginSend(pa.bytes, 0, pa.bytes.Length, SocketFlags.None, delegate(IAsyncResult result) { }, null);
 
-                            return;
+                                return;
+                            }
+                            catch {
+                                continue;
+                            }
                         }
-                        catch
-                        {
-                            continue;
-                        }
+                        CloseConnection();
                     }
-                    CloseConnection();
                 }
             }
         }

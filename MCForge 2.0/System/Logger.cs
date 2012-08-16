@@ -76,7 +76,7 @@ namespace MCForge.Utils {
             _lastTime = DateTime.Now;
             FileUtils.CreateDirIfNotExist(FileUtils.LogsPath);
             FileUtils.CreateFileIfNotExist(FileUtils.LogsPath + CurrentLogFile, "--MCForge: Version: " + Assembly.GetExecutingAssembly().GetName().Version + ", OS:" + Environment.OSVersion + ", ARCH:" + ( Environment.Is64BitOperatingSystem ? "x64" : "x86" ) + ", CULTURE: " + CultureInfo.CurrentCulture + Environment.NewLine);
-
+            writer = new StreamWriter(FileUtils.LogsPath + CurrentLogFile, true);
         }
 
         /// <summary>
@@ -85,6 +85,8 @@ namespace MCForge.Utils {
         public static void DeInit() {
             _flushMessages = false;
             _flushErrorMessages = false;
+            writer.Flush();
+            writer.Close();
         }
 
         /// <summary>
@@ -131,6 +133,8 @@ namespace MCForge.Utils {
         }
 
         private static int count;
+        private static StreamWriter writer;
+        
         /// <summary>
         /// Writes the log message to the log file
         /// </summary>
@@ -141,15 +145,16 @@ namespace MCForge.Utils {
                 while ( count >= c ) Thread.Sleep(200);
             }
             count++;
-            if ( _lastTime.Day != DateTime.Now.Day ) {
+            if (_lastTime.Day != DateTime.Now.Day) {
+                writer.Flush();
+                writer.Close();
+                FileUtils.CreateFileIfNotExist(FileUtils.LogsPath + CurrentLogFile, "--MCForge: Version: " + Assembly.GetExecutingAssembly().GetName().Version + ", OS:" + Environment.OSVersion + ", ARCH:" + (Environment.Is64BitOperatingSystem ? "x64" : "x86") + ", CULTURE: " + CultureInfo.CurrentCulture + Environment.NewLine);
+                writer = new StreamWriter(FileUtils.LogsPath + CurrentLogFile, true);
                 _lastTime = DateTime.Now;
-                FileUtils.CreateFileIfNotExist(FileUtils.LogsPath + CurrentLogFile, "--MCForge: Version: " + Assembly.GetExecutingAssembly().GetName().Version + ", OS:" + Environment.OSVersion + ", ARCH:" + ( Environment.Is64BitOperatingSystem ? "x64" : "x86" ) + ", CULTURE: " + CultureInfo.CurrentCulture + Environment.NewLine);
             }
 
             try {
-                using ( var writer = new StreamWriter(FileUtils.LogsPath + CurrentLogFile, true) ) {
                     writer.WriteLine(log);
-                }
             }
             catch { }
             count--;
@@ -157,7 +162,7 @@ namespace MCForge.Utils {
 
         internal static void Flush() {
             while ( _flushMessages ) {
-                Thread.Sleep(20);
+                while (_flushQueue.Count == 0 && _flushMessages) Thread.Sleep(200);
                 if ( _flushQueue.Count > 0 ) {
                     var arg = _flushQueue.Dequeue();
                     if ( OnRecieveLog != null ) {
@@ -176,7 +181,7 @@ namespace MCForge.Utils {
 
         internal static void FlushErrors() {
             while ( _flushErrorMessages ) {
-                Thread.Sleep(20);
+                while (_flushErrorQueue.Count == 0 && _flushErrorMessages) Thread.Sleep(200);
                 if ( _flushErrorQueue.Count > 0 ) {
                     var arg = _flushErrorQueue.Dequeue();
                     if ( OnRecieveErrorLog != null )

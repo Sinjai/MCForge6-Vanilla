@@ -304,7 +304,7 @@ namespace MCForge.Core {
 
             Backup.StartBackup();
 
-            Database.init();
+            Database.Init();
 
             CreateCoreFiles();
 
@@ -584,7 +584,7 @@ namespace MCForge.Core {
             HeartThread.Abort();
 
             Logger.DeInit();
-
+            Database.DeInit();
             Running = false;
         }
 
