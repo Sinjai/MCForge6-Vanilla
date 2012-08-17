@@ -123,10 +123,14 @@ namespace MCForge.Commands.Moderation {
         }
 
         void Undo(long UID, int time, Level l, Player online) {
+            long since=DateTime.Now.AddSeconds(-time).Ticks;
             int count = 0;
-            foreach (var ch in BlockChangeHistory.Undo(l.Name, (uint)UID, DateTime.Now.AddSeconds(-time).Ticks)) {
-                l.BlockChange(ch.Item1, ch.Item2, ch.Item3, ch.Item4);
+            foreach (var ch in BlockChangeHistory.GetCurrentIfUID(l.Name, (uint)UID, since)) {
+                RedoHistory.Add((uint)UID, l.Name, ch.Item1, ch.Item2, ch.Item3, ch.Item4);
                 count++;
+            }
+            foreach (var ch in BlockChangeHistory.Undo(l.Name, (uint)UID, since)) {
+                l.BlockChange(ch.Item1, ch.Item2, ch.Item3, ch.Item4);
             }
             online.SendMessage("&e" + count + Server.DefaultColor + " Blocks changed");
             return;

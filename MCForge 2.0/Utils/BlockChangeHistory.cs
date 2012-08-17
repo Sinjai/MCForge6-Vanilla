@@ -6,37 +6,34 @@ using System.IO.Compression;
 
 namespace MCForge.Utils {
     public class BlockChangeHistory {
-        public static ExtraData<string, MultiChange> history = new ExtraData<string, MultiChange>();
+        public static ExtraData<string, LevelUndo> history = new ExtraData<string, LevelUndo>();
         public static void Add(string level, uint uid, ushort x, ushort z, ushort y, byte newBlock) {
-            MultiChange tmp = history[level];
+            LevelUndo tmp = history[level];
             if (tmp == null) return;
             tmp.Add(x, z, y, uid, newBlock);
         }
         public static IEnumerable<Tuple<ushort, ushort, ushort, byte>> Undo(string level, uint uid, long since) {
-            MultiChange tmp = history[level];
+            LevelUndo tmp = history[level];
             if (tmp == null) yield break;
             else foreach (var ret in tmp.Undo(uid, since)) yield return ret;
         }
         public static void SetLevel(string level, ushort sizeX, ushort sizeZ, ushort sizeY, byte[] originalLevel) {
-            history[level] = new MultiChange(sizeX, sizeZ, sizeY, originalLevel);
+            history[level] = new LevelUndo(sizeX, sizeZ, sizeY, originalLevel);
         }
-
-
         public static IEnumerable<Tuple<ushort, ushort, ushort, byte>> GetCurrentIfUID(string level, uint uid, long since) {
-            MultiChange tmp = history[level];
+            LevelUndo tmp = history[level];
             if (tmp == null) yield break;
             else foreach (var ret in tmp.GetCurrentIfUID(uid, since)) yield return ret;
         }
-
         public static void WriteOut(string level, bool clear) {
-            MultiChange tmp = history[level];
+            LevelUndo tmp = history[level];
             if (tmp != null) {
                 FileStream fs = new FileStream("levels/" + level + ".history", FileMode.Create, FileAccess.Write);
-            //    GZipStream gs = new GZipStream(fs, CompressionMode.Compress);
+                //    GZipStream gs = new GZipStream(fs, CompressionMode.Compress);
                 BinaryWriter bw = new BinaryWriter(fs);
                 tmp.Write(bw);
                 bw.Flush();
-            //    gs.Flush();
+                //    gs.Flush();
                 fs.Flush();
                 fs.Close();
                 if (clear) history[level] = null;
@@ -50,9 +47,9 @@ namespace MCForge.Utils {
         public static bool Load(string level) {
             if (File.Exists("levels/" + level + ".history")) {
                 FileStream fs = new FileStream("levels/" + level + ".history", FileMode.Open, FileAccess.Read);
-            //    GZipStream gs = new GZipStream(fs, CompressionMode.Decompress);
+                //    GZipStream gs = new GZipStream(fs, CompressionMode.Decompress);
                 BinaryReader br = new BinaryReader(fs);
-                history[level] = MultiChange.Read(br);
+                history[level] = LevelUndo.Read(br);
                 fs.Close();
                 return true;
             }
@@ -71,7 +68,7 @@ namespace MCForge.Utils {
         }
         public uint Value;
     }
-    public class SpecialList {
+    public class UndoList {
         //TODO: if it never throws exceptions remove them
         List<object> data = new List<object>();
         public void Add(byte type, uint uid) {
@@ -218,7 +215,7 @@ namespace MCForge.Utils {
                             ;
                         else break;
                     }
-                    if (count == 0) 
+                    if (count == 0)
                         throw new Exception("corrupted list?");
                     return new TypeByte(count, 1);
                 }
@@ -302,8 +299,8 @@ namespace MCForge.Utils {
                 }
             }
         }
-        public static SpecialList Read(BinaryReader br) {
-            SpecialList ret = new SpecialList();
+        public static UndoList Read(BinaryReader br) {
+            UndoList ret = new UndoList();
             int count = br.ReadInt32();
             for (int i = 0; i < count; ) {
                 TypeByte tb = br.ReadByte();
@@ -407,14 +404,14 @@ namespace MCForge.Utils {
             public static int MaxAmount;
         }
     }
-    public class MultiChange {
-        public MultiChange(ushort sizeX, ushort sizeZ, ushort sizeY, byte[] originalLevel) {
+    public class LevelUndo {
+        public LevelUndo(ushort sizeX, ushort sizeZ, ushort sizeY, byte[] originalLevel) {
             this.originalLevel = (byte[])originalLevel.Clone();
             this.sizeX = sizeX;
             this.sizeZ = sizeZ;
             this.sizeY = sizeY;
         }
-        ExtraData<ushort, ExtraData<ushort, ExtraData<ushort, SpecialList>>> changes = new ExtraData<ushort, ExtraData<ushort, ExtraData<ushort, SpecialList>>>();
+        ExtraData<ushort, ExtraData<ushort, ExtraData<ushort, UndoList>>> changes = new ExtraData<ushort, ExtraData<ushort, ExtraData<ushort, UndoList>>>();
         byte[] originalLevel;
         ushort sizeX, sizeZ, sizeY;
         byte GetBlock(ushort x, ushort z, ushort y) {
@@ -422,13 +419,13 @@ namespace MCForge.Utils {
         }
 
         public void Add(ushort x, ushort z, ushort y, uint uid, byte type) {
-            ExtraData<ushort, ExtraData<ushort, SpecialList>> xLevel = changes[x];
-            ExtraData<ushort, SpecialList> zLevel;
-            SpecialList yLevel;
+            ExtraData<ushort, ExtraData<ushort, UndoList>> xLevel = changes[x];
+            ExtraData<ushort, UndoList> zLevel;
+            UndoList yLevel;
             if (xLevel == null) {
-                xLevel = new ExtraData<ushort, ExtraData<ushort, SpecialList>>();
-                zLevel = new ExtraData<ushort, SpecialList>();
-                yLevel = new SpecialList();
+                xLevel = new ExtraData<ushort, ExtraData<ushort, UndoList>>();
+                zLevel = new ExtraData<ushort, UndoList>();
+                yLevel = new UndoList();
                 yLevel.Add(type, uid);
                 zLevel[y] = yLevel;
                 xLevel[z] = zLevel;
@@ -437,8 +434,8 @@ namespace MCForge.Utils {
             else {
                 zLevel = xLevel[z];
                 if (zLevel == null) {
-                    zLevel = new ExtraData<ushort, SpecialList>();
-                    yLevel = new SpecialList();
+                    zLevel = new ExtraData<ushort, UndoList>();
+                    yLevel = new UndoList();
                     yLevel.Add(type, uid);
                     zLevel[y] = yLevel;
                     xLevel[z] = zLevel;
@@ -446,7 +443,7 @@ namespace MCForge.Utils {
                 else {
                     yLevel = zLevel[y];
                     if (yLevel == null) {
-                        yLevel = new SpecialList();
+                        yLevel = new UndoList();
                         yLevel.Add(type, uid);
                         zLevel[y] = yLevel;
 
@@ -459,9 +456,9 @@ namespace MCForge.Utils {
         }
 
         public IEnumerable<Tuple<ushort, ushort, ushort, byte>> Undo(uint uid, long since) {
-            ExtraData<ushort, ExtraData<ushort, SpecialList>> xLevel;
-            ExtraData<ushort, SpecialList> zLevel;
-            SpecialList yLevel;
+            ExtraData<ushort, ExtraData<ushort, UndoList>> xLevel;
+            ExtraData<ushort, UndoList> zLevel;
+            UndoList yLevel;
             for (int a = 0; a < changes.Keys.Count; a++) {
                 ushort x = changes.Keys.ElementAt(a);
                 xLevel = changes[x];
@@ -497,9 +494,9 @@ namespace MCForge.Utils {
         }
 
         public IEnumerable<Tuple<ushort, ushort, ushort, byte>> GetCurrentIfUID(uint uid, long since) {
-            ExtraData<ushort, ExtraData<ushort, SpecialList>> xLevel;
-            ExtraData<ushort, SpecialList> zLevel;
-            SpecialList yLevel;
+            ExtraData<ushort, ExtraData<ushort, UndoList>> xLevel;
+            ExtraData<ushort, UndoList> zLevel;
+            UndoList yLevel;
             for (int a = 0; a < changes.Keys.Count; a++) {
                 ushort x = changes.Keys.ElementAt(a);
                 xLevel = changes[x];
@@ -526,9 +523,9 @@ namespace MCForge.Utils {
             return ret;
         }
         public void Write(BinaryWriter bw) {
-            ExtraData<ushort, ExtraData<ushort, SpecialList>> xLevel;
-            ExtraData<ushort, SpecialList> zLevel;
-            SpecialList yLevel;
+            ExtraData<ushort, ExtraData<ushort, UndoList>> xLevel;
+            ExtraData<ushort, UndoList> zLevel;
+            UndoList yLevel;
             bw.Write(originalLevel.Length);
             bw.Write(sizeX);
             bw.Write(sizeZ);
@@ -550,42 +547,158 @@ namespace MCForge.Utils {
                 }
             }
         }
-        public static MultiChange Read(BinaryReader br) {
+        public static LevelUndo Read(BinaryReader br) {
             long count = br.ReadInt32();
             ushort x = br.ReadUInt16();
             ushort z = br.ReadUInt16();
             ushort y = br.ReadUInt16();
             byte[] origLvl = br.ReadBytes((int)count);
-            MultiChange ret = new MultiChange(x, z, y, origLvl);
+            LevelUndo ret = new LevelUndo(x, z, y, origLvl);
             count = br.ReadInt64();
             for (; count > 0; count--) {
-                    x = br.ReadUInt16();
-                    z = br.ReadUInt16();
-                    y = br.ReadUInt16();
-                    if (x >= 64 || z >= 64 || y >= 32)
-                        x = x;
-                    ExtraData<ushort, ExtraData<ushort, SpecialList>> xLevel = ret.changes[x];
-                    ExtraData<ushort, SpecialList> zLevel;
-                    if (xLevel == null) {
-                        xLevel = new ExtraData<ushort, ExtraData<ushort, SpecialList>>();
-                        zLevel = new ExtraData<ushort, SpecialList>();
-                        zLevel[y] = SpecialList.Read(br);
+                x = br.ReadUInt16();
+                z = br.ReadUInt16();
+                y = br.ReadUInt16();
+                if (x >= 64 || z >= 64 || y >= 32)
+                    x = x;
+                ExtraData<ushort, ExtraData<ushort, UndoList>> xLevel = ret.changes[x];
+                ExtraData<ushort, UndoList> zLevel;
+                if (xLevel == null) {
+                    xLevel = new ExtraData<ushort, ExtraData<ushort, UndoList>>();
+                    zLevel = new ExtraData<ushort, UndoList>();
+                    zLevel[y] = UndoList.Read(br);
+                    xLevel[z] = zLevel;
+                    ret.changes[x] = xLevel;
+                }
+                else {
+                    zLevel = xLevel[z];
+                    if (zLevel == null) {
+                        zLevel = new ExtraData<ushort, UndoList>();
+                        zLevel[y] = UndoList.Read(br);
                         xLevel[z] = zLevel;
-                        ret.changes[x] = xLevel;
                     }
                     else {
-                        zLevel = xLevel[z];
-                        if (zLevel == null) {
-                            zLevel = new ExtraData<ushort, SpecialList>();
-                            zLevel[y] = SpecialList.Read(br);
-                            xLevel[z] = zLevel;
-                        }
-                        else {
-                            zLevel[y] = SpecialList.Read(br);
-                        }
+                        zLevel[y] = UndoList.Read(br);
                     }
+                }
             }
             return ret;
+        }
+    }
+    public class RedoList {
+        List<object> data = new List<object>();
+        public void Add(byte type) {
+            uint now = (uint)(DateTime.Now.Ticks / 50000000);
+            if (data.Count > 0 && ((uint)data[data.Count - 2]) == now) {
+                data[data.Count - 1] = type;
+            }
+            else {
+                data.Add(now);
+                data.Add(type);
+            }
+        }
+        public byte? Redo(long since) {
+            return Redo((uint)(since / 50000000));
+        }
+        private byte? Redo(uint since) {
+            byte? ret = null;
+            int i = data.Count - 2;
+            for (; i >= 0; i -= 2) {
+                if (((uint)data[i]) > since) ret = (byte)data[i + 1];
+                else break;
+            }
+            if (i != data.Count - 2) if (i >= 0) { data.RemoveRange(i, data.Count - i); } else { data.Clear(); }
+            return ret;
+        }
+        public int Count { get { return data.Count; } }
+    }
+    public class PlayerLevelRedo {
+        ExtraData<ushort, ExtraData<ushort, ExtraData<ushort, RedoList>>> changes = new ExtraData<ushort, ExtraData<ushort, ExtraData<ushort, RedoList>>>();
+        public void Add(ushort x, ushort z, ushort y, byte type) {
+            ExtraData<ushort, ExtraData<ushort, RedoList>> xLevel = changes[x];
+            ExtraData<ushort, RedoList> zLevel;
+            RedoList yLevel;
+            if (xLevel == null) {
+                xLevel = new ExtraData<ushort, ExtraData<ushort, RedoList>>();
+                zLevel = new ExtraData<ushort, RedoList>();
+                yLevel = new RedoList();
+                yLevel.Add(type);
+                zLevel[y] = yLevel;
+                xLevel[z] = zLevel;
+                changes[x] = xLevel;
+            }
+            else {
+                zLevel = xLevel[z];
+                if (zLevel == null) {
+                    zLevel = new ExtraData<ushort, RedoList>();
+                    yLevel = new RedoList();
+                    yLevel.Add(type);
+                    zLevel[y] = yLevel;
+                    xLevel[z] = zLevel;
+                }
+                else {
+                    yLevel = zLevel[y];
+                    if (yLevel == null) {
+                        yLevel = new RedoList();
+                        yLevel.Add(type);
+                        zLevel[y] = yLevel;
+                    }
+                    else {
+                        yLevel.Add(type);
+                    }
+                }
+            }
+        }
+        public IEnumerable<Tuple<ushort, ushort, ushort, byte>> Redo(long since) {
+            ExtraData<ushort, ExtraData<ushort, RedoList>> xLevel;
+            ExtraData<ushort, RedoList> zLevel;
+            RedoList yLevel;
+            for (int a = 0; a < changes.Keys.Count; a++) {
+                ushort x = changes.Keys.ElementAt(a);
+                xLevel = changes[x];
+                for (int b = 0; b < xLevel.Keys.Count; b++) {
+                    ushort z = xLevel.Keys.ElementAt(b);
+                    zLevel = xLevel[z];
+                    for (int c = 0; c < zLevel.Keys.Count; c++) {
+                        ushort y = zLevel.Keys.ElementAt(c);
+                        yLevel = zLevel[y];
+                        byte? tmp = yLevel.Redo(since);
+                        if (tmp != null) yield return new Tuple<ushort, ushort, ushort, byte>(x, z, y, (byte)tmp);
+                        if (yLevel.Count == 0) {
+                            zLevel[y] = null;
+                            c--;
+                        }
+                    }
+                    if (zLevel.Count == 0) {
+                        xLevel[z] = null;
+                        b--;
+                    }
+                }
+                if (xLevel.Count == 0) {
+                    changes[x] = null;
+                    a--;
+                }
+            }
+            yield break;
+        }
+    }
+    public class RedoHistory {
+        public static ExtraData<string, PlayerLevelRedo> history = new ExtraData<string, PlayerLevelRedo>();
+        public static void Add(uint uid, string level, ushort x, ushort z, ushort y, byte block) {
+            PlayerLevelRedo tmp = history[uid + "|" + level];
+            if (tmp == null) {
+                tmp = new PlayerLevelRedo();
+                tmp.Add(x, z, y, block);
+                history[uid + "|" + level] = tmp;
+            }
+            else {
+                tmp.Add(x, z, y, block);
+            }
+        }
+        public static IEnumerable<Tuple<ushort, ushort, ushort, byte>> Redo(uint uid, string level, long since) {
+            PlayerLevelRedo tmp = history[uid + "|" + level];
+            if (tmp == null) yield break;
+            else foreach (var ret in tmp.Redo(since)) yield return ret;
         }
     }
 }
