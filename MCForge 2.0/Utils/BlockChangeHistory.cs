@@ -32,9 +32,11 @@ namespace MCForge.Utils {
             MultiChange tmp = history[level];
             if (tmp != null) {
                 FileStream fs = new FileStream("levels/" + level + ".history", FileMode.Create, FileAccess.Write);
-                GZipStream gs = new GZipStream(fs, CompressionMode.Compress);
-                BinaryWriter bw = new BinaryWriter(gs);
+            //    GZipStream gs = new GZipStream(fs, CompressionMode.Compress);
+                BinaryWriter bw = new BinaryWriter(fs);
                 tmp.Write(bw);
+                bw.Flush();
+            //    gs.Flush();
                 fs.Flush();
                 fs.Close();
                 if (clear) history[level] = null;
@@ -48,8 +50,8 @@ namespace MCForge.Utils {
         public static bool Load(string level) {
             if (File.Exists("levels/" + level + ".history")) {
                 FileStream fs = new FileStream("levels/" + level + ".history", FileMode.Open, FileAccess.Read);
-                GZipStream gs = new GZipStream(fs, CompressionMode.Decompress);
-                BinaryReader br = new BinaryReader(gs);
+            //    GZipStream gs = new GZipStream(fs, CompressionMode.Decompress);
+                BinaryReader br = new BinaryReader(fs);
                 history[level] = MultiChange.Read(br);
                 fs.Close();
                 return true;
@@ -196,25 +198,28 @@ namespace MCForge.Utils {
             if (data[i].GetType() == typeof(UID)) {
                 byte count = 0;
                 for (; count <= TypeByte.MaxAmount; count++) {
-                    if (i + count + 1 < data.Count && data[i + count].GetType() == typeof(UID) && data[i + count + 1].GetType() == typeof(byte))
+                    if (i + count * 2 + 1 < data.Count && data[i + count * 2].GetType() == typeof(UID) && data[i + count * 2 + 1].GetType() == typeof(byte))
                         ;
                     else break;
                 }
-                if (count == 0) throw new Exception("corrupted list?");
+                if (count == 0)
+                    throw new Exception("corrupted list?");
                 return new TypeByte(count, 0);
             }
             else {
 #if DEBUG
-                if (data[i].GetType() == typeof(byte)) throw new Exception("corrupted list??");
+                if (data[i].GetType() == typeof(byte))
+                    throw new Exception("corrupted list??");
 #endif
                 if (i + 1 < data.Count && data[i + 1].GetType() == typeof(byte)) {
                     byte count = 0;
                     for (; count <= TypeByte.MaxAmount; count++) {
-                        if (i + count + 1 < data.Count && data[i + count].GetType() == typeof(Time) && data[i + count + 1].GetType() == typeof(byte))
+                        if (i + count * 2 + 1 < data.Count && data[i + count * 2].GetType() == typeof(Time) && data[i + count * 2 + 1].GetType() == typeof(byte))
                             ;
                         else break;
                     }
-                    if (count == 0) throw new Exception("corrupted list?");
+                    if (count == 0) 
+                        throw new Exception("corrupted list?");
                     return new TypeByte(count, 1);
                 }
                 else if (i + 2 < data.Count && data[i + 1].GetType() == typeof(UID) && data[i + 2].GetType() == typeof(byte)) {
@@ -222,21 +227,23 @@ namespace MCForge.Utils {
                         byte count = 0;
                         i++;
                         for (; count <= TypeByte.MaxAmount; count++) {
-                            if (i + count + 1 < data.Count && data[i + count].GetType() == typeof(UID) && data[i + count + 1].GetType() == typeof(byte))
+                            if (i + count * 2 + 1 < data.Count && data[i + count * 2].GetType() == typeof(UID) && data[i + count * 2 + 1].GetType() == typeof(byte))
                                 ;
                             else break;
                         }
-                        if (count == 0) throw new Exception("corrupted list?");
+                        if (count == 0)
+                            throw new Exception("corrupted list?");
                         return new TypeByte(count, 2);
                     }
                     else {
                         byte count = 0;
                         for (; count <= TypeByte.MaxAmount; count++) {
-                            if (i + count + 3 < data.Count && data[i + count].GetType() == typeof(Time) && data[i + count + 1].GetType() == typeof(UID) && data[i + count + 1].GetType() == typeof(byte))
+                            if (i + count * 3 + 2 < data.Count && data[i + count * 3].GetType() == typeof(Time) && data[i + count * 3 + 1].GetType() == typeof(UID) && data[i + count * 3 + 2].GetType() == typeof(byte))
                                 ;
                             else break;
                         }
-                        if (count == 0) throw new Exception("corrupted list?");
+                        if (count == 0)
+                            throw new Exception("corrupted list?");
                         return new TypeByte(count, 3);
 
                     }
@@ -298,24 +305,33 @@ namespace MCForge.Utils {
         public static SpecialList Read(BinaryReader br) {
             SpecialList ret = new SpecialList();
             int count = br.ReadInt32();
-            for (int i = 0; i < count; i++) {
+            for (int i = 0; i < count; ) {
                 TypeByte tb = br.ReadByte();
                 int amount;
                 switch (tb.head) {
                     case 0:
                         amount = tb.amount;
-                        for (; amount > 0; amount--) {
-                            ret.data.Add(new UID(br.ReadUInt32()));
-                            ret.data.Add(br.ReadByte());
-                            i += 2;
+                        try {
+                            for (; amount > 0; amount--) {
+                                ret.data.Add(new UID(br.ReadUInt32()));
+                                ret.data.Add(br.ReadByte());
+                                i += 2;
+                            }
+                        }
+                        catch {
+
                         }
                         break;
                     case 1:
                         amount = tb.amount;
-                        for (; amount > 0; amount--) {
-                            ret.data.Add(new Time(br.ReadUInt32()));
-                            ret.data.Add(br.ReadByte());
-                            i += 2;
+                        try {
+                            for (; amount > 0; amount--) {
+                                ret.data.Add(new Time(br.ReadUInt32()));
+                                ret.data.Add(br.ReadByte());
+                                i += 2;
+                            }
+                        }
+                        catch {
                         }
                         break;
                     case 2:
@@ -323,8 +339,8 @@ namespace MCForge.Utils {
                         ret.data.Add(new Time(br.ReadUInt32()));
                         i++;
                         for (; amount > 0; amount--) {
-                            ret.data.Add(new UID(br.ReadUInt32()));
                             try {
+                                ret.data.Add(new UID(br.ReadUInt32()));
                                 ret.data.Add(br.ReadByte());
                             }
                             catch {
@@ -335,11 +351,15 @@ namespace MCForge.Utils {
                         break;
                     case 3:
                         amount = tb.amount;
-                        for (; amount > 0; amount--) {
-                            ret.data.Add(new Time(br.ReadUInt32()));
-                            ret.data.Add(new UID(br.ReadUInt32()));
-                            ret.data.Add(br.ReadByte());
-                            i += 3;
+                        try {
+                            for (; amount > 0; amount--) {
+                                ret.data.Add(new Time(br.ReadUInt32()));
+                                ret.data.Add(new UID(br.ReadUInt32()));
+                                ret.data.Add(br.ReadByte());
+                                i += 3;
+                            }
+                        }
+                        catch {
                         }
                         break;
                 }
@@ -539,29 +559,31 @@ namespace MCForge.Utils {
             MultiChange ret = new MultiChange(x, z, y, origLvl);
             count = br.ReadInt64();
             for (; count > 0; count--) {
-                x = br.ReadUInt16();
-                z = br.ReadUInt16();
-                y = br.ReadUInt16();
-                ExtraData<ushort, ExtraData<ushort, SpecialList>> xLevel = ret.changes[x];
-                ExtraData<ushort, SpecialList> zLevel;
-                if (xLevel == null) {
-                    xLevel = new ExtraData<ushort, ExtraData<ushort, SpecialList>>();
-                    zLevel = new ExtraData<ushort, SpecialList>();
-                    zLevel[y] = SpecialList.Read(br);
-                    xLevel[z] = zLevel;
-                    ret.changes[x] = xLevel;
-                }
-                else {
-                    zLevel = xLevel[z];
-                    if (zLevel == null) {
+                    x = br.ReadUInt16();
+                    z = br.ReadUInt16();
+                    y = br.ReadUInt16();
+                    if (x >= 64 || z >= 64 || y >= 32)
+                        x = x;
+                    ExtraData<ushort, ExtraData<ushort, SpecialList>> xLevel = ret.changes[x];
+                    ExtraData<ushort, SpecialList> zLevel;
+                    if (xLevel == null) {
+                        xLevel = new ExtraData<ushort, ExtraData<ushort, SpecialList>>();
                         zLevel = new ExtraData<ushort, SpecialList>();
                         zLevel[y] = SpecialList.Read(br);
                         xLevel[z] = zLevel;
+                        ret.changes[x] = xLevel;
                     }
                     else {
-                        zLevel[y] = SpecialList.Read(br);
+                        zLevel = xLevel[z];
+                        if (zLevel == null) {
+                            zLevel = new ExtraData<ushort, SpecialList>();
+                            zLevel[y] = SpecialList.Read(br);
+                            xLevel[z] = zLevel;
+                        }
+                        else {
+                            zLevel[y] = SpecialList.Read(br);
+                        }
                     }
-                }
             }
             return ret;
         }
