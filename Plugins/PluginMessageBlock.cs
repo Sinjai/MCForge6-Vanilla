@@ -38,16 +38,84 @@ namespace Plugins {
             for (int i = 0; i < lvls.Length; i++)
                 OnAllLevelsLoad_Normal(lvls[i], null);
             Player.OnAllPlayersBigMove.Normal += OnAllPlayersBigMove_Normal;
+            Player.OnAllPlayersBlockChange.Normal += OnAllPlayersBlockChange_Normal;
+            protectBlockType = mb.ProtectBlockType;
+            removeCommandOnAir = mb.RemoveCommandOnAir;
+            removeMessageOnAir = mb.RemoveMessageOnAir;
         }
+        bool protectBlockType = true;
+        bool removeCommandOnAir = true;
+        bool removeMessageOnAir = true;
+
+        void OnAllPlayersBlockChange_Normal(Player sender, BlockChangeEventArgs args) {
+            Vector3S v = new Vector3S(args.X, args.Z, args.Y);
+            if (store[sender.Level.Name].Contains(v)) {
+                object msg = sender.Level.ExtraData["MessageBlock" + v];
+                if (msg != null && msg.GetType() == typeof(string) && ((string)msg).Length > 0) {
+                    if (((string)msg).StartsWith("c")) {
+                        if (removeCommandOnAir && (args.Action == ActionType.Delete || args.Holding == 0)) {
+                            Remove(sender.Level, v);
+                        }
+                        else if (protectBlockType) {
+                            args.Cancel();
+                        }
+                    }
+                    else {
+                        if (removeMessageOnAir && (args.Action == ActionType.Delete || args.Holding == 0)) {
+                            Remove(sender.Level, v);
+                        }
+                        else if (protectBlockType) {
+                            args.Cancel();
+                        }
+                    }
+                }
+            }
+        }
+
         void OnAllPlayersBigMove_Normal(Player sender, MoveEventArgs args) {
             Vector3S v = sender.belowBlock;
-            if (store[sender.Level.Name].Contains(v)) {
-                sender.SendMessage((string)sender.Level.ExtraData["MessageBlock" + v]);
+            object msg = sender.Level.ExtraData["MessageBlock" + v];
+            if (msg != null && msg.GetType() == typeof(string) && ((string)msg).Length > 1) {
+                if (((string)msg)[0] == 'm') {
+                    sender.SendMessage(((string)sender.Level.ExtraData["MessageBlock" + v]).Substring(1));
+                }
+                else {
+                    if (((string)msg)[0] == 'c') {
+                        int perm = 0;
+                        string[] commands = new string[0];
+                        try {
+                            perm = byte.Parse(((string)msg).Split(':')[1]);
+                            commands = ((string)msg).Split(':')[2].FromHexString().Split('/');
+                        }
+                        catch { }
+                        if (perm >= sender.Group.Permission) {
+                            for (int i = 0; i < commands.Length; i++) {
+                                string cname = commands[i].Trim().Split(' ')[0];
+                                if (!string.IsNullOrWhiteSpace(cname)) {
+                                    if (cname.Length < commands[i].Length) {
+                                        string[] cargs = commands[i].Substring(cname.Length + 1).Split(' ');
+                                        ICommand c = Command.Find(cname);
+                                        try {
+                                            if (c != null) c.Use(sender, cargs);
+                                        }
+                                        catch (Exception e) { Logger.LogError(e); }
+                                    }
+                                    else {
+                                        ICommand c = Command.Find(cname);
+                                        try { if (c != null) c.Use(sender, new string[0]); }
+                                        catch (Exception e) { Logger.LogError(e); }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
         public void OnUnload() {
             Level[] lvls = Level.Levels.ToArray();
             Player.OnAllPlayersBigMove.Normal -= OnAllPlayersBigMove_Normal;
+            Player.OnAllPlayersBlockChange.Normal -= OnAllPlayersBlockChange_Normal;
             Level.OnAllLevelsUnload.Normal -= OnAllLevelsUnload_Normal;
             Level.OnAllLevelsLoad.Normal -= OnAllLevelsLoad_Normal;
             for (int i = 0; i < lvls.Length; i++)
@@ -63,7 +131,7 @@ namespace Plugins {
                         join += tmp[i].ToHexString() + ";";
                 }
                 if (join.EndsWith(";")) {
-                    sender.ExtraData["MessageBlock"] = join.Substring(0, join.Length);
+                    sender.ExtraData["MessageBlock"] = join.Substring(0, join.Length - 1);
                 }
                 else if (!String.IsNullOrEmpty(join)) sender.ExtraData["MessageBlock"] = join;
                 store[sender.Name] = null;
@@ -120,7 +188,7 @@ namespace Plugins {
         /// <param name="v"></param>
         /// <param name="message"></param>
         /// <returns></returns>
-        public bool Add(Level l, Vector3S v, string message) {
+        public bool Add(Level l, Vector3S v, string message, Player p) {
             bool ret = false;
             if (!store[l.Name].Contains(v)) {
                 store[l.Name].Add(v);
@@ -241,7 +309,13 @@ namespace Plugins {
                     return;
                 }
                 string message = (string)sender.GetDatapass("MessageBlockMessage");
-                if (pmb.Add(sender.Level, v, message)) {
+                if (message.StartsWith("/") && sender.Group.Permission >= commandBlockPermission) {
+                    message = "c:" + sender.Group.Permission + ":" + message.ToHexString();
+                }
+                else {
+                    message = "m" + message;
+                }
+                if (pmb.Add(sender.Level, v, message, sender)) {
                     sender.SendMessage("Message block added");
                 }
                 else {
@@ -258,6 +332,10 @@ namespace Plugins {
             byte createPermission = 0;
             byte viewPermission = 0;
             byte removeAllPermission = 0;
+            byte commandBlockPermission = 0;
+            public bool ProtectBlockType = true;
+            public bool RemoveCommandOnAir = true;
+            public bool RemoveMessageOnAir = true;
 
             public void Initialize() {
                 MessageBlockSettings settings = new MessageBlockSettings();
@@ -270,12 +348,30 @@ namespace Plugins {
                 f = settings.GetSettingInt("DeleteAllPermission");//allows to delete all message blocks
                 if (f >= byte.MinValue && f <= byte.MaxValue)
                     removeAllPermission = (byte)f;
+                f = settings.GetSettingInt("CommandBlockPermission");
+                if (f >= byte.MinValue && f <= byte.MaxValue)
+                    commandBlockPermission = (byte)f;
+                ProtectBlockType = settings.GetSettingBoolean("ProtectBlockType");
+                RemoveCommandOnAir = settings.GetSettingBoolean("RemoveCommandOnAir");
+                RemoveMessageOnAir = settings.GetSettingBoolean("RemoveMessageOnAir");
+
                 settings = null;
                 Command.AddReference(this, "messageblock", "mb");
             }
         }
         private class MessageBlockSettings : ExtraSettings {
-            public MessageBlockSettings() : base(typeof(MessageBlockSettings).Name) { }
+            public MessageBlockSettings()
+                : base(typeof(MessageBlockSettings).Name, new SettingNode[]{
+             new SettingNode("CreatePermission","0","Allows to create and remove message blocks"),
+             new SettingNode("ViewPermission","0","Allows to view all message blocks as a list"),
+             new SettingNode("DeleteAllPermission","0","Allows to delete all message blocks at once"),
+             new SettingNode("CommandBlockPermission","0","Allows to use commands in a message block"),
+             new SettingNode("ProtectBlockType","true","If set to 'false' the block can be changed without affects to the message"),
+             new SettingNode("RemoveCommandOnAir","true","'true' removes the block and the command, when 'false' and 'ProtectBlockType' is 'false' the block gets changed and the message removed if 'ProtectBlockType' is 'true' the block gets rebuild"),
+             new SettingNode("RemoveMessageOnAir","true","'true' removes the block and the command, when 'false' and 'ProtectBlockType' is 'false' the block gets changed and the message removed if 'ProtectBlockType' is 'true' the block gets rebuild")
+            }) {
+
+            }
         }
     }
 }

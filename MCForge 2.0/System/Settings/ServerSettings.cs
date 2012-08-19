@@ -105,7 +105,7 @@ namespace MCForge.Utils.Settings {
                }, false);
 
         internal static string Salt { get; set; }
-        internal static int Version { get; set; }
+        internal static int Version { get { return 7; } }
 
         /// <summary>
         /// This event is triggered when a setting node is changed in anyway
