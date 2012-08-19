@@ -24,46 +24,10 @@ namespace Plugins.WoMPlugin
 {
     public class WoMPluginSettings : ExtraSettings
     {
-        private List<SettingNode> nodes = new List<SettingNode> {
+        public WoMPluginSettings()
+            : base("WoMPluginSettings", new SettingNode[]{
             new SettingNode("notify-ops", "True" , "Notifies ops if a player using the WoM client joins."),
             new SettingNode("joinleave-alert", "True", "All join and leave messages will be transferred to the top-right corner as a temporary alert to all WoM users(Saves chat space)."),
-        };
-
-        public override string SettingsName { get { return "WoMPluginSettings"; } }
-
-        public override void OnLoad()
-        {
-            if (!FileUtils.FileExists(PropertiesPath))
-            {
-                using (var writer = File.CreateText(PropertiesPath))
-                {
-                    foreach (var node in nodes)
-                    {
-                        writer.WriteLine(node.Key + " = " + node.Value);
-                    }
-                }
-            }
-            nodes = LoadSettings();
-        }
-
-        public override void Save()
-        {
-            using (var writer = File.CreateText(PropertiesPath))
-            {
-                foreach (var node in Values)
-                {
-                    writer.WriteLine(node.Key + " = " + node.Value);
-                }
-            }
-        }
-        public override List<SettingNode> Values
-        {
-            get { return nodes; }
-        }
-
-        public override string PropertiesPath
-        {
-            get { return ServerSettings.GetSetting("configpath") + "WoMTexturing/" + "womtexturing.properties"; }
-        }
+        }, false) { }
     }
 }

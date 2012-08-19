@@ -18,7 +18,8 @@ using System.Linq;
 using System.Text;
 
 namespace MCForge.Utils.Settings {
-    class GroupSettings {
+    class GroupSettings : ExtraSettings {
+        public GroupSettings() : base(typeof(GroupSettings).Name) { }
         //should I move PlayerGroupProperties here? - cazzar
     }
 }

@@ -75,25 +75,8 @@ namespace Plugins {
         }
 
         private class AutoBlockChangeSettings : ExtraSettings {
-            public override string SettingsName {
-                get { return this.GetType().Name; }
-            }
-
-            private List<SettingNode> values = new List<SettingNode>();
-            public override List<SettingNode> Values {
-                get { return values; }
-            }
-
-            public override void OnLoad() {
-
-            }
-
-            public override void Save() {
-
-            }
-
-            public override string PropertiesPath {
-                get { return this.SettingsName; }
+            public AutoBlockChangeSettings()
+                : base(typeof(AutoBlockChangeSettings).Name) {
             }
         }
     }

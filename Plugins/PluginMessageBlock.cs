@@ -267,7 +267,7 @@ namespace Plugins {
                 f = settings.GetSettingInt("ViewPermission");//allows view all message blocks
                 if (f >= byte.MinValue && f <= byte.MaxValue)
                     viewPermission = (byte)f;
-                f = settings.GetSettingInt("deleteAllPermission");//allows to delete all message blocks
+                f = settings.GetSettingInt("DeleteAllPermission");//allows to delete all message blocks
                 if (f >= byte.MinValue && f <= byte.MaxValue)
                     removeAllPermission = (byte)f;
                 settings = null;
@@ -275,24 +275,7 @@ namespace Plugins {
             }
         }
         private class MessageBlockSettings : ExtraSettings {
-            public override string SettingsName {
-                get { return this.GetType().Name; }
-            }
-
-            private List<SettingNode> values = new List<SettingNode>();
-            public override List<SettingNode> Values {
-                get { return values; }
-            }
-
-            public override void OnLoad() {
-            }
-
-            public override void Save() {
-            }
-
-            public override string PropertiesPath {
-                get { return this.SettingsName; }
-            }
+            public MessageBlockSettings() : base(typeof(MessageBlockSettings).Name) { }
         }
     }
 }

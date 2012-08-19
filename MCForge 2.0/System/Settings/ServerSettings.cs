@@ -29,13 +29,7 @@ namespace MCForge.Utils.Settings {
     /// Settings Utility
     /// </summary>
     public class ServerSettings {
-
-        internal const byte Version = 7;
-        internal static string Salt { get; set; }
-
-        private static bool _initCalled;
-        private static List<SettingNode> Values;
-        private static readonly SettingNode[] defaultValues = {
+        private static ExtraSettings settings = new ExtraSettings("ServerSettings", new SettingNode[]{
                     new SettingNode("ServerName", "[MCForge] Default", "Name of your server"),
                     new SettingNode("Wom-Alternate_Name", "[MCForge] Default", "Name of your server on WoM direct"),
                     new SettingNode("Port", "25565", null),
@@ -108,13 +102,22 @@ namespace MCForge.Utils.Settings {
                     new SettingNode("FlyGlassSize", "5, 2", "The size of the glass panel. The first value describes width and length. The second value describes the height (default: 2)."),
                     new SettingNode("Fly+", "true", "'true' allows players to use '/fly +' which displays an aditional block at the players position"),
                     new SettingNode("FlyWaterSize", "5, 5, 5", "The size of the water cuboid to swim in the air. Use one number to set all dimension to the same size or use three numbers for different sizes. If it is set to false '/fly water' will be disabled")
-               };
+               }, false);
 
+        internal static string Salt { get; set; }
+        internal static int Version { get; set; }
 
         /// <summary>
         /// This event is triggered when a setting node is changed in anyway
         /// </summary>
-        public static event EventHandler<SettingsChangedEventArgs> OnSettingChanged;
+        public static event EventHandler<SettingsChangedEventArgs> OnSettingChanged {
+            add {
+                settings.OnSettingChanged += value;
+            }
+            remove {
+                settings.OnSettingChanged -= value;
+            }
+        }
 
 
         /// <summary>
@@ -124,43 +127,8 @@ namespace MCForge.Utils.Settings {
         public static void Init() {
             //Do not set to static ServerSettings(){}
 
-            if (_initCalled)
-                throw new ArgumentException("\"Settings.Init()\" can only be called once");
-
             GenerateSalt();
-
-            _initCalled = true;
-            Values = new List<SettingNode>(defaultValues);
-            if (!Directory.Exists(FileUtils.PropertiesPath))
-                Directory.CreateDirectory(FileUtils.PropertiesPath);
-
-            if (!File.Exists(FileUtils.PropertiesPath + "server.properties")) {
-
-                using (var writer = File.CreateText(FileUtils.PropertiesPath + "server.properties")) {
-                    foreach (var v in Values) {
-                        writer.WriteLine(v.Description == null
-                                             ? string.Format("{0}={1}\n", v.Key.ToLower(), v.Value)
-                                             : string.Format("#{0}\r\n{1}={2}\n", v.Description, v.Key.ToLower(), v.Value));
-
-                    }
-                }
-            }
-
-            LoadSettings();
-            UpgradeSettings();
-        }
-
-        private static void UpgradeSettings() {
-            if (Values.Count < defaultValues.Length) {
-                Logger.Log("Upgrading settings...", LogType.Warning);
-                for (int i = 0; i < defaultValues.Length; i++) {
-                    var value = defaultValues[i];
-                    if (!HasKey(value.Key))
-                        Values.Insert(i, value);
-                }
-
-                Save();
-            }
+            settings.Init();
         }
 
 
@@ -171,10 +139,7 @@ namespace MCForge.Utils.Settings {
         /// <param name="key">The key</param>
         /// <returns>The setting values, use [0] at end if it only has 1 value</returns>
         public static string[] GetSettingArray(string key) {
-            if (key == null) return new[] { "" };
-            key = key.ToLower();
-            var pair = GetNode(key);
-            return pair == null ? new[] { "" } : GetNode(key).Value.Split(','); //We don't want to return a null object
+            return settings.GetSettingArray(key);
         }
 
 
@@ -185,8 +150,7 @@ namespace MCForge.Utils.Settings {
         /// <returns>The setting value</returns>
         /// <remarks>Returns the first value if multiple values are present</remarks>
         public static string GetSetting(string key) {
-            key = key.ToLower();
-            return GetSettingArray(key)[0];
+            return settings.GetSetting(key);
         }
 
         /// <summary>
@@ -195,16 +159,7 @@ namespace MCForge.Utils.Settings {
         /// <param name="key">The key</param>
         /// <returns>The setting value specified by the key, or -1 if the setting is not found or could not be parsed</returns>
         public static int GetSettingInt(string key) {
-            key = key.ToLower();
-            int i;
-            var pair = GetNode(key);
-            if (pair == null)
-                return -1;
-            if (!int.TryParse(GetNode(key).Value, out i)) {
-                Logger.Log("ServerSettings: integer expected as first value for '" + key.SqlEscape() + "'", Color.Red, Color.Black);
-                return -1;
-            }
-            return i;
+            return settings.GetSettingInt(key);
         }
 
         /// <summary>
@@ -213,8 +168,7 @@ namespace MCForge.Utils.Settings {
         /// <param name="key">The key</param>
         /// <returns>The setting value specified by the key, or false if the setting is not found</returns>
         public static bool GetSettingBoolean(string key) {
-            key = key.ToLower();
-            return GetSetting(key).ToLower() == "true";
+            return settings.GetSettingBoolean(key);
         }
 
         /// <summary>
@@ -225,20 +179,7 @@ namespace MCForge.Utils.Settings {
         /// <param name="values">for each string in values, it will be seperated by a comma ','</param>
         /// <remarks>If the setting does not exist, it will create a new one</remarks>
         public static void SetSetting(string key, string description = null, params string[] values) {
-            key = key.ToLower();
-            var pair = GetNode(key);
-            if (pair == null) {
-                pair = new SettingNode(key, string.Join(",", values), description);
-                Values.Add(pair);
-                if (OnSettingChanged != null)
-                    OnSettingChanged(null, new SettingsChangedEventArgs(key, null, pair.Value));
-                return;
-            }
-            if (OnSettingChanged != null)
-                OnSettingChanged(null, new SettingsChangedEventArgs(key, pair.Value, string.Join(",", values)));
-
-            pair.Description = description ?? pair.Description;;
-            pair.Value = string.Join(",", values);
+            settings.SetSetting(key, description, values);
         }
 
         /// <summary>
@@ -249,20 +190,7 @@ namespace MCForge.Utils.Settings {
         /// <param name="description">Write a description (optional)</param>
         /// <remarks>If the setting does not exist, it will create a new one</remarks>
         public static void SetSetting(string key, int value, string description = null) {
-            key = key.ToLower();
-            var pair = GetNode(key);
-            if (pair == null) {
-                pair = new SettingNode(key, value.ToString(CultureInfo.InvariantCulture), description);
-                Values.Add(pair);
-                if (OnSettingChanged != null)
-                    OnSettingChanged(null, new SettingsChangedEventArgs(key, null, pair.Value));
-                return;
-            }
-            if (OnSettingChanged != null)
-                OnSettingChanged(null, new SettingsChangedEventArgs(key, pair.Value, value.ToString(CultureInfo.InvariantCulture)));
-
-            pair.Description = description;
-            pair.Value = string.Join(",", value.ToString(CultureInfo.InvariantCulture));
+            settings.SetSetting(key, value, description);
         }
 
         /// <summary>
@@ -273,86 +201,25 @@ namespace MCForge.Utils.Settings {
         /// <param name="description">Write a description (optional)</param>
         /// <remarks>If the setting does not exist, it will create a new one</remarks>
         public static void SetSetting(string key, bool value, string description = null) {
-            key = key.ToLower();
-            var pair = GetNode(key);
-            if (pair == null) {
-                pair = new SettingNode(key, value.ToString(CultureInfo.InvariantCulture), description);
-                Values.Add(pair);
-                if (OnSettingChanged != null)
-                    OnSettingChanged(null, new SettingsChangedEventArgs(key, null, pair.Value));
-                return;
-            }
-            if (OnSettingChanged != null)
-                OnSettingChanged(null, new SettingsChangedEventArgs(key, pair.Value, value.ToString(CultureInfo.InvariantCulture)));
-
-            pair.Description = description;
-            pair.Value = string.Join(",", value.ToString(CultureInfo.InvariantCulture));
+            settings.SetSetting(key, value, description);
         }
 
         internal static SettingNode GetNode(string key) {
-            key = key.ToLower();
-            return Values.FirstOrDefault(pair => (pair.Key == null) ? false : pair.Key.ToLower() == key.ToLower());
+           return settings.GetNode(key);
         }
 
         /// <summary>
         /// Saves the settings
         /// </summary>
         public static void Save() {
-
-            using (var writer = new StreamWriter(File.Create(FileUtils.PropertiesPath + "server.properties"))) {
-                foreach (var v in Values) {
-
-                    writer.WriteLine(v.Description == null && v.Key == null
-                        ? v.Value
-                        : v.Description == null
-                            ? string.Format("{0}={1}" + (v != Values.Last() ? Environment.NewLine : ""), v.Key, v.Value)
-                            : string.Format("#{0}" + Environment.NewLine + "{1}={2}" + (v != Values.Last() ? Environment.NewLine : ""), v.Description, v.Key, v.Value));
-
-                }
-            }
+            settings.Save();
         }
 
         /// <summary>
         /// Loads all the settings into the memory, if no properties file is found nothing will happen
         /// </summary>
         public static void LoadSettings() {
-            if (!File.Exists(FileUtils.PropertiesPath + "server.properties"))
-                return;
-            string[] text = File.ReadAllLines(FileUtils.PropertiesPath + "server.properties");
-            Values.Clear();
-            for (int i = 0; i < text.Count(); i++) {
-                string read = text[i];
-                SettingNode pair;
-
-                if (String.IsNullOrWhiteSpace(read)) {
-                    Values.Add(new SettingNode(null, read, null));
-                    continue;
-                }
-
-                if (read[0] == '#' && ((i + 1 < text.Length) ? text[i + 1][0] == '#' || String.IsNullOrWhiteSpace(text[i + 1]) : true)) {
-                    Values.Add(new SettingNode(null, read, null));
-                    continue;
-                }
-
-                if (read[0] == '#' && (i + 1 < text.Length) ? text[i + 1][0] != '#' && !String.IsNullOrWhiteSpace(text[i + 1]) : false) {
-                    i++;
-                    var split = text[i].Split('=');
-                    pair = new SettingNode(split[0].Trim().ToLower(),
-                                           String.Join("=", split, 1, split.Length - 1).Trim(),
-                                           read.Substring(1));
-                }
-                else {
-                    if (read[0] != '#') {
-                        var split = text[i].Split('=');
-                        pair = new SettingNode(split[0].Trim().ToLower(),
-                                               String.Join("=", split, 1, split.Length - 1).Trim(),
-                                               null);
-                    }
-                    else pair = new SettingNode(null, read, null);
-                }
-                Values.Add(pair);
-            }
-
+            settings.LoadSettings();
         }
 
 
@@ -365,63 +232,10 @@ namespace MCForge.Utils.Settings {
         }
 
         public static bool HasKey(string key) {
-            return GetNode(key) != null;
+            return settings.HasKey(key);
         }
         public static string GetDescription(string key) {
-            return GetNode(key).Description;
+            return settings.GetDescription(key);
         }
     }
-
-    /// <summary>
-    /// Called When a setting node is changed
-    /// </summary>
-    public class SettingsChangedEventArgs : EventArgs {
-
-        /// <summary>
-        /// The key of the setting
-        /// </summary>
-        public string Key { get; set; }
-        /// <summary>
-        /// The value before it was changed
-        /// </summary>
-        public string OldValue { get; set; }
-        /// <summary>
-        /// The new value of the setting
-        /// </summary>
-        public string NewValue { get; set; }
-
-
-        /// <summary>
-        /// Create a new Settings Changed Event Class
-        /// </summary>
-        /// <param name="key">Name of key in lowercase</param>
-        /// <param name="oldValue">Old value</param>
-        /// <param name="newValue">value to change</param>
-        public SettingsChangedEventArgs(string key, string oldValue, string newValue) {
-            Key = key.ToLower();
-            OldValue = oldValue;
-            NewValue = newValue;
-        }
-
-    }
-
-    /// <summary>
-    /// A simple class housing information of a setting key, value, and description
-    /// </summary>
-    public class SettingNode {
-
-        public string Key { get; set; }
-        public string Value { get; set; }
-        public string Description { get; set; }
-
-        public SettingNode(string key, string value, string description) {
-            if (key != null)
-                Key = key.ToLower();
-            Value = value;
-            Description = description;
-        }
-    }
-
-
-
 }

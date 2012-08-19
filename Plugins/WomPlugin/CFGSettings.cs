@@ -23,11 +23,9 @@ using MCForge.Utils.Settings;
 
 namespace Plugins.WoMPlugin
 {
-    public class CFGSettings : ExtraSettings
-    {
-        #region Variables
-        private Level l;
-        private List<SettingNode> nodes = new List<SettingNode>() {
+    public class CFGSettings : ExtraSettings {
+        public CFGSettings(Level l)
+            : base("CFGSettings_"+l.Name, new SettingNode[]{
             new SettingNode("server.name", ServerSettings.GetSetting("ServerName"), "The name of your server. (Top right line)"),
             new SettingNode("server.detail", ServerSettings.GetSetting("MOTD"), "The MOTD of the server. (Second line)"),
             new SettingNode("detail.user", "Welcome to my server! $name", "The User Detail Line text. (Third line)"),
@@ -38,83 +36,10 @@ namespace Plugins.WoMPlugin
             new SettingNode("environment.level", "0", "The elevation of \"ground level\" to use for this map. (Affects where the \"sea\" is on the map."),
             new SettingNode("environment.edge", "685cfceb13ccee86d3b93f163f4ac6e4a28347bf", null),
             new SettingNode("environment.terrain", "f3dac271d7bce9954baad46e183a6a910a30d13b", null),
-            new SettingNode("environment.side", "7c0fdebeb6637929b9b3170680fa7a79b656c3f7", null),
-            };
-        #endregion
-        #region ExtraSettings Members
-        public override string SettingsName { get { return "CFGSettings"; } }
-
-        public CFGSettings(Level l)
+            new SettingNode("environment.side", "7c0fdebeb6637929b9b3170680fa7a79b656c3f7", null)}, false)
         {
             this.l = l;
         }
-
-        public override void OnLoad()
-        {
-            Logger.Log("CFGSettings loaded for " + l);
-
-            if (!FileUtils.FileExists(PropertiesPath))
-            {
-                if (Server.DebugMode)
-                {
-                    Logger.Log("[WoMTextures] Cfg file for " + l.Name + " not found. Creating.");
-                }
-                CreateDefaultCFG();
-            }
-            LoadFile(); //Loads ExtraData
-            nodes = LoadSettings();
-        }
-
-        public override void Save()
-        {
-            using (var writer = File.CreateText(PropertiesPath))
-            {
-                foreach (var node in Values)
-                {
-                    writer.WriteLine(node.Key + " = " + node.Value);
-                }
-            }
-        }
-        public override List<SettingNode> Values
-        {
-            get { return nodes; }
-        }
-
-        public override string PropertiesPath
-        {
-            get { return ServerSettings.GetSetting("configpath") + "WoMTexturing/" + l + ".cfg"; }
-        }
-        #endregion
-        #region WoMSettings File Stuff
-        private void CreateDefaultCFG()
-        {
-            using (var writer = File.CreateText(PropertiesPath))
-            {
-                foreach (var node in nodes)
-                {
-                    writer.WriteLine(node.Key + " = " + node.Value);
-                }
-            }
-        }
-        private void LoadFile()
-        {
-            if (l == null)
-            {
-                Logger.Log(String.Format("{0} was formatted incorrectly (level not found), this file will not be loaded.", PropertiesPath), LogType.Error);
-                return;
-            }
-            string[] lines = File.ReadAllLines(PropertiesPath);
-            if (lines.Length != 11)
-            {
-                Logger.Log(String.Format("{0} was formatted incorrectly, this file will not be loaded.", PropertiesPath), LogType.Error);
-                return;
-            }
-            l.ExtraData.ChangeOrCreate<object, object>("WoMConfig", lines);
-            if (Server.DebugMode)
-            {
-                Logger.Log("[WoMTextures] Loaded " + PropertiesPath + " succesfully!");
-            }
-        }
-        #endregion
+        private Level l;
     }
 }

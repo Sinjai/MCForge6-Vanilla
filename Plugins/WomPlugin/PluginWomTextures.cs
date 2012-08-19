@@ -66,10 +66,10 @@ namespace Plugins.WoMPlugin
                 //This allows us to get a setting from any level cfg.
                 CFGSettings s = new CFGSettings(l);
                 CFGDict.CreateIfNotExist<Level, CFGSettings>(l, s);
-                s.OnLoad();
+                s.Init();
             }
             PluginSettings = new WoMPluginSettings();
-            PluginSettings.OnLoad();
+            PluginSettings.Init();
 
             Server.OnServerFinishSetup -= OnLoadDone;
             //Need on level load event to add to dictionary and serve cfg.

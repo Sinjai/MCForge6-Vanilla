@@ -18,6 +18,7 @@ using System.Linq;
 using System.Text;
 
 namespace MCForge.Utils.Settings {
-    class LevelSettings {
+    class LevelSettings : ExtraSettings {
+        public LevelSettings() : base(typeof(LevelSettings).Name) { }
     }
 }
