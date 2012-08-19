@@ -188,7 +188,7 @@ namespace Plugins {
         /// <param name="v"></param>
         /// <param name="message"></param>
         /// <returns></returns>
-        public bool Add(Level l, Vector3S v, string message, Player p) {
+        public bool Add(Level l, Vector3S v, string message) {
             bool ret = false;
             if (!store[l.Name].Contains(v)) {
                 store[l.Name].Add(v);
@@ -220,7 +220,7 @@ namespace Plugins {
             }
 
             public byte Permission {
-                get { return Math.Min(createPermission, Math.Min(viewPermission, removeAllPermission)); }
+                get { return Math.Min(Math.Min(createPermission, Math.Min(viewPermission, removeAllPermission)), commandBlockPermission); }
             }
 
             public void Use(Player p, string[] args) {
@@ -315,7 +315,7 @@ namespace Plugins {
                 else {
                     message = "m" + message;
                 }
-                if (pmb.Add(sender.Level, v, message, sender)) {
+                if (pmb.Add(sender.Level, v, message)) {
                     sender.SendMessage("Message block added");
                 }
                 else {
