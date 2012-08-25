@@ -277,6 +277,7 @@
     <Compile Include="World\Blocks\Physics\DefaultPhysicBlocks\Door.cs" />
     <Compile Include="World\Blocks\Physics\DefaultPhysicBlocks\Gravel.cs" />
     <Compile Include="World\Blocks\Physics\DefaultPhysicBlocks\Sand.cs" />
+    <Compile Include="Utils\Cuboid.cs" />
     <Compile Include="World\Drawing\CubeBrush.cs" />
     <Compile Include="World\Drawing\Fonts.cs" />
     <Compile Include="World\Drawing\IBrush.cs" />

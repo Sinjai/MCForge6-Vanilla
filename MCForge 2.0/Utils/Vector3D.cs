@@ -59,6 +59,9 @@ namespace MCForge.Utils {
         public static Vector3D operator +(Vector3D a, Vector3D b) {
             return new Vector3D((double)(a.x + b.x), (double)(a.z + b.z), (double)(a.y + b.y));
         }
+        public static Vector3D operator +(Vector3D a, Vector3S b) {
+            return new Vector3D((double)(a.x + b.x), (double)(a.z + b.z), (double)(a.y + b.y));
+        }
         public static Vector3D operator *(Vector3D a, int b) {
             return new Vector3D((double)(a.x * b), (double)(a.z * b), (double)(a.y * b));
         }
@@ -83,6 +86,7 @@ namespace MCForge.Utils {
         public static bool operator <(Vector3D a, Vector3D b) {
             return a.x * a.x + a.y * a.y + a.z * a.z < b.x * b.x + b.y * b.y + b.z * b.z;
         }
+
         public Vector2S Horizontal {
             get { return new Vector2S((short)x, (short)z); }
             set {
