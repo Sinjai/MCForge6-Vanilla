@@ -70,6 +70,7 @@ namespace Plugins.WoMPlugin
 
         private string StringArrayToString(string[] array)
         {
+            return string.Join(" ", array); //Oh look at that. A 1 Liner!
             string t = "";
             foreach (string str in array)
             {
