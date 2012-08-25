@@ -31,7 +31,7 @@ namespace Plugins.WoMPlugin
 
         public void Use(Player p, string[] args)
         {
-            string messageToSend = StringArrayToString(args);
+            string messageToSend = string.Join(" ", args);
             //Givo - gah ill make it send the rest below another time
             if (messageToSend.Length >= 44)
             {
@@ -66,17 +66,6 @@ namespace Plugins.WoMPlugin
                     p.SendMessage((args.Length < 1) ? "You need to specify a message!" : "Invalid arguments!");
                     return;
             }
-        }
-
-        private string StringArrayToString(string[] array)
-        {
-            return string.Join(" ", array); //Oh look at that. A 1 Liner!
-            string t = "";
-            foreach (string str in array)
-            {
-                t += str + " ";
-            }
-            return t;
         }
 
         public void Help(Player p)

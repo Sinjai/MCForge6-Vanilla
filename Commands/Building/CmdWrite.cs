@@ -45,7 +45,7 @@ namespace MCForge.Commands {
             sender.OnPlayerBlockChange.Normal += BlockChange2;
         }
         void BlockChange2(Player sender, BlockChangeEventArgs args) {
-            string direction = null;
+            //string direction = null;
             sender.OnPlayerBlockChange.Normal -= BlockChange2;
             CatchPos cpos = (CatchPos)sender.GetDatapass(this.Name);
             foreach (Vector3S v in BlockString(cpos.message, cpos.pos, new Vector3S(args.X, args.Z, args.Y), sender.Level.Size)) {
