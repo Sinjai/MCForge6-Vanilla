@@ -250,9 +250,7 @@ namespace MCForge.Groups
                     return true;
                 }
 
-            if (command.Permission <= Permission && !CommandPermissionOverrides.overrides.ContainsKey(command))
-                return true;
-            return false;
+            return command.Permission <= Permission && !CommandPermissionOverrides.overrides.ContainsKey(command);
         }
 
         /// <summary>
