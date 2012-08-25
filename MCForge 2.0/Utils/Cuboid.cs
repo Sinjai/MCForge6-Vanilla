@@ -136,6 +136,16 @@ namespace MCForge.Utils
                 world.BlockChange((ushort) (pos.pos.x), (ushort) (pos.pos.z), (ushort) (pos.pos.y), newBlock, p));
         }
 
+        public bool Within(Vector3D pos)
+        {
+            return Max.x <= pos.x &&
+                   Max.z <= pos.z && 
+                   Max.y <= pos.y && 
+                   Min.x >= pos.x && 
+                   Min.z >= pos.z && 
+                   Min.y >= pos.y;
+        }
+
         #region for the cuboid
 
         private static void BufferAdd(ICollection<Pos> list, ushort x, ushort z, ushort y)

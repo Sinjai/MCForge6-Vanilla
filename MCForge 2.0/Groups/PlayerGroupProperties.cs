@@ -85,7 +85,7 @@ namespace MCForge.Groups
                         else if (!string.IsNullOrWhiteSpace(group.Name))
                         {
                             try { 
-                                group.add(); group = new PlayerGroup(); }
+                                group.Add(); group = new PlayerGroup(); }
                             catch { Logger.Log("Failed to add a group!", LogType.Error); }
                             //break;
                         }

@@ -75,6 +75,9 @@
     </Compile>
     <Compile Include="WomPlugin\WOM.cs" />
     <Compile Include="WomPlugin\WoMPluginSettings.cs" />
+    <Compile Include="Zones\CmdZone.cs" />
+    <Compile Include="Zones\PluginZones.cs" />
+    <Compile Include="Zones\Zone.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MCForge 2.0\MCForge.csproj">
@@ -104,9 +107,7 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Seperate Logs" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

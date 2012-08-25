@@ -38,7 +38,7 @@ namespace Plugins.Zones
 
         private void OnAllPlayersBlockChangeOnHigh(Player sender, BlockChangeEventArgs args)
         {
-            var zones = Zone.FindAllWithin(new Vector3S(args.X, args.Z, args.Y));
+            var zones = Zone.FindAllWithin(new Vector3D(args.X, args.Z, args.Y));
             foreach (var zone in zones)
             {
                 if (!zone.CanBuildIn(sender))
