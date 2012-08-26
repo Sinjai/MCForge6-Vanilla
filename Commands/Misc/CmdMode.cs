@@ -13,12 +13,14 @@ or implied. See the Licenses for the specific language governing
 permissions and limitations under the Licenses.
 */
 using System;
+using MCForge.API.Events;
 using MCForge.Core;
 using MCForge.Entity;
 using MCForge.Interface.Command;
 using MCForge.Utils;
 using MCForge.World;
 using MCForge.World.Blocks;
+using MCForge.World.Physics;
 
 namespace MCForge.Commands {
     public class CmdMode : ICommand {
@@ -57,6 +59,7 @@ namespace MCForge.Commands {
                     p.ExtraData.Add("BlockMode", b);
 
                 p.SendMessage("&b" + StringUtils.TitleCase(b.Name) + Server.DefaultColor + " mode &9on");
+                p.OnPlayerBlockChange.Normal += OnPlayerBlockChangeOnNormal;
                 return;
             }
             else {
@@ -85,10 +88,21 @@ namespace MCForge.Commands {
                     throw new Exception("No block set in block mode");
 
                 Block prev = (Block)p.ExtraData["BlockMode"];
+                p.OnPlayerBlockChange.Normal -= OnPlayerBlockChangeOnNormal;
                 p.SendMessage("&b" + StringUtils.TitleCase(prev.Name) + Server.DefaultColor + " mode &coff");
                 p.ExtraData["Mode"] = false;
                 p.ExtraData["BlockMode"] = null;
             }
+        }
+
+        private void OnPlayerBlockChangeOnNormal(Player sender, BlockChangeEventArgs args)
+        {
+            var b = (Block) sender.ExtraData["BlockMode"];
+            if (args.Action == ActionType.Delete) return;
+            args.Holding = b;
+            var physicsBlock = b as PhysicsBlock;
+            if (physicsBlock == null) return;
+            sender.Level.pblocks.Add(physicsBlock);
         }
 
         public void Help(Player p) {
