@@ -67,7 +67,7 @@ namespace Plugins.Zones
 
         public void Help(Player p)
         {
-            throw new System.NotImplementedException();
+           
         }
 
         public void Initialize()

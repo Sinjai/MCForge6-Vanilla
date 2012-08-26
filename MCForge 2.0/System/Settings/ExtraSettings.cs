@@ -64,7 +64,7 @@ namespace MCForge.Utils.Settings {
                 Directory.CreateDirectory(FileUtils.PropertiesPath);
 
             if (!File.Exists(PropertiesPath)) {
-
+                FileUtils.CreateDirIfNotExist("config");
                 using (var writer = File.CreateText(PropertiesPath)) {
                     foreach (var v in Values) {
                         writer.WriteLine(v.Description == null
