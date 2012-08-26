@@ -271,6 +271,26 @@ namespace Plugins {
                                 return;
                             }
                         }
+                        else if (args.Length > 5) {
+                            ushort x, z, y;
+                            try {
+                                x = ushort.Parse(args[1]);
+                                z = ushort.Parse(args[2]);
+                                y = ushort.Parse(args[3]);
+                            }
+                            catch {
+                                p.SendMessage("Location could not be parsed");
+                                return;
+                            }
+                            Level l = Level.FindLevel(args[4]);
+                            if (l == null) {
+                                p.SendMessage("Level is not loaded or does not exist");
+                                return;
+                            }
+                            string message = String.Join(" ", args, 5, args.Length - 5);
+                            add(l, x, z, y, message, p);
+                            return;
+                        }
                         Help(p);
                         return;
                     }
@@ -299,23 +319,20 @@ namespace Plugins {
                 }
             }
 
-            void add_Normal(Player sender, BlockChangeEventArgs args) {
-                sender.OnPlayerBlockChange.Normal -= add_Normal;
-                args.Cancel();
-                Vector3S v = new Vector3S(args.X, args.Z, args.Y);
+            void add(Level l, ushort x, ushort z, ushort y, string message, Player sender) {
                 PluginMessageBlock pmb = (PluginMessageBlock)Plugin.getByType(typeof(PluginMessageBlock).Name);
                 if (pmb == null) {
+                    Logger.Log(typeof(PluginMessageBlock).Name + " is currently not loaded");
                     sender.SendMessage(typeof(PluginMessageBlock).Name + " is currently not loaded");
                     return;
                 }
-                string message = (string)sender.GetDatapass("MessageBlockMessage");
                 if (message.StartsWith("/") && sender.Group.Permission >= commandBlockPermission) {
                     message = "c:" + sender.Group.Permission + ":" + message.ToHexString();
                 }
                 else {
                     message = "m" + message;
                 }
-                if (pmb.Add(sender.Level, v, message)) {
+                if (pmb.Add(l, new Vector3S(x, z, y), message)) {
                     sender.SendMessage("Message block added");
                 }
                 else {
@@ -323,11 +340,19 @@ namespace Plugins {
                 }
             }
 
+            void add_Normal(Player sender, BlockChangeEventArgs args) {
+                sender.OnPlayerBlockChange.Normal -= add_Normal;
+                args.Cancel();
+                string message = (string)sender.GetDatapass("MessageBlockMessage");
+                add(sender.Level, args.X, args.Z, args.Y, message, sender);
+            }
+
             public void Help(Player p) {
                 p.SendMessage("/mb message - creates a message block");
                 p.SendMessage("/mb + view - shows all message blocks on the current level");
                 p.SendMessage("/mb + remove - removes a message block on the current level");
                 p.SendMessage("/mb + remove all - removes all message blocks on the current level");
+                p.SendMessage("/mb + x z y level message - creates a message block");
             }
             byte createPermission = 0;
             byte viewPermission = 0;

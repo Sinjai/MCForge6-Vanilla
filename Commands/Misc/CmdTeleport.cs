@@ -18,6 +18,7 @@ using MCForge.Interface.Command;
 using MCForge.Utils.Settings;
 using MCForge.Utils;
 using System.Threading;
+
 namespace MCForge.Commands
 {
     public class CmdTeleport : ICommand
@@ -112,20 +113,35 @@ namespace MCForge.Commands
                     one.SendToPos(two.Pos, two.Rot);
                     p.SendMessage(one.Username + " has been succesfully teleported to " + two.Username + "!");
                     break;
-                case 3:
-                    short x, z, y;
-                    bool[] intParse = { short.TryParse(args[0], out x), short.TryParse(args[1], out z), short.TryParse(args[2], out y) };
-                    if (intParse.Contains<bool>(false))
-                    {
-                        p.SendMessage("One of your coordinates was har.");
-                        return;
+                case 3: {
+                        short x, z, y;
+                        bool[] intParse = { short.TryParse(args[0], out x), short.TryParse(args[1], out z), short.TryParse(args[2], out y) };
+                        if (intParse.Contains<bool>(false)) {
+                            p.SendMessage("One of your coordinates was har.");
+                            return;
+                        }
+                        else {
+                            p.SendToPos(new Vector3S(x, z, y), p.Rot);
+                            p.SendMessage(string.Format("Succesfully teleported to {0}, {1}, {2}!", x, z, y));
+                        }
+                        break;
                     }
-                    else
-                    {
-                        p.SendToPos(new Vector3S(x, z, y), p.Rot);
-                        p.SendMessage(string.Format("Succesfully teleported to {0}, {1}, {2}!", x, z, y));
+                case 4: {
+                        short x, z, y;
+                        bool[] intParse = { short.TryParse(args[0], out x), short.TryParse(args[1], out z), short.TryParse(args[2], out y) };
+                        if (intParse.Contains<bool>(false)) {
+                            p.SendMessage("One of your coordinates was har.");
+                            return;
+                        }
+                        else {
+                            ICommand g = Command.Find("goto");
+                            if (g == null) { p.SendMessage("You can't teleport to another level"); return; }
+                            g.Use(p, new string[] { args[3] });
+                            p.SendToPos(new Vector3S(x, z, y), p.Rot);
+                            p.SendMessage(string.Format("Succesfully teleported to {0}, {1}, {2}!", x, z, y));
+                        }
+                        break;
                     }
-                    break;
                 default:
                     p.SendMessage("Invalid arguments!");
                     break;

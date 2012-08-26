@@ -78,6 +78,7 @@
     <Compile Include="Information\CmdLevels.cs" />
     <Compile Include="Information\CmdUnloaded.cs" />
     <Compile Include="Misc\CmdEconomy.cs" />
+    <Compile Include="Misc\CmdPortal.cs" />
     <Compile Include="Moderation\CmdClearBlockChanges.cs" />
     <Compile Include="Moderation\CmdHighlight.cs" />
     <Compile Include="Moderation\CmdPerBuild.cs" />

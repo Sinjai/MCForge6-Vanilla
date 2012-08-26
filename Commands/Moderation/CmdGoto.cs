@@ -33,15 +33,10 @@ namespace MCForge.Commands
             Level tempLevel = Level.FindLevel(args[0]);
             if (tempLevel != null)
             {
-                try
-                {
-                    if (tempLevel.visit.Permission < p.Group.Permission)
-                    {
-                        p.SendMessage("You dont have permission to go to this level");
-                        return;
-                    }
+                if (tempLevel.visit != null && tempLevel.visit.Permission < p.Group.Permission) {
+                    p.SendMessage("You dont have permission to go to this level");
+                    return;
                 }
-                catch { }
                 #region Send and Spawn
                 p.GlobalDie();
                 p.IsLoading = true;
