@@ -69,31 +69,14 @@ namespace MCForge.Commands.Information {
         void OnBlockChange(Player sender, BlockChangeEventArgs e) {
             sender.OnPlayerBlockChange.Normal -= OnBlockChange;
             e.Cancel();
-            using (var data = Database.fillData("SELECT * FROM Blocks WHERE X = '" + e.X + "' AND Y = '" + e.Y + "' AND Z = '" + e.Z + "' AND Level = '" + sender.Level.Name.SqlEscape() + "';")) {
-
-                if (data.Rows.Count == 0) {
-                    sender.SendMessage("This block has not been modified since the map was cleared or created.");
-                    return;
-                }
-
-                for (int i = 0; i < data.Rows.Count; i++) {
-                    string username;
-                    string color;
-                    string block;
-                    string time;
-                    bool deleted;
-
-                    using (var playerData = Database.fillData("SELECT * FROM _players WHERE UID = " + data.Rows[i]["UID"].ToString().SqlEscape())) {
-                        username = playerData.Rows[0]["Name"].ToString();
-                        color = playerData.Rows[0]["color"].ToString();
-                    }
-
-                    block = ((Block)byte.Parse(data.Rows[i]["Block"].ToString())).Name;
-                    time = DateTime.Parse(data.Rows[i]["Date"].ToString()).ToString("yyyy-MM-dd HH:mm:ss");
-                    deleted = data.Rows[i]["Deleted"].ToString().ToLower() == "true";
-                    sender.SendMessage((deleted ? "&4Destroyed by " : "&3Created by ") + Server.DefaultColor + color + username + Server.DefaultColor + ", using &3" + block + Server.DefaultColor + " At " + time);
-                }
+            int count = 0;
+            foreach (var info in BlockChangeHistory.About(sender.Level.Name, e.X, e.Z, e.Y)) {
+                string name = Player.GetName(info.Item2);
+                string color = Player.GetColor(info.Item2);
+                sender.SendMessage(((name == null) ? "nobody" : ((color == null) ? "" : color) + name) + " changed to " + ((info.Item1 == 0) ? "&4" : "&3") + ((Block)info.Item1).Name + " " + Server.DefaultColor + "at " + new DateTime(info.Item3).ToString("dd/MM/yy HH:mm:ss"));
+                count++;
             }
+            sender.SendMessage(count + Server.DefaultColor + " changes listed.");
             if (sender.StaticCommandsEnabled) {
                 sender.SendMessage("Break block to get info");
                 sender.OnPlayerBlockChange.Normal += OnBlockChange;

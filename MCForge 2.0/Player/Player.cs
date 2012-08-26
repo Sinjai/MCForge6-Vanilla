@@ -649,6 +649,22 @@ namespace MCForge.Entity {
             }
         }
 
+        public static string GetName(long uid) {
+            DataTable playerDb = Database.fillData("SELECT * FROM _players WHERE UID='" + uid + "'");
+            if (playerDb.Rows.Count == 0) {
+                return null;
+            }
+            return playerDb.Rows[0]["Name"].ToString();
+        }
+
+        public static string GetColor(long uid) {
+            DataTable playerDb = Database.fillData("SELECT * FROM _players WHERE UID='" + uid + "'");
+            if (playerDb.Rows.Count == 0) {
+                return null;
+            }
+            return playerDb.Rows[0]["color"].ToString();
+        }
+
 
         private readonly Dictionary<string, object> DataPasses = new Dictionary<string, object>();
 

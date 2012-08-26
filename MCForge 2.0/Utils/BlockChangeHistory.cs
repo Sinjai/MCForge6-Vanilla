@@ -25,6 +25,13 @@ namespace MCForge.Utils {
             if (tmp == null) yield break;
             else foreach (var ret in tmp.GetCurrentIfUID(uid, since)) yield return ret;
         }
+        public static IEnumerable<Tuple<byte, long, long>> About(string level, ushort x, ushort z, ushort y) {
+            LevelUndo tmp = history[level];
+            if (tmp == null) yield break;
+            foreach (var ret in tmp.About(x, z, y))
+                yield return ret;
+            yield break;
+        }
         public static void WriteOut(string level, bool clear) {
             LevelUndo tmp = history[level];
             if (tmp != null) {
@@ -163,7 +170,7 @@ namespace MCForge.Utils {
         public Tuple<byte?, bool> Undo(uint uid, long since) {
             return Undo(uid, (uint)(since / 50000000));
         }
-
+        
         public int Count { get { return data.Count; } }
 
         Tuple<byte?, bool> Undo(uint uid, uint since) {
@@ -254,6 +261,26 @@ namespace MCForge.Utils {
                  */
             }
         }
+        public IEnumerable<Tuple<byte, long, long>> About() {
+            foreach (var a in about()) {
+                long ticks=DateTime.Now.Ticks;
+                uint now = (uint)(DateTime.Now.Ticks / 50000000);
+                yield return new Tuple<byte, long, long>(a.Item1, (long)a.Item2, new DateTime(ticks).AddSeconds(-(now - a.Item3) * 5).Ticks);
+            }
+        }
+        IEnumerable<Tuple<byte, uint, uint>> about() {
+            for (int i = 0; i < data.Count; i++) {
+                if (data[i].GetType() == typeof(byte)) {
+                    uint? uid = whoIs(i);
+                    uint? time = whenIs(i);
+                    if (uid != null && null != time) {
+                        yield return new Tuple<byte, uint, uint>((byte)data[i], (uint)uid, (uint)time);
+                    }
+                }
+            }
+            yield break;
+        }
+
         public void Write(BinaryWriter bw) {
             bw.Write(data.Count);
             for (int i = 0; i < data.Count; ) {
@@ -515,6 +542,24 @@ namespace MCForge.Utils {
             }
         }
 
+        public IEnumerable<Tuple<byte, long, long>> About(ushort x, ushort z, ushort y) {
+            ExtraData<ushort, ExtraData<ushort, UndoList>> xLevel;
+            ExtraData<ushort, UndoList> zLevel;
+            UndoList yLevel;
+            xLevel = changes[x];
+            if (xLevel != null) {
+                zLevel = xLevel[z];
+                if (zLevel != null) {
+                    yLevel = zLevel[y];
+                    if (yLevel != null) {
+                        foreach (var ret in yLevel.About())
+                            yield return ret;
+                    }
+                }
+            }
+            yield break;
+        }
+
         long Count() {
             long ret = 0;
             foreach (var a in changes)
@@ -559,8 +604,6 @@ namespace MCForge.Utils {
                 x = br.ReadUInt16();
                 z = br.ReadUInt16();
                 y = br.ReadUInt16();
-                if (x >= 64 || z >= 64 || y >= 32)
-                    x = x;
                 ExtraData<ushort, ExtraData<ushort, UndoList>> xLevel = ret.changes[x];
                 ExtraData<ushort, UndoList> zLevel;
                 if (xLevel == null) {
