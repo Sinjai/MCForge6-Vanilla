@@ -79,8 +79,8 @@ namespace MCForge.Commands {
                     }
 
                     p.ExtraData["Mode"] = true;
-                    if (!p.ExtraData.ContainsKey("BlockMode"))
-                        p.ExtraData.Add("BlockMode", b);
+                    p.ExtraData["BlockMode"] = b;
+                    
                     p.SendMessage("&b" + StringUtils.TitleCase(b.Name) + Server.DefaultColor + " mode &9on");
                     return;
                 }

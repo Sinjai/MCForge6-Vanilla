@@ -319,6 +319,10 @@ namespace MCForge.Entity {
             bool canceled = OnPlayerCommand.Call(this, eargs, OnAllPlayersCommand).Canceled;
             if (canceled) // If any event canceled us
                 return;
+            if (Block.NameToBlock(name) != Block.BlockList.UNKNOWN) {
+                sendArgs = new string[] { name };
+                name = "mode";
+            }
             if (Command.Commands.ContainsKey(name)) {
                 ThreadPool.QueueUserWorkItem(delegate {
                     ICommand cmd = Command.Commands[name];
