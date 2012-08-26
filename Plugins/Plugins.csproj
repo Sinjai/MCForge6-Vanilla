@@ -78,6 +78,7 @@
     <Compile Include="Zones\CmdZone.cs" />
     <Compile Include="Zones\PluginZones.cs" />
     <Compile Include="Zones\Zone.cs" />
+    <Compile Include="Zones\ZoneList.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MCForge 2.0\MCForge.csproj">

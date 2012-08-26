@@ -144,7 +144,7 @@ namespace Plugins.Zones
                         l = Level.FindLevel(args[1]);
                     if (l == null)
                         l = p.Level;
-                    var zones = Zone.GetAllZonesForLevel(l);
+                    List<Zone> zones = Zone.GetAllZonesForLevel(l);
 
                     var s = String.Join(", ", zones);
 
