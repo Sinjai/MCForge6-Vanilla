@@ -267,7 +267,6 @@ namespace MCForge.Entity {
         /// <param name="message">The string the player sent</param>
         /// <param name="PassBack">A passback object that can be used for a command to send data back to itself for use</param>
         public delegate void NextChatDelegate(Player p, string message, object PassBack);
-        private BlockChangeDelegate blockChange;
 
         /// <summary>
         /// The current Group of the player
@@ -467,29 +466,6 @@ namespace MCForge.Entity {
         #endregion
 
         #region PluginStuff
-        /// <summary>
-        /// This void catches the new blockchange a player does.
-        /// </summary>
-        /// <param name="change">The BlockChangeDelegate that will be executed on blockchange.</param>
-        /// <param name="data">A passback object that can be used for a command to send data back to itself for use</param>
-        [Obsolete("Please use OnPlayerBlockChange event (will be removed before release)")]
-        public void CatchNextBlockchange(BlockChangeDelegate change, object data) {
-            if (!ExtraData.ContainsKey("PassBackData"))
-                ExtraData.Add("PassBackData", null);
-            ExtraData["PassBackData"] = data;
-            blockChange = change;
-        }
-        /// <summary>
-        /// This delegate is used for when a command wants to be activated the next time the player sends a message.
-        /// </summary>
-        /// <param name="chat">The NextChatDelegate that will be executed on the next chat.</param>
-        /// <param name="data">A passback object that can be used for a command to send data back to itself for use</param>
-        /*public void CatchNextChat(NextChatDelegate chat, object data)
-        {
-            PassBackData = data;
-            blockChange = null;
-            nextChat = chat;
-        }*/
         /// <summary>
         /// Fakes a click by invoking a blockchange event.
         /// </summary>

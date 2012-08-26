@@ -98,8 +98,8 @@ namespace MCForge.Commands {
         private void OnPlayerBlockChangeOnNormal(Player sender, BlockChangeEventArgs args)
         {
             var b = (Block) sender.ExtraData["BlockMode"];
-            if (args.Action == ActionType.Delete) return;
             args.Holding = b;
+            args.Action = ActionType.Place;
             var physicsBlock = b as PhysicsBlock;
             if (physicsBlock == null) return;
             sender.Level.pblocks.Add(physicsBlock);

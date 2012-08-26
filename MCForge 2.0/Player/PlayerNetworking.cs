@@ -284,39 +284,30 @@ namespace MCForge.Entity
             byte newType = message[7];
             HandleBlockchange(x, y, z, action, newType, false);
         }
-        private void HandleBlockchange(ushort x, ushort y, ushort z, byte action, byte newType, bool fake)
-        {
-
-
+        private void HandleBlockchange(ushort x, ushort y, ushort z, byte action, byte newType, bool fake) {
             LastClick = new Vector3S(x, y, z);
-
-            if (newType > 49 || (newType == 7 && !IsAdmin))
-            {
+            if (newType > 49 || (newType == 7 && !IsAdmin)) {
                 Kick("HACKED CLIENT!");
                 //TODO Send message to op's for adminium hack
                 return;
             }
 
             byte currentType = 50;
-            if (y < Level.Size.y)
-            {
+            if (y < Level.Size.y) {
                 currentType = Level.GetBlock(x, z, y);
-                if (!Block.IsValidBlock(currentType) && currentType != 255)
-                {
+                if (!Block.IsValidBlock(currentType) && currentType != 255) {
                     Kick("HACKED SERVER!");
                     return;
                 }
             }
-            else
-            {
+            else {
                 return;
             }
 
             bool placing = (action == 1);
             BlockChangeEventArgs eargs = new BlockChangeEventArgs(x, z, y, (placing ? ActionType.Place : ActionType.Delete), newType, Level.GetBlock(x, z, y));
             eargs = OnPlayerBlockChange.Call(this, eargs, OnAllPlayersBlockChange);
-            if (eargs.Canceled)
-            {
+            if (eargs.Canceled) {
                 if (!fake)
                     SendBlockChange(x, z, y, Level.GetBlock(eargs.X, eargs.Z, eargs.Y));
                 return;
@@ -326,41 +317,16 @@ namespace MCForge.Entity
             y = eargs.Y;
             action = (byte)((eargs.Action == ActionType.Place) ? 1 : 0);
             placing = action == 1;
+            if (fake || eargs.Holding != newType)
+                SendBlockChange(x, z, y, eargs.Holding);
             newType = eargs.Holding;
             currentType = eargs.Current;
-            
-            if (blockChange != null)
-            {
-                if (fake)
-                    SendBlockChange(x, z, y, currentType);
-
-                BlockChangeDelegate tempBlockChange = blockChange;
-                if (!ExtraData.ContainsKey("PassBackData"))
-                    ExtraData.Add("PassBackData", null);
-
-                object tempPassBack = ExtraData["PassBackData"];
-
-                blockChange = null;
-                ExtraData["PassBackData"] = null;
-
-                ThreadPool.QueueUserWorkItem(delegate
-                {
-                    tempBlockChange.Invoke(this, x, z, y, newType, placing, tempPassBack);
-                });
-                return;
-            }
-           
-
-            if (action == 0) //Deleting
-            {
+            if (action == 0) {
                 Level.BlockChange(x, z, y, 0, this);
             }
-            else //Placing
-            {
+            else {
                 Level.BlockChange(x, z, y, newType, this);
             }
-
-            //BlockChanges.Add(new World.Blocks.BlockChange(new Vector3S(x, z, y), blockFrom, newType, action == 0));
         }
         private void HandleIncomingPos(byte[] message) {
             if (!IsLoggedIn)
