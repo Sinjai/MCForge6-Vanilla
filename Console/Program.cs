@@ -172,7 +172,7 @@ namespace MCForge.Core {
                 try {
                     cmd.Use(cp, args);
                 }
-                catch { Logger.Log("Command aborted"); }
+                catch (Exception e) { Logger.LogError(e); Logger.Log("Command aborted"); }
                 Logger.Log("CONSOLE used: /" + commandSplit[0]);
             }
             else if (input.ToLower() == "!stop") {
