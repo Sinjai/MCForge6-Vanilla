@@ -18,12 +18,13 @@ using System.Linq;
 using System.Text;
 using MCForge.API.Events;
 using MCForge.Entity;
+using MCForge.Groups;
 using MCForge.Interface.Plugin;
 using MCForge.Utils;
 
 namespace Plugins.Zones
 {
-    class PluginZones : IPlugin
+    public class PluginZones : IPlugin
     {
         public string Name
         {
@@ -55,12 +56,11 @@ namespace Plugins.Zones
             var zones = Zone.FindAllWithin(new Vector3D(args.X, args.Z, args.Y));
             foreach (var zone in zones)
             {
-                if (!zone.CanBuildIn(sender))
-                {
-                    sender.SendMessage("You cannot build in this Zone!");
-                    args.Cancel();
-                    return;
-                }
+                if (zone.CanBuildIn(sender)) continue;
+
+                sender.SendMessage("You cannot build in this Zone! This zone if for: " + (PlayerGroup.FindPermInt(zone.Permission) ?? ("Permission: " + zone.Permission)) + " or higher!");
+                args.Cancel();
+                return;
             }
         }
 

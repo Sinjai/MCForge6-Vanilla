@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using MCForge.Entity;
 using MCForge.Utils;
 using MCForge.World;
@@ -25,7 +26,7 @@ namespace Plugins.Zones
             List<Zone> zones;
             if (Level.ExtraData.ContainsKey("zones"))
             {
-                zones = (List<Zone>) Level.ExtraData["zones"];
+                zones = (List<Zone>) Level.ExtraData.GetIfExist("zones");
                 zones.Add(this);
             }
             else
@@ -82,6 +83,19 @@ namespace Plugins.Zones
 
         public static List<Zone> GetAllZonesForLevel(Level level)
         {
+            List<Zone> zonelist = null;
+            if (level.ExtraData.ContainsKey("zones"))
+            {
+                zonelist = (List<Zone>)level.ExtraData.GetIfExist("zones");
+            }
+
+
+            if (zonelist != null)
+                foreach (var zone in zonelist.Where(zone => !Zones.Contains(zone)))
+                {
+                    Zones.Add(zone);
+                }
+
             var zones = new List<Zone>();
             foreach (var zone in Zones)
             {
@@ -98,6 +112,15 @@ namespace Plugins.Zones
                     return zone;
             }
             return null;
+        }
+
+        public static implicit operator string(Zone z)
+        {
+            return z.Name;
+        }
+        public override string ToString()
+        {
+            return this;
         }
     }
 }

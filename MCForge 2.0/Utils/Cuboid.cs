@@ -152,12 +152,12 @@ namespace MCForge.Utils
 
         public bool Within(Vector3D pos)
         {
-            return Max.x <= pos.x &&
-                   Max.z <= pos.z && 
-                   Max.y <= pos.y && 
-                   Min.x >= pos.x && 
-                   Min.z >= pos.z && 
-                   Min.y >= pos.y;
+            return Max.x >= pos.x &&
+                   Max.z >= pos.z && 
+                   Max.y >= pos.y && 
+                   Min.x <= pos.x && 
+                   Min.z <= pos.z && 
+                   Min.y <= pos.y;
         }
 
         #region for the cuboid
