@@ -27,7 +27,7 @@ namespace MCForge.Groups
     class CommandPermissionOverrides
     {
         /// <summary>
-        /// The list of all the permissions in <Command, Byte> Form
+        /// The list of all the permissions in &lt;Command, Byte&gt; Form
         /// </summary>
         internal static Dictionary<ICommand, byte> overrides = new Dictionary<ICommand, byte>();
         static string PropertiesPath = FileUtils.PropertiesPath + "command.properties";
@@ -48,7 +48,7 @@ namespace MCForge.Groups
                     continue;
                 }
                 string[] linesplit = line.Split(':');
-
+                
                 if (linesplit.Length < 2)
                 {
                     Logger.Log("Line: \"" + line + "is not recognised");//, LogType.Error);
