@@ -35,6 +35,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Resources\MCForge.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Accessibility">
       <EmbedInteropTypes>True</EmbedInteropTypes>
@@ -251,6 +254,7 @@
     <None Include="Resources\hirez_mcforge.png" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Resources\MCForge.ico" />
     <Content Include="Resources\mcforge_text.png" />
     <Content Include="Resources\preview_image.png" />
   </ItemGroup>
