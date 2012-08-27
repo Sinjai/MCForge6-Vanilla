@@ -14,6 +14,8 @@ permissions and limitations under the Licenses.
 */
 using System;
 using System.IO;
+using System.Linq;
+using System.Xml;
 using MCForge.Core;
 using MCForge.Entity;
 using MCForge.Interface.Command;
@@ -21,7 +23,7 @@ using MCForge.Utils;
 
 namespace MCForge.Commands.Misc
 {
-    class CmdResetPassword : ICommand
+    public class CmdResetPassword : ICommand
     {
         public string Name { get { return "ResetPassword"; } }
         public CommandTypes Type { get { return CommandTypes.Misc; } }
@@ -34,11 +36,33 @@ namespace MCForge.Commands.Misc
             if (args[0] == "") { Help(p); return; }
             Player who = Player.Find(args[0]);
             if (p != null && !p.IsOwner) { p.SendMessage("Only the server owner can reset passwords!"); return; }
-            if (!File.Exists("extra/passwords/" + args[0] + ".xml")) { p.SendMessage("The player you specified does not have a password!"); return; }
+            //if (!File.Exists("extra/passwords/" + args[0] + ".xml")) { p.SendMessage("The player you specified does not have a password!"); return; }
             if (p != null && !p.IsVerified) { p.SendMessage("You cannot reset passwords until you have verified with &a/pass <password>" + Server.DefaultColor + "!"); return; }
             try
             {
-                File.Delete("extra/passwords/" + args[0] + ".xml");
+                if (File.Exists("extra/passwords.xml"))
+                {
+                    var myXmlDocument = new XmlDocument();
+
+                    myXmlDocument.Load("extra/passwords.xml");
+
+                    foreach (XmlNode node in myXmlDocument.ChildNodes)
+                    {
+                        if (!node.HasChildNodes) continue;
+                        if (node.ChildNodes.Cast<XmlNode>().Count(node2 => node2.Name.ToLower() == args[0].ToLower()) == 0)
+                        {
+                            p.SendMessage("The player you specified does not have a password!"); return;
+                        }
+                        foreach (var node2 in
+                            node.ChildNodes.Cast<XmlNode>().Where(
+                                node2 => node2.Name.ToLower() == args[0].ToLower()))
+                        {
+                            
+                                node.RemoveAll(); //make sure there is no duplicates
+                        }
+                    }
+                    myXmlDocument.Save("extra/passwords.xml");
+                }
                 p.SendMessage("&3" + args[0] + Server.DefaultColor + "'s password has been successfully reset.");
             }
             catch (Exception e)

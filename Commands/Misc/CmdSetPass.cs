@@ -74,6 +74,7 @@ namespace MCForge.Commands.Misc
                         } 
                     }
                 }
+                myXmlDocument.Save("extra/passwords.xml");
             }
 
             if (!assigned)
