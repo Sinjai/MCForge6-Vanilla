@@ -14,30 +14,61 @@ permissions and limitations under the Licenses.
 */
 using System;
 using System.IO;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading;
 using MCForge.Core;
 using MCForge.Entity;
 using MCForge.Interface.Command;
 using MCForge.Utils;
+using System.Xml;
 
 namespace MCForge.Commands.Misc {
-    class CmdPass : ICommand {
+    public class CmdPass : ICommand {
         public string Name { get { return "Pass"; } }
         public CommandTypes Type { get { return CommandTypes.Misc; } }
         public string Author { get { return ""; } }
         public int Version { get { return 1; } }
         public string CUD { get { return ""; } }
         public byte Permission { get { return 0; } }
-        public static bool gotpass = false;
-        public static string password = "";
+        
         public void Use(Player p, string[] args) {
             p.ExtraData.CreateIfNotExist("PassTries", 0);
             if (p.IsVerified) { p.SendMessage("You already verified!"); return; }
             if (!Server.Verifying) { p.SendMessage("You don't need to verify!"); return; }
             if (p.Group.Permission < Server.VerifyGroup.Permission) { p.SendMessage("Only " + Server.VerifyGroup.Color + Server.VerifyGroup.Name + "s " + Server.DefaultColor + "and above need to verify."); return; }
             if ((int)p.ExtraData["PassTries"] >= 3) { p.Kick("Did you really think you could keep on guessing?"); return; }
+            
+            if (!File.Exists("extra/passwords.xml"))
+            {
+                p.SendMessage("You have not &cset a password" + Server.DefaultColor + ", use &a/setpass [Password] " + Server.DefaultColor + "to set one!");
+                return;
+            }
+            var myXmlDocument = new XmlDocument();
+            myXmlDocument.Load("extra/passwords.xml");
+
+            foreach (XmlNode node in myXmlDocument.ChildNodes)
+            {
+                if (!node.HasChildNodes) continue;
+                foreach (var node2 in
+                    node.ChildNodes.Cast<XmlNode>().Where(
+                        node2 => node2.Name.ToLower() == p.DisplayName.ToLower()))
+                {
+                    var hash = node.InnerText.Trim();
+                    var password = ComputeHash(String.Join(" ", args).Trim(), new SHA256CryptoServiceProvider());
+                    if (hash == password)
+                    {
+                        p.SendMessage("Thank you, " + p.Color + p.Username + Server.DefaultColor + "! You are now &averified " + Server.DefaultColor + "and have access to admin commands and features!");
+                        if (p.IsVerified == false)
+                            p.IsVerified = true;
+                        password = "";
+                        p.ExtraData["PassTries"] = 0;
+                        return;
+                    }
+                }
+            }
+
+            /*
             int foundone = 0;
             if (args[0] == "") { Help(p); return; }
             int number = args.Length;
@@ -83,14 +114,22 @@ namespace MCForge.Commands.Misc {
                 password = "";
                 p.ExtraData["PassTries"] = 0;
                 return;
-            }
+            }*/
             p.ExtraData["PassTries"] = (int)p.ExtraData["PassTries"] + 1;
             p.SendMessage("&cIncorrect Password. " + Server.DefaultColor + "Remember your password is &ccase sensitive!");
             p.SendMessage("If you have &cforgotten your password, " + Server.DefaultColor + "contact the server host and they can reset it! &cIncorrect " + Server.DefaultColor + "Tries: &b" + p.ExtraData["PassTries"]);
-            return;
         }
 
-        /// <summary>
+        public static string ComputeHash(string input, HashAlgorithm algorithm)
+        {
+            Byte[] inputBytes = Encoding.UTF8.GetBytes(input);
+
+            Byte[] hashedBytes = algorithm.ComputeHash(inputBytes);
+
+            return BitConverter.ToString(hashedBytes);
+        }
+
+        /*/// <summary>
         /// An almost pointless class in some cases
         /// </summary>
         public class Crypto {
@@ -157,13 +196,13 @@ namespace MCForge.Commands.Misc {
                 gotpass = true;
                 return plaintext;
             }
-        }
+        }*/
         public void Help(Player p) {
             p.SendMessage("/pass <password> - Complete password verification.");
             p.SendMessage("/password, /verify, and /login may also be used.");
         }
         public void Initialize() {
-            Command.AddReference(this, new string[4] { "pass", "password", "verify", "login" });
+            Command.AddReference(this, new[] { "pass", "password", "verify", "login" });
         }
     }
 }

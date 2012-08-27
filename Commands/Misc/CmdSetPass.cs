@@ -14,8 +14,10 @@ permissions and limitations under the Licenses.
 */
 using System;
 using System.IO;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using System.Xml;
 using MCForge.Core;
 using MCForge.Entity;
 using MCForge.Interface.Command;
@@ -23,7 +25,7 @@ using MCForge.Utils;
 
 namespace MCForge.Commands.Misc
 {
-    class CmdSetPass : ICommand
+    public class CmdSetPass : ICommand
     {
         public string Name { get { return "SetPass"; } }
         public CommandTypes Type { get { return CommandTypes.Misc; } }
@@ -36,18 +38,67 @@ namespace MCForge.Commands.Misc
             if (!p.IsVerified) { p.SendMessage("&cYou already have a password set. " + Server.DefaultColor + "You &ccannot change " + Server.DefaultColor + "it unless &cyou verify it with &a/pass [Password]. " + Server.DefaultColor + "If you have &cforgotten " + Server.DefaultColor + "your password, contact the server host and they can &creset it!"); return; }
             if (args[0] == "") { Help(p); return; }
             if (p.Group.Permission < Server.VerifyGroup.Permission) { p.SendMessage("Only " + Server.VerifyGroup.Color + Server.VerifyGroup.Name + "s " + Server.DefaultColor + "and above need to verify."); return; }
-            int number = args[0].Split(' ').Length;
-            if (number > 1)
+            //int number = args.Length;
+            //if (number > 1)
+            //{
+            //    p.SendMessage("Your password must be one word!");
+            //    return;
+            //}
+            //allow multiple word passwords
+
+            var passHash = CmdPass.ComputeHash(String.Join(" ", args).Trim(), new SHA256CryptoServiceProvider());
+
+            var assigned = false;
+            FileUtils.CreateDirIfNotExist("extra");
+            if (File.Exists("extra/passwords.xml"))
             {
-                p.SendMessage("Your password must be one word!");
-                return;
+                var myXmlDocument = new XmlDocument();
+
+                myXmlDocument.Load("extra/passwords.xml");
+
+                foreach (XmlNode node in myXmlDocument.ChildNodes)
+                {
+                    if (!node.HasChildNodes) continue;
+                    foreach (var node2 in 
+                        node.ChildNodes.Cast<XmlNode>().Where(
+                            node2 => node2.Name.ToLower() == p.DisplayName.ToLower()))
+                    {
+                        if (!assigned)
+                        {
+                            node2.InnerText = passHash;
+                            assigned = true;
+                        }
+                        else
+                        {
+                            node.RemoveAll(); //make sure there is no duplicates
+                        } 
+                    }
+                }
             }
-            Crypto.EncryptStringAES(args[0], "MCForgeEncryption", p);
+
+            if (!assigned)
+            {
+                //if still not assigned
+                var settings = new XmlWriterSettings {Indent = true, CloseOutput = true, NewLineOnAttributes = true};
+
+                using (var writer = XmlWriter.Create("extra/passwords.xml", settings))
+                {
+                    writer.WriteStartDocument();
+                        writer.WriteStartElement("passwords");
+                            writer.WriteStartElement(p.DisplayName);
+                            writer.WriteString(passHash);
+                        writer.WriteEndElement();
+                    writer.WriteEndElement();
+
+                    writer.Flush();
+                    writer.Close();
+                }
+            }
+                                                            
             p.SendMessage("Your password has &asuccessfully &abeen set to:");
-            p.SendMessage("&c" + args[0]);
-            return;
+            p.SendMessage("&c\"" + String.Join(" ", args).Trim() + "\"");
         }
-        public class Crypto
+        /*public class Crypto
         {
             private static byte[] _salt = Encoding.ASCII.GetBytes("o6806642kbM7c5");
 
@@ -128,7 +179,7 @@ namespace MCForge.Commands.Misc
                 return outStr;
 
             }
-        }
+        }*/
         public void Help(Player p)
         {
             p.SendMessage("/setpass <password> - set your verification password.");
