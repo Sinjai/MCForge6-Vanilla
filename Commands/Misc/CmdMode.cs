@@ -66,7 +66,7 @@ namespace MCForge.Commands {
                 if (args[0] != ((Block)p.ExtraData["BlockMode"]).Name) {
                     Block b = Block.NameToBlock(args[0]);
                     if (b is UNKNOWN) { 
-                        p.SendMessage("Cannot find block\"" + args[0] + "\"!");
+                        p.SendMessage("Cannot find block \"" + args[0] + "\"!");
                         return; 
                     }
                     if (b == Block.BlockList.AIR) {
