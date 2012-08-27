@@ -60,23 +60,9 @@ namespace MCForge.Gui.Properties {
             }
         }
         
-        internal static System.Drawing.Bitmap hirez_mcforge {
+        internal static System.Drawing.Bitmap mcforge_logo {
             get {
-                object obj = ResourceManager.GetObject("hirez_mcforge", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        internal static System.Drawing.Bitmap mcforge_text {
-            get {
-                object obj = ResourceManager.GetObject("mcforge_text", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        internal static System.Drawing.Bitmap preview_image {
-            get {
-                object obj = ResourceManager.GetObject("preview_image", resourceCulture);
+                object obj = ResourceManager.GetObject("mcforge_logo", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

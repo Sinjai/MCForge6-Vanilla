@@ -1,0 +1,16 @@
+C:\Users\Cayde\Documents\GitHub\MCForge-Vanilla\MCForge 2.0\bin\Debug\System.Data.SQLite.dll
+C:\Users\Cayde\Documents\GitHub\MCForge-Vanilla\MCForge 2.0\bin\Debug\System.Data.SQLite.xml
+C:\Users\Cayde\Documents\GitHub\MCForge-Vanilla\MCForge 2.0\bin\Debug\sqlite3.dll
+C:\Users\Cayde\Documents\GitHub\MCForge-Vanilla\MCForge 2.0\bin\Debug\MCForge Gui.exe.config
+C:\Users\Cayde\Documents\GitHub\MCForge-Vanilla\MCForge 2.0\bin\Debug\MCForge Gui.exe
+C:\Users\Cayde\Documents\GitHub\MCForge-Vanilla\MCForge 2.0\bin\Debug\MCForge Gui.pdb
+C:\Users\Cayde\Documents\GitHub\MCForge-Vanilla\Gui\obj\x86\Debug\ResolveAssemblyReference.cache
+C:\Users\Cayde\Documents\GitHub\MCForge-Vanilla\Gui\obj\x86\Debug\MCForge.Gui.LogoForm.resources
+C:\Users\Cayde\Documents\GitHub\MCForge-Vanilla\Gui\obj\x86\Debug\MCForge.Gui.MainForm.resources
+C:\Users\Cayde\Documents\GitHub\MCForge-Vanilla\Gui\obj\x86\Debug\MCForge.Gui.Popups.PopupError.resources
+C:\Users\Cayde\Documents\GitHub\MCForge-Vanilla\Gui\obj\x86\Debug\MCForge.Gui.Popups.PortTools.resources
+C:\Users\Cayde\Documents\GitHub\MCForge-Vanilla\Gui\obj\x86\Debug\MCForge.Gui.Properties.Resources.resources
+C:\Users\Cayde\Documents\GitHub\MCForge-Vanilla\Gui\obj\x86\Debug\GenerateResource.read.1.tlog
+C:\Users\Cayde\Documents\GitHub\MCForge-Vanilla\Gui\obj\x86\Debug\GenerateResource.write.1.tlog
+C:\Users\Cayde\Documents\GitHub\MCForge-Vanilla\Gui\obj\x86\Debug\MCForge Gui.exe
+C:\Users\Cayde\Documents\GitHub\MCForge-Vanilla\Gui\obj\x86\Debug\MCForge Gui.pdb

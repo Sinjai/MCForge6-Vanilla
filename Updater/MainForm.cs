@@ -31,7 +31,7 @@ namespace Updater
         
         void MainFormLoad(object sender, EventArgs e) {
             ChangeLable("Starting..");
-            newsFeeder1.StartRead();
+            //newsFeeder1.StartRead();
             form = this;
             Thread t = new Thread(new ThreadStart(StartActions));
             t.Start();

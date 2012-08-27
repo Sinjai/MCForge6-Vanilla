@@ -37,7 +37,7 @@ namespace Updater
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.newsFeeder1 = new MCForge.Gui.Components.NewsFeeder(this.components);
+            //this.newsFeeder1 = new MCForge.Gui.Components.NewsFeeder(this.components);
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.label1 = new System.Windows.Forms.Label();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
@@ -45,11 +45,11 @@ namespace Updater
             // 
             // newsFeeder1
             // 
-            this.newsFeeder1.Location = new System.Drawing.Point(2, 91);
-            this.newsFeeder1.Name = "newsFeeder1";
-            this.newsFeeder1.Size = new System.Drawing.Size(347, 20);
-            this.newsFeeder1.TabIndex = 0;
-            this.newsFeeder1.Text = "newsFeeder1";
+            //this.newsFeeder1.Location = new System.Drawing.Point(2, 91);
+            //this.newsFeeder1.Name = "newsFeeder1";
+            //this.newsFeeder1.Size = new System.Drawing.Size(347, 20);
+            //this.newsFeeder1.TabIndex = 0;
+            //this.newsFeeder1.Text = "newsFeeder1";
             // 
             // progressBar1
             // 
@@ -83,7 +83,7 @@ namespace Updater
             this.Controls.Add(this.checkBox1);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.progressBar1);
-            this.Controls.Add(this.newsFeeder1);
+            //this.Controls.Add(this.newsFeeder1);
             this.Name = "MainForm";
             this.Text = "Updater";
             this.Load += new System.EventHandler(this.MainFormLoad);
@@ -92,6 +92,6 @@ namespace Updater
         private System.Windows.Forms.CheckBox checkBox1;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.ProgressBar progressBar1;
-        private MCForge.Gui.Components.NewsFeeder newsFeeder1;
+        //private MCForge.Gui.Components.NewsFeeder newsFeeder1;
     }
 }

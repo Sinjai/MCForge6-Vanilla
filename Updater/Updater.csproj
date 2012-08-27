@@ -90,10 +90,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Gui\Gui.csproj">
-      <Project>{64D2BDDC-F51C-487E-A4CB-6AA2A4E2D284}</Project>
-      <Name>Gui</Name>
-    </ProjectReference>
     <ProjectReference Include="..\MCForge 2.0\MCForge.csproj">
       <Project>{EDC9892F-BBA2-4043-9FD9-94C0BA7D9552}</Project>
       <Name>MCForge</Name>

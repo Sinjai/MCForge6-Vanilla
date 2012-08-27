@@ -5,179 +5,256 @@
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{64D2BDDC-F51C-487E-A4CB-6AA2A4E2D284}</ProjectGuid>
+    <ProjectGuid>{9719E88E-773E-478B-B7A1-B1030FF61356}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>MCForge.Gui</RootNamespace>
-    <AssemblyName>MCForge Gui</AssemblyName>
+    <AssemblyName>MCForgeGui</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
-    <PublishUrl>publish\</PublishUrl>
-    <Install>true</Install>
-    <InstallFrom>Disk</InstallFrom>
-    <UpdateEnabled>false</UpdateEnabled>
-    <UpdateMode>Foreground</UpdateMode>
-    <UpdateInterval>7</UpdateInterval>
-    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
-    <UpdatePeriodically>false</UpdatePeriodically>
-    <UpdateRequired>false</UpdateRequired>
-    <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
-    <UseApplicationTrust>false</UseApplicationTrust>
-    <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>..\MCForge 2.0\bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <PlatformTarget>x86</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\MCForge 2.0\bin\Release\</OutputPath>
+    <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup>
-    <StartupObject>
-    </StartupObject>
-  </PropertyGroup>
-  <PropertyGroup>
-    <ApplicationIcon>MCForge.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Accessibility">
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="MCForge">
+      <HintPath>..\..\MCForge-Vanilla\MCForge 2.0\bin\Debug\MCForge.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Design" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="API\MCForgeGui.cs" />
-    <Compile Include="API\MCForgeGuiManager.cs" />
-    <Compile Include="Components\ColoredLogReader.cs">
+    <Compile Include="Components\AeroButton.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Components\ColoredLogReader.Designer.cs">
-      <DependentUpon>ColoredLogReader.cs</DependentUpon>
+    <Compile Include="Components\AeroButton.Designer.cs">
+      <DependentUpon>AeroButton.cs</DependentUpon>
     </Compile>
-    <Compile Include="NativeMethods.cs" />
-    <Compile Include="Components\NewsFeeder.cs">
+    <Compile Include="Components\AeroLabel.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Components\NewsFeeder.Designer.cs">
-      <DependentUpon>NewsFeeder.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Components\PerPixelAlphaForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Components\StyledRichTextBox.cs">
+    <Compile Include="Components\ChatPreview.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="LogoForm.cs">
+    <Compile Include="Components\ChatPreview.Designer.cs">
+      <DependentUpon>ChatPreview.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Components\ColoredListBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Components\ColoredTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Components\ColoredTextBox.Designer.cs">
+      <DependentUpon>ColoredTextBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Components\ColorRelatedButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Components\ColorSelectionButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Components\ColorSelectionButton.Designer.cs">
+      <DependentUpon>ColorSelectionButton.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Components\GlassForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="LogoForm.Designer.cs">
-      <DependentUpon>LogoForm.cs</DependentUpon>
+    <Compile Include="Components\GlassToolStrip.cs">
+      <SubType>Component</SubType>
     </Compile>
-    <Compile Include="MainForm.cs">
+    <Compile Include="Components\GlassToolStripMenuItem.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Components\HintedTextbox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Components\HtmlReader.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Components\Interfaces\IFormSharer.cs" />
+    <Compile Include="Components\MapBrowser.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Components\MapBrowser.Designer.cs">
+      <DependentUpon>MapBrowser.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Components\SpaciousLabel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Components\SpaciousLabel.Designer.cs">
+      <DependentUpon>SpaciousLabel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Components\ToolTipListBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Dialogs\ColorSelectionDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="MainForm.Designer.cs">
-      <DependentUpon>MainForm.cs</DependentUpon>
+    <Compile Include="Dialogs\ColorSelectionDialog.Designer.cs">
+      <DependentUpon>ColorSelectionDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="Popups\PopupError.cs">
+    <Compile Include="Dialogs\MapManagerDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Popups\PopupError.Designer.cs">
-      <DependentUpon>PopupError.cs</DependentUpon>
+    <Compile Include="Dialogs\MapManagerDialog.Designer.cs">
+      <DependentUpon>MapManagerDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="Popups\PortTools.cs">
+    <Compile Include="Dialogs\NewsDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Popups\PortTools.Designer.cs">
-      <DependentUpon>PortTools.cs</DependentUpon>
+    <Compile Include="Dialogs\NewsDialog.Designer.cs">
+      <DependentUpon>NewsDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\PlayerManagerDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\PlayerManagerDialog.Designer.cs">
+      <DependentUpon>PlayerManagerDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\ErrorDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\ErrorDialog.designer.cs">
+      <DependentUpon>ErrorDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\PortToolsDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\PortToolsDialog.designer.cs">
+      <DependentUpon>PortToolsDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\ServerSettingsDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\ServerSettingsDialog.Designer.cs">
+      <DependentUpon>ServerSettingsDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\TextOnlyDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\TextOnlyDialog.Designer.cs">
+      <DependentUpon>TextOnlyDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormMainScreen.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormMainScreen.Designer.cs">
+      <DependentUpon>FormMainScreen.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormSplashScreen.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Form1.Designer.cs">
+      <DependentUpon>FormSplashScreen.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="app.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\MCForge 2.0\MCForge.csproj">
-      <Project>{EDC9892F-BBA2-4043-9FD9-94C0BA7D9552}</Project>
-      <Name>MCForge</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="License.txt" />
-    <Content Include="Resources\mcforge_spinner.png" />
-    <None Include="Resources\mcforge_logo.png" />
-    <EmbeddedResource Include="LogoForm.resx">
-      <DependentUpon>LogoForm.cs</DependentUpon>
+    <Compile Include="Utils\ColorRelation.cs" />
+    <Compile Include="Utils\Constants.cs" />
+    <Compile Include="Utils\GraphicsExtention.cs" />
+    <Compile Include="Utils\GuiSettings.cs" />
+    <Compile Include="Utils\Margins.cs" />
+    <Compile Include="Utils\Natives.cs" />
+    <Compile Include="Utils\RECT.cs" />
+    <Compile Include="Utils\TypeCollection.cs" />
+    <Compile Include="Utils\Utils.cs" />
+    <EmbeddedResource Include="Components\GlassForm.resx">
+      <DependentUpon>GlassForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="MainForm.resx">
-      <DependentUpon>MainForm.cs</DependentUpon>
+    <EmbeddedResource Include="Components\MapBrowser.resx">
+      <DependentUpon>MapBrowser.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
-    <Content Include="MCForge.ico" />
-    <EmbeddedResource Include="Popups\PopupError.resx">
-      <DependentUpon>PopupError.cs</DependentUpon>
+    <EmbeddedResource Include="Dialogs\ColorSelectionDialog.resx">
+      <DependentUpon>ColorSelectionDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Popups\PortTools.resx">
-      <DependentUpon>PortTools.cs</DependentUpon>
+    <EmbeddedResource Include="Dialogs\MapManagerDialog.resx">
+      <DependentUpon>MapManagerDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\NewsDialog.resx">
+      <DependentUpon>NewsDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\PlayerManagerDialog.resx">
+      <DependentUpon>PlayerManagerDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\ErrorDialog.resx">
+      <DependentUpon>ErrorDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\PortToolsDialog.resx">
+      <DependentUpon>PortToolsDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\TextOnlyDialog.resx">
+      <DependentUpon>TextOnlyDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormMainScreen.resx">
+      <DependentUpon>FormMainScreen.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormSplashScreen.resx">
+      <DependentUpon>FormSplashScreen.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
-    <BootstrapperPackage Include=".NETFramework,Version=v4.0">
-      <Visible>False</Visible>
-      <ProductName>Microsoft .NET Framework 4 %28x86 and x64%29</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
-      <Visible>False</Visible>
-      <ProductName>Windows Installer 3.1</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
+    <None Include="Resources\hirez_mcforge.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\mcforge_text.png" />
+    <Content Include="Resources\preview_image.png" />
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

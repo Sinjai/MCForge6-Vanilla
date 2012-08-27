@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("NewMCForgeGui")]
+[assembly: AssemblyTitle("MCForge Gui")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("NewMCForgeGui")]
+[assembly: AssemblyProduct("MCForge Gui")]
 [assembly: AssemblyCopyright("Copyright ©  2012")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("66171c30-7714-47da-9229-e09fd994fef2")]
+[assembly: Guid("9f1615f2-5b32-4c2d-9f20-967bcc4e015c")]
 
 // Version information for an assembly consists of the following four values:
 //
