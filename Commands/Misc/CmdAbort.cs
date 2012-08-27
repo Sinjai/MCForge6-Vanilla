@@ -42,6 +42,10 @@ namespace MCForge.Commands
                 p.ExtraData["ModeBlock"] = null;
             if (p.ExtraData.ContainsKey("HasMarked"))
                 p.ExtraData["HasMarked"] = false;
+            if (p.ExtraData.ContainsKey("IsFlying"))
+                p.ExtraData["IsFlying"] = null;
+
+            p.SendMessage("Every toggled action has been diabled.");
         }
 
         public void Help(Player p)
