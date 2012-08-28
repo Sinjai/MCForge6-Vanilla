@@ -756,6 +756,21 @@ namespace MCForge.World {
             }
         }
 
+        /// <summary>
+        /// Renames the level to <paramref name="newName"/>.
+        /// </summary>
+        /// <param name="newName">The new name of the level.</param>
+        /// <remarks></remarks>
+        public void Rename(string newName)
+        {
+            File.Move(String.Format("levels/{0}.lvl", Name),
+                      String.Format("levels/{0}.lvl", newName));
+            Unload(true);
+            LoadLevel(newName);
+            //is this needed?
+            //SQL.Database.executeQuery(string.Format("ALTER TABLE {0} RENAME TO {1}", Name, newName));
+        }
+
         private List<Player> _playerList;
 
         /// <summary>
