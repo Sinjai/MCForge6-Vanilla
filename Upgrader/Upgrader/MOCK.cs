@@ -18,6 +18,7 @@ using System.Net;
 using System.Threading;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
+using System.Collections.Generic;
 
 /// <summary>
 /// This will be used to trick older version of MCForge to run the upgrader
@@ -27,6 +28,13 @@ namespace MCForge_.Gui
 {
     public static class Program
     {
+        public struct Zone
+        {
+            public string Owner;
+            public ushort bigX, bigY, bigZ;
+            public ushort smallX, smallY, smallZ;
+        }
+        
         [DllImport("kernel32.dll", SetLastError = true)]
         static extern bool AllocConsole();
 
@@ -93,10 +101,10 @@ namespace MCForge_.Gui
             //FreeConsole();
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(Program.GlobalExHandler);
             Application.ThreadException += new ThreadExceptionEventHandler(Program.ThreadExHandler);
+            Dictionary<string, DataTable> ZoneDb = new Dictionary<string, DataTable>();
             try {
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine("Starting upgrade...");
-                //TODO Start upgrade or start a seperate program to start update.
                 Console.WriteLine("Loading old properties...");
                 Server.s = new Server();
                 Server.LoadAllSettings();
@@ -135,11 +143,18 @@ namespace MCForge_.Gui
                     
                     Console.WriteLine("Converting Level data..");
                     MySQL.execute("CREATE TABLE if not exists Blocks (UID INTEGER, X MEDIUMINT, Y MEDIUMINT, Z MEDIUMINT, Level VARCHAR(100), Deleted VARCHAR(30), Block TEXT, Date DATETIME, Was TEXT);");
-                    foreach (string level in Directory.GetFiles("levels", "*.lvl"))
+                    foreach (string levelfile in Directory.GetFiles("levels", "*.lvl"))
                     {
                         try {
-                            //Convert Block History
-                            string name = Path.GetFileName(level).Split('.')[0];
+                            //Get level name
+                            FileInfo fi = new FileInfo(levelfile);
+                            string name = fi.Name.Split('.')[0];
+                            try {
+                                Console.WriteLine("Getting zones for later use..");
+                                DataTable Zones = new DataTable();
+                                MySQL.fill("SELECT * FROM `Zone" + name + "`", Zones);
+                                ZoneDb.Add(name, Zones);
+                            } catch { }
                             DataTable table1 = new DataTable("table1");
                             MySQL.fill("SELECT * FROM Block" + name, table1);
                             DataTable temp = new DataTable("temp");
@@ -160,9 +175,11 @@ namespace MCForge_.Gui
                             //Snowl panned them to be in the Level.ExtraData
                             //(it allows for portability of the .lvl so you can move it from server to server without requiring MySQL)
                         }
-                        catch {
+                        catch (Exception e) {
                             Console.ForegroundColor = ConsoleColor.Red;
-                            Console.WriteLine("Converting failed for " + level);
+                            Console.WriteLine("Converting failed for " + levelfile);
+                            Console.WriteLine(e.ToString());
+                            Console.ForegroundColor = ConsoleColor.Green;
                         }
                     }
                     
@@ -186,11 +203,18 @@ namespace MCForge_.Gui
                         
                         Console.WriteLine("Converting Level data..");
                         SQLite.execute("CREATE TABLE if not exists Blocks (UID INTEGER, X MEDIUMINT, Y MEDIUMINT, Z MEDIUMINT, Level VARCHAR(100), Deleted VARCHAR(30), Block TEXT, Date DATETIME, Was TEXT);");
-                        foreach (string level in Directory.GetFiles("levels", "*.lvl"))
+                        foreach (string levelfile in Directory.GetFiles("levels", "*.lvl"))
                         {
                             try {
                                 //Convert Block History
-                                string name = Path.GetFileName(level).Split('.')[0];
+                                FileInfo fi = new FileInfo(levelfile);
+                                string name = fi.Name.Split('.')[0];
+                                try {
+                                    Console.WriteLine("Getting zones for later use..");
+                                    DataTable Zones = new DataTable();
+                                    SQLite.fill("SELECT * FROM `Zone" + name + "`", Zones);
+                                    ZoneDb.Add(name, Zones);
+                                } catch { }
                                 DataTable table1 = new DataTable("table1");
                                 SQLite.fill("SELECT * FROM Block" + name, table1);
                                 DataTable temp = new DataTable("temp");
@@ -209,9 +233,11 @@ namespace MCForge_.Gui
                                 }
                                 //TODO Add zones, mb, and portals once those are in
                             }
-                            catch {
+                            catch (Exception e) {
                                 Console.ForegroundColor = ConsoleColor.Red;
-                                Console.WriteLine("Converting failed for " + level);
+                                Console.WriteLine("Converting failed for " + levelfile);
+                                Console.WriteLine(e.ToString());
+                                Console.ForegroundColor = ConsoleColor.Green;
                             }
                         }
                     }
@@ -227,6 +253,31 @@ namespace MCForge_.Gui
                         Level l = Level.LoadLevel(level);
                         if (l != null)
                         {
+                            Console.WriteLine("Converting zones for level " + l.Name + "..");
+                            Console.WriteLine("Converting " + ZoneDb.Count + " zones!");
+                            try {
+                                DataTable temp = ZoneDb[l.Name];
+                                Zone Zn;
+                                for (int i = 0; i < temp.Rows.Count; ++i)
+                                {
+                                    Zn.smallX = ushort.Parse(temp.Rows[i]["SmallX"].ToString());
+                                    Zn.smallY = ushort.Parse(temp.Rows[i]["SmallY"].ToString());
+                                    Zn.smallZ = ushort.Parse(temp.Rows[i]["SmallZ"].ToString());
+                                    Zn.bigX = ushort.Parse(temp.Rows[i]["BigX"].ToString());
+                                    Zn.bigY = ushort.Parse(temp.Rows[i]["BigY"].ToString());
+                                    Zn.bigZ = ushort.Parse(temp.Rows[i]["BigZ"].ToString());
+                                    Zn.Owner = temp.Rows[i]["Owner"].ToString();
+                                    Plugins.Zones.Zone z = new Plugins.Zones.Zone(new MCForge.Utils.Vector3D(Zn.smallX, Zn.smallZ, Zn.smallY), new MCForge.Utils.Vector3D(Zn.bigX, Zn.bigZ, Zn.bigY), Zn.Owner, Zn.Owner, 0, l, false);
+                                    
+                                }
+                            } catch (Exception e) {
+                                Console.ForegroundColor = ConsoleColor.Red;
+                                Console.WriteLine("Error converting zones..");
+                                Console.WriteLine(e.ToString());
+                                Console.ForegroundColor = ConsoleColor.Green;
+                            }
+                            if (ZoneDb.ContainsKey(l.Name))
+                                ZoneDb.Remove(l.Name);
                             l.SaveToBinary();
                             Console.ForegroundColor = ConsoleColor.Green;
                             Console.WriteLine(level + " converted!");

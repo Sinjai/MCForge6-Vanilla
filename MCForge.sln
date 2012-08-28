@@ -1,6 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
+# SharpDevelop 4.2.1.8805
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Console", "Console\Console.csproj", "{2BA59FB7-13B4-42A7-A915-F68B2032EE7C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MCForge", "MCForge 2.0\MCForge.csproj", "{EDC9892F-BBA2-4043-9FD9-94C0BA7D9552}"
