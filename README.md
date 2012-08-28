@@ -1,6 +1,6 @@
 #MCForge Vanilla
 
-![MCForge Logo](http://www.mcforge.net/templates/enterprise/images/logo.png)
+![MCForge Logo](http://www.mcforge.net/community/public/style_images/4_logo.png)
 
 Minecraft Classic Custom Server Software
 
