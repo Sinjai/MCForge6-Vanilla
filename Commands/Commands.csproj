@@ -93,6 +93,7 @@
     <Compile Include="Moderation\CmdHide.cs" />
     <Compile Include="Moderation\CmdPerVisit.cs" />
     <Compile Include="Moderation\CmdRedo.cs" />
+    <Compile Include="Moderation\CmdRenameLvl.cs" />
     <Compile Include="Moderation\CmdRestart.cs" />
     <Compile Include="Moderation\CmdShutdown.cs" />
     <Compile Include="Moderation\CmdUndo.cs" />
@@ -210,6 +211,9 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Commands.licenseheader" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
