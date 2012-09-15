@@ -313,6 +313,12 @@ namespace MCForge.Gui.Forms {
             }
         }
 
+        private void makerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using (CommandMaker dialog = new CommandMaker())
+                dialog.ShowDialog();
+        }
+
         #endregion
 
 
@@ -333,8 +339,5 @@ namespace MCForge.Gui.Forms {
 
             public void WriteLine(string line, string replyChannel) {}
         }
-
-
-
     }
 }
