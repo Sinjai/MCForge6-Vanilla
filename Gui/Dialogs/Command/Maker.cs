@@ -13,15 +13,12 @@ or implied. See the Licenses for the specific language governing
 permissions and limitations under the Licenses.
 */
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
 using MCForge.Gui.Utils;
+using System.Text.RegularExpressions;
 
 namespace MCForge.Gui.Dialogs
 {
@@ -31,7 +28,6 @@ namespace MCForge.Gui.Dialogs
         {
             InitializeComponent();
         }
-
         public static string ParseCode(string input)
         {
             /**
@@ -42,6 +38,11 @@ namespace MCForge.Gui.Dialogs
              * Note: Don't mess with the replace order.
              */
             StringBuilder sb = new StringBuilder(input);
+            // MCForge Structs/Interfaces
+            sb.Replace("CommandTypes", "&3CommandTypes&8");
+            sb.Replace("ICommand", "&3ICommand&8");
+            sb.Replace("Player", "&3Player&8");
+            sb.Replace("Command", "&3Command&8");
             // Comments
             sb.Replace("//", "&2//");
             // System
@@ -61,11 +62,6 @@ namespace MCForge.Gui.Dialogs
             sb.Replace("{", "&8{"); // Fixes class.
             sb.Replace("}", "&8}"); // Fixes comments.
             sb.Replace(".", "&8."); // Fixes using.
-            // MCForge Structs/Interfaces
-            sb.Replace("CommandTypes", "&3CommandTypes&8");
-            sb.Replace("ICommand", "&3ICommand&8");
-            sb.Replace("Player", "&3Player&8");
-            sb.Replace("Command", "&3Command&8");
             return sb.ToString();
         }
 
@@ -129,33 +125,47 @@ namespace MCForge.Gui.Dialogs
         {
             
         }
-        private string currentWord = "";
-        private void ColorRefresh()
-        {
-            int index = makerText.Text.LastIndexOf(currentWord);
-            string text = makerText.Text.Substring(index != -1 ? index : 0); // Last word.
-            string[] messagesSplit = text.Split(new[] { '%', '&' }, StringSplitOptions.RemoveEmptyEntries);
-            for (int i = 0; i < messagesSplit.Length; i++)
-            {
-                string split = messagesSplit[i];
-                if (String.IsNullOrWhiteSpace(split))
-                    continue;
-                Color? color = Utilities.GetDimColorFromChar(split[0]);
-                makerText.Text.Replace(text, split);
-            }
+ 
+                // Will add all reserved words later.
+        public Regex systemKeywords = new Regex("using|namespace|public|void|get|set|return|string|int|byte|");
+        public Regex MCForgeKeywords = new Regex("CommandTypes|ICommand|Player|Command");
+        public Regex markerKeywords = new Regex("class|struct|:");
+        Color system = Color.FromArgb( 255, 0, 0, 161 );
+        Color normal = Color.FromArgb( 255, 34, 34, 34 );
+        Color highlight = Color.FromArgb( 255, 0, 161, 161 );
+        Color comment = Color.FromArgb( 255, 0, 161, 0 );
+
+        private void StringToRegexColor(){
+        	int selPos = makerText.SelectionStart;
+        	foreach(Match m in MCForgeKeywords.Matches(makerText.Text)){
+        		makerText.Select(m.Index, m.Length);
+                makerText.SelectionColor = highlight;
+                makerText.SelectionStart = selPos;
+                makerText.SelectionColor = normal;
+        	}
+        	foreach(Match m in systemKeywords.Matches(makerText.Text)){
+        		makerText.Select(m.Index, m.Length);
+                makerText.SelectionColor = system;
+                makerText.SelectionStart = selPos;
+                makerText.SelectionColor = normal;
+        	}
+        	foreach(Match m in markerKeywords.Matches(makerText.Text)){
+        		makerText.Select(m.Index, m.Length);
+        		makerText.SelectionColor = system;
+                makerText.SelectionStart = selPos;
+                makerText.SelectionColor = highlight;
+        	}
+        	foreach(Match m in new Regex("//").Matches(makerText.Text)){
+        		makerText.Select(m.Index, m.Length);
+                makerText.SelectionColor = comment;
+        	}
+        	
         }
-        
         private void makerText_KeyPress(object sender, KeyPressEventArgs e)
         {
-            //Fix to use keychar.
-            /*if (e.KeyChar == )
-            {
-                currentWord = ParseCode(currentWord);
-                ColorRefresh();
-                currentWord = "";
-                return;
-            }
-            currentWord += a.ConvertToString(e.KeyData)*/
-        }
-    }
+			if(e.KeyChar == (char)Keys.Space){
+				StringToRegexColor();
+		    }
+		}
+	}
 }

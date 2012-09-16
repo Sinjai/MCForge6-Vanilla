@@ -131,7 +131,7 @@ namespace MCForge.Gui.Components {
             Refresh();
         }
 
-              /// <summary>
+        /// <summary>
         /// Appends the log.
         /// </summary>
         /// <param name="text">The text to log.</param>
