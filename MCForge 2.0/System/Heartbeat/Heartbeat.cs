@@ -29,8 +29,8 @@ namespace MCForge.Core.HeartService
 	{
 		public static void PrepareHearts()
 		{
-			Heart.hearts.Add(new MBeat());
-			Heart.hearts.Add(new WBeat());
+			Heart.hearts.Add(new CBeat());
+            Heart.hearts.Add(new MBeat());
 		}
 
         public static void ActivateHeartBeat() {
@@ -68,7 +68,7 @@ namespace MCForge.Core.HeartService
 					Logger.LogError(e);
 				}
 			}
-			//Minecraft URL stuff...
+			//ClassiCube URL stuff...
 			if (output[0] == "bad heartbeat! (salt is too long)")
 			{
 				//saltlength is not limited by salt.Length

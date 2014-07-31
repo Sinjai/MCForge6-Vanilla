@@ -266,15 +266,15 @@ namespace MCForge.Gui.Forms {
 
 
         private void visitForumsToolStripMenuItem_Click(object sender, EventArgs e) {
-            Process.Start("http://mcforge.net/forums/");
+            Process.Start("http://mcforge.org/forums/");
         }
 
         private void reportAProblemToolStripMenuItem_Click(object sender, EventArgs e) {
-            Process.Start("http://www.mcforge.net/forums/forumdisplay.php?fid=5");
+            Process.Start("http://mcforge.org/forums/viewforum.php?f=8");
         }
 
         private void documentationToolStripMenuItem_Click(object sender, EventArgs e) {
-            Process.Start("https://github.com/MCForge/MCForge-Vanilla/wiki");
+            Process.Start("https://github.com/MCForge/MCForge7-Vanilla");
         }
 
         private void shutdownToolStripMenuItem_Click(object sender, EventArgs e) {

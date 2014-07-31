@@ -131,6 +131,9 @@ namespace MCForge.Entity
                                 case 5: HandleBlockchange(message); break;
                                 case 8: HandleIncomingPos(message); break;
                                 case 13: HandleChat(message); break;
+                                case 16: HandleExtInfo(message); break;
+                                case 17: HandleExtEntry(message); break;
+                                case 19: HandleCustomBlockSupportLevel(message); break;
                             }
                         });
                     }
@@ -150,6 +153,24 @@ namespace MCForge.Entity
                 Logger.LogError(e);
             }
             return buffer;
+        }
+
+        public void HandleExtInfo(byte[] message)
+        {
+            appName = enc.GetString(message, 0, 64).Trim();
+            extensionCount = message[65];
+        }
+
+        void HandleExtEntry(byte[] msg)
+        {
+            CPE tmp; tmp.name = enc.GetString(msg, 0, 64);
+            tmp.version = BitConverter.ToInt32(msg, 64);
+            ExtEntry.Add(tmp);
+        }
+
+        public void HandleCustomBlockSupportLevel(byte[] message)
+        {
+            customBlockSupportLevel = 1;
         }
 
         private void HandleLogin(byte[] message)
@@ -210,6 +231,29 @@ namespace MCForge.Entity
                         SendPacket(pa);
                     }
                 }
+
+            if (type == 0x42)
+            {
+                extension = true;
+                SendExtInfo(14);
+                SendExtEntry("ClickDistance", 1);
+                SendExtEntry("CustomBlocks", 1);
+                SendExtEntry("HeldBlock", 1);
+                SendExtEntry("TextHotKey", 1);
+                SendExtEntry("ExtPlayerList", 1);
+                SendExtEntry("EnvColors", 1);
+                SendExtEntry("SelectionCuboid", 1);
+                SendExtEntry("BlockPermissions", 1);
+                SendExtEntry("ChangeModel", 1);
+                SendExtEntry("EnvMapAppearance", 1);
+                SendExtEntry("EnvWeatherType", 1);
+                SendExtEntry("HackControl", 1);
+                SendExtEntry("EmoteFix", 1);
+                SendExtEntry("MessageTypes", 1);
+
+                SendCustomBlockSupportLevel(1);
+            }
+
                 //TODO Database Stuff
 
                 Logger.Log("[System]: " + Ip + " logging in as " + Username + ".", System.Drawing.Color.Green, System.Drawing.Color.Black);
@@ -258,7 +302,17 @@ namespace MCForge.Entity
                 UpdatePosition(true);
                 SpawnOtherPlayersForThisPlayer();
                 SpawnBotsForThisPlayer();
-
+                Server.Players.ForEach(delegate(Player p)
+                {
+                    if (p != this && p.HasExtension("ExtPlayerList"))
+                    {
+                        p.SendExtAddPlayerName(ID, Username, p.Group, p.Color + p.Username);
+                    }
+                    if (HasExtension("ExtPlayerList"))
+                    {
+                        SendExtAddPlayerName(p.ID, p.Username, p.Group, p.Color + p.Username);
+                    }
+                });
                 IsLoading = false;
 
                 //Load from Database
@@ -1121,6 +1175,171 @@ namespace MCForge.Entity
                     p.SendPacket(pa);
                 }
             });
+        }
+
+        public void SendExtInfo(short count)
+        {
+            Packet pa = new Packet();
+            pa.Add(Packet.Types.ExtInfo);
+            pa.Add("MCForge-Redux", 64);
+            pa.Add(count);
+            SendPacket(pa);
+        }
+        public void SendExtEntry(string name, short version)
+        {
+            Packet pa = new Packet();
+            pa.Add(Packet.Types.ExtEntry);
+            pa.Add(name, 64);
+            pa.Add(version);
+            SendPacket(pa);
+        }
+        public void SendClickDistance(short distance)
+        {
+            Packet pa = new Packet();
+            pa.Add(Packet.Types.SetClickDistance);
+            pa.Add(distance);
+            SendPacket(pa);
+        }
+        public void SendCustomBlockSupportLevel(byte level)
+        {
+            Packet pa = new Packet();
+            pa.Add(Packet.Types.CustomBlockSupportLevel);
+            pa.Add(level);
+            SendPacket(pa);
+        }
+        public void SendHoldThis(byte type, byte locked)
+        { // if locked is on 1, then the player can't change their selected block.
+            Packet pa = new Packet();
+            pa.Add(Packet.Types.HoldThis);
+            pa.Add(type);
+            pa.Add(locked);
+            SendPacket(pa);
+        }
+        public void SendTextHotKey(string label, string command, int keycode, byte mods)
+        {
+            Packet pa = new Packet();
+            pa.Add(Packet.Types.SetTextHotKey);
+            pa.Add(label, 64);
+            pa.Add(command, 64);
+            pa.Add(keycode);
+            pa.Add(mods);
+            SendPacket(pa);
+        }
+        public void SendExtAddPlayerName(short id, string name, PlayerGroup grp, string displayname = "")
+        {
+            Packet pa = new Packet();
+            pa.Add(Packet.Types.ExtAddPlayerName);
+            byte[] buffer = new byte[195];
+            pa.Add(id);
+            pa.Add(name, 64);
+            if (displayname == "") { displayname = name; }
+            pa.Add(displayname, 64);
+            pa.Add(grp.Name.ToUpper() + "s:", 64);
+            pa.Add(121 - grp.Permission);
+            SendPacket(pa);
+        }
+
+        public void SendExtAddEntity(byte id, string name, string displayname = "")
+        {
+            Packet pa = new Packet();
+            pa.Add(Packet.Types.ExtAddEntity);
+            byte[] buffer = new byte[129];
+            buffer[0] = id;
+            pa.Add(name, 64);
+            if (displayname == "") { displayname = name; }
+            pa.Add(displayname, 64);
+            SendPacket(pa);
+        }
+
+        public void SendExtRemovePlayerName(short id)
+        {
+            Packet pa = new Packet();
+            pa.Add(Packet.Types.ExtRemovePlayerName);
+            pa.Add(id);
+            SendPacket(pa);
+        }
+        public void SendEnvSetColor(byte type, short r, short g, short b)
+        {
+            Packet pa = new Packet();
+            pa.Add(Packet.Types.EnvSetColor);
+            pa.Add(type);
+            pa.Add(r);
+            pa.Add(g);
+            pa.Add(b);
+            SendPacket(pa);
+        }
+        public void SendMakeSelection(byte id, string label, short smallx, short smally, short smallz, short bigx, short bigy, short bigz, short r, short g, short b, short opacity)
+        {
+            Packet pa = new Packet();
+            pa.Add(Packet.Types.MakeSelection);
+            pa.Add(id);
+            pa.Add(label, 64);
+            pa.Add(smallx);
+            pa.Add(smally);
+            pa.Add(smallz);
+            pa.Add(bigx);
+            pa.Add(bigy);
+            pa.Add(bigz);
+            pa.Add(r);
+            pa.Add(g);
+            pa.Add(b);
+            pa.Add(opacity);
+            SendPacket(pa);
+        }
+        public void SendDeleteSelection(byte id)
+        {
+            Packet pa = new Packet();
+            pa.Add(Packet.Types.RemoveSelection);
+            pa.Add(id);
+            SendPacket(pa);
+        }
+        public void SendSetBlockPermission(byte type, byte canplace, byte candelete)
+        {
+            Packet pa = new Packet();
+            pa.Add(Packet.Types.SetBlockPermission);
+            pa.Add(canplace);
+            pa.Add(candelete);
+            SendPacket(pa);
+        }
+        public void SendChangeModel(byte id, string model)
+        {
+            if (!HasExtension("ChangeModel")) { return; }
+            Packet pa = new Packet();
+            pa.Add(Packet.Types.ChangeModel);
+            pa.Add(id);
+            pa.Add(model, 64);
+            SendPacket(pa);
+        }
+        public void SendSetMapAppearance(string url, byte sideblock, byte edgeblock, short sidelevel)
+        {
+            Packet pa = new Packet();
+            pa.Add(Packet.Types.EnvMapAppearance);
+            byte[] buffer = new byte[68];
+            pa.Add(url, 64);
+            pa.Add(sideblock);
+            pa.Add(edgeblock);
+            pa.Add(sidelevel);
+            SendPacket(pa);
+        }
+        public void SendSetMapWeather(byte weather)
+        { // 0 - sunny; 1 - raining; 2 - snowing
+            Packet pa = new Packet();
+            pa.Add(Packet.Types.EnvWeatherType);
+            pa.Add(weather);
+            SendPacket(pa);
+        }
+        public void SendHackControl(byte allowflying, byte allownoclip, byte allowspeeding, byte allowrespawning, byte allowthirdperson, byte allowchangingweather, short maxjumpheight)
+        {
+            Packet pa = new Packet();
+            pa.Add(Packet.Types.HackControl);
+            pa.Add(allowflying);
+            pa.Add(allownoclip);
+            pa.Add(allowspeeding);
+            pa.Add(allowrespawning);
+            pa.Add(allowthirdperson);
+            pa.Add(allowchangingweather);
+            pa.Add(maxjumpheight);
+            SendPacket(pa);
         }
         #endregion
 

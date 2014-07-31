@@ -105,6 +105,7 @@ namespace MCForge.Utils.Settings {
                }, false);
 
         internal static string Salt { get; set; }
+        internal static string Salt2 { get; set; }
         internal static int Version { get { return 7; } }
 
         /// <summary>
@@ -226,8 +227,11 @@ namespace MCForge.Utils.Settings {
         internal static void GenerateSalt() {
             using (var numberGen = new RNGCryptoServiceProvider()) {
                 var data = new byte[20];
+                var data2 = new byte[20];
                 numberGen.GetBytes(data);
+                numberGen.GetBytes(data2);
                 Salt = Convert.ToBase64String(data);
+                Salt2 = Convert.ToBase64String(data2);
             }
         }
 

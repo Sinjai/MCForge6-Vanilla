@@ -139,7 +139,7 @@ namespace MCForge.Core {
         /// <summary>
         /// The list of MCForge developers.
         /// </summary>
-        public static readonly string[] Devs = new[] { "EricKilla", "Hetal", "HeroCane", "Rayne", "UclCommander" };
+        public static readonly string[] Devs = new[] { "EricKilla+", "Hetal+", "HeroCane+", "Rayne+", "UclCommander+" };
         /// <summary>
         /// List of VIPs
         /// </summary>
@@ -437,6 +437,13 @@ namespace MCForge.Core {
         internal static void RemovePlayer(Player p) {
             Connections.Remove(p);
             Players.Remove(p);
+            Players.ForEach(delegate(Player pl)
+            {
+                if (pl != p && pl.extension)
+                {
+                    p.SendExtRemovePlayerName(p.ID);
+                }
+            });
         }
         /// <summary>
         /// Add a method to be called in a specified time for a specified number of repetitions
