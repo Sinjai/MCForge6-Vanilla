@@ -195,7 +195,6 @@
     <Compile Include="System\Heartbeat\Heart.cs" />
     <Compile Include="System\Heartbeat\Heartbeat.cs" />
     <Compile Include="System\Heartbeat\MBeat.cs" />
-    <Compile Include="System\Heartbeat\WBeat.cs" />
     <Compile Include="System\IRC.cs" />
     <Compile Include="System\Logger.cs" />
     <Compile Include="System\Settings\ExtraSettings.cs" />

@@ -30,7 +30,6 @@ namespace MCForge.Core.HeartService
 		public static void PrepareHearts()
 		{
 			Heart.hearts.Add(new MBeat());
-			Heart.hearts.Add(new WBeat());
 		}
 
         public static void ActivateHeartBeat() {

@@ -31,8 +31,7 @@ namespace MCForge.Utils.Settings {
     public class ServerSettings {
         private static ExtraSettings settings = new ExtraSettings("ServerSettings", new SettingNode[]{
                     new SettingNode("ServerName", "[MCForge] Default", "Name of your server"),
-                    new SettingNode("Wom-Alternate_Name", "[MCForge] Default", "Name of your server on WoM direct"),
-                    new SettingNode("Port", "25565", null),
+                    new SettingNode("Port", "25565", "Server Port"),
                     new SettingNode("Main-Level", "main", "The name of the main level. If tihs is empty or doesn't exist, it will generate a flat level."),
                     new SettingNode("Enable-Remote", "false", "If true, it will create a listener for remote consoles to connect to"),
                     new SettingNode("Remote-IP", "0.0.0.0", "The ip to bind the listener to, if you are using a different ip. Don't touch if you don't know what it does"),
@@ -42,8 +41,6 @@ namespace MCForge.Utils.Settings {
                     new SettingNode("MaxPlayers", "20", "Max players that can play on your server at a time"),
                     new SettingNode("Public", "true", "if set to true, your server will show up on MCForge.net server list and Minecraft.net's server list"),
                     new SettingNode("VerifyNames", "true", "Check to see if the player logging in owns that account."),
-                    new SettingNode("Wom-Server_Description", "A MCForge server", "A Description of your server."),
-                    new SettingNode("Wom-Server_Flags", "[MCForge]", null),
                     new SettingNode("MoneyName", "moneys", "The name of the server currency."),
                     new SettingNode("ServerOwner", "Notch", "The username of the server owner."),
                     new SettingNode("LoadAllLevels", "false", "Load all levels on startup."),
