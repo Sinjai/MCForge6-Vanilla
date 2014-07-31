@@ -74,9 +74,9 @@ namespace MCForge.Gui.Forms {
         }
 
         private void FormMainScreen_Shown(object sender, EventArgs e) {
-            if ( GuiSettings.GetSettingBoolean(GuiSettings.SHOW_NEWS_KEY) )
+            /*if ( GuiSettings.GetSettingBoolean(GuiSettings.SHOW_NEWS_KEY) )
                 using ( var news = new NewsDialog() )
-                    news.ShowDialog();
+                    news.ShowDialog();*/
         }
 
         private void txtMessage_KeyDown(object sender, KeyEventArgs e) {

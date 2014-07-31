@@ -139,7 +139,7 @@ namespace MCForge.Core {
         /// <summary>
         /// The list of MCForge developers.
         /// </summary>
-        public static readonly string[] Devs = new[] { "EricKilla", "Merlin33069", "Snowl", "gamezgalaxy", "headdetect", "Gamemakergm", "cazzar", "givo", "jasonbay13", "Alem_Zupa", "7imekeeper", "ninedrafted", "Nerketur", "Serado", "501st_Commander" };
+        public static readonly string[] Devs = new[] { "EricKilla", "Hetal", "HeroCane", "Rayne", "UclCommander" };
         /// <summary>
         /// List of VIPs
         /// </summary>
