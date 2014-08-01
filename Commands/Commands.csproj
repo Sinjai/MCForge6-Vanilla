@@ -12,6 +12,7 @@
     <AssemblyName>Commands</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -24,7 +25,6 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
@@ -78,6 +78,7 @@
     <Compile Include="Information\CmdLevels.cs" />
     <Compile Include="Information\CmdUnloaded.cs" />
     <Compile Include="Misc\CmdEconomy.cs" />
+    <Compile Include="Misc\CmdGC.cs" />
     <Compile Include="Misc\CmdPortal.cs" />
     <Compile Include="Moderation\CmdClearBlockChanges.cs" />
     <Compile Include="Moderation\CmdHighlight.cs" />

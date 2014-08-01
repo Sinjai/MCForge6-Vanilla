@@ -18,6 +18,7 @@ using System.Diagnostics;
 using MCForge.Core;
 using MCForge.World;
 using System.Reflection;
+using MCForge.Core.RelayChat;
 
 namespace MCForge.Gui.Forms {
     public partial class FormMainScreen : AeroForm, IFormSharer {
@@ -125,6 +126,11 @@ namespace MCForge.Gui.Forms {
                     Player.UniversalChatAdmins("&a<&fTo Admins&a> [&fConsole&a]:&f " + txtMessage.Text);
                     Logger.Log("<AdminChat> &5[&1Console&5]: &1" + txtMessage.Text);
                     txtMessage.InHintState = true;
+                }
+                else if (cmbChatType.Text == "GlobalChat")
+                {
+                    GlobalChat.SendConsoleMessage(txtMessage.Text);
+                    Logger.Log("<GC> &0[&2Console&0]: " + txtMessage.Text);
                 }
                 else {
                     Player.UniversalChat("&a[&fConsole&a]:&f " + txtMessage.Text);

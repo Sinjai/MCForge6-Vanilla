@@ -188,6 +188,7 @@
     <Compile Include="Robot\Point3D.cs" />
     <Compile Include="System\Backup.cs" />
     <Compile Include="System\Economy.cs" />
+    <Compile Include="System\Heartbeat\CBeat.cs" />
     <Compile Include="System\RelayChat\GlobalChat.cs" />
     <Compile Include="System\RelayChat\ServerChat.cs" />
     <Compile Include="System\Updater.cs" />

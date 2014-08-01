@@ -43,7 +43,7 @@ namespace MCForge.Core.RelayChat
         StreamReader sread;
         NetworkStream sstream;
         TcpClient irc;
-        bool debug = true;
+        bool debug = false;
         public bool botOn = false;
         public bool connected = false;
         string line;
