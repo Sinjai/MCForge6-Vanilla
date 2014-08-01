@@ -21,13 +21,13 @@ using MCForge.Utils;
 namespace MCForge.Core.HeartService
 {
 	/// <summary>
-	/// The Minecraft Heartbeat
+	/// The ClassiCube Heartbeat
 	/// </summary>
-	public class MBeat : Heart
+	public class CBeat : Heart
 	{
 		public override string URL {
 			get {
-				return "https://minecraft.net/heartbeat.jsp";
+				return "http://www.classicube.net/heartbeat.jsp";
 			}
 		}
 		public override string Prepare()
@@ -37,12 +37,12 @@ namespace MCForge.Core.HeartService
 				"&name=" + System.Web.HttpUtility.UrlEncode(ServerSettings.GetSetting("servername")) +
 				"&public=" + ServerSettings.GetSettingBoolean("public") +
 				"&version=" + ServerSettings.Version +
-				"&salt=" + System.Web.HttpUtility.UrlEncode(ServerSettings.Salt) +
+				"&salt=" + System.Web.HttpUtility.UrlEncode(ServerSettings.Salt2) +
 				"&users=" + Server.PlayerCount;
 		}
 		public override string OnPump(StreamReader responseStreamReader)
 		{
-            return null;
+			return base.OnPump(responseStreamReader);
 		}
 	}
 }

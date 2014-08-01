@@ -145,6 +145,21 @@ namespace MCForge.Entity {
         private byte[] buffer = new byte[0];
         private byte[] tempBuffer = new byte[0xFFF];
 
+        public bool HasExtension(string extName)
+        {
+            if (!extension)
+                return false;
+
+            return ExtEntry.FindAll(cpe => cpe.name == extName) != null;
+        }
+        public struct CPE { public string name; public int version; }
+        public List<CPE> ExtEntry = new List<CPE>();
+        public string appName;
+        public int extensionCount;
+        public List<string> extensions = new List<string>();
+        public int customBlockSupportLevel;
+        public bool extension;
+
         /// <summary>
         /// The player's color
         /// </summary>
@@ -608,13 +623,29 @@ namespace MCForge.Entity {
             return false;
         }
         private bool VerifyAccount(string name, string verify) {
+            bool verified = false;
             if (!ServerSettings.GetSettingBoolean("offline") && Ip != "127.0.0.1") {
                 if (Server.PlayerCount >= ServerSettings.GetSettingInt("maxplayers")) {
                     SKick("Server is full, please try again later!");
                     return false;
                 }
-
-                if (verify == null || verify == "" || verify == "--" || (verify != BitConverter.ToString(md5.ComputeHash(enc.GetBytes(ServerSettings.Salt + name))).Replace("-", "").ToLower().TrimStart('0') && verify != BitConverter.ToString(md5.ComputeHash(enc.GetBytes(ServerSettings.Salt + name))).Replace("-", "").ToLower().TrimStart('0'))) {
+                if (verify == null || verify == "" || verify == "--" || (verify != BitConverter.ToString(md5.ComputeHash(enc.GetBytes(ServerSettings.Salt2 + name))).Replace("-", "").ToLower() && verify != BitConverter.ToString(md5.ComputeHash(enc.GetBytes(ServerSettings.Salt2 + name))).Replace("-", "").ToLower()))
+                {
+                    if (ServerSettings.GetSettingBoolean("VerifyNames"))
+                    {
+                        SKick("Account could not be verified, try again.");
+                        //Logger.Log("'" + verify + "' != '" + BitConverter.ToString(md5.ComputeHash(enc.GetBytes(ServerSettings.salt + name))).Replace("-", "").ToLower().TrimStart('0') + "'");
+                        return false;
+                    }
+                }
+                else
+                {
+                    name += "+";
+                    _displayName += "+";
+                    Username += "+";
+                    verified = true;
+                }
+                if (verified == false && (verify == null || verify == "" || verify == "--" || (verify != BitConverter.ToString(md5.ComputeHash(enc.GetBytes(ServerSettings.Salt + name))).Replace("-", "").ToLower().TrimStart('0') && verify != BitConverter.ToString(md5.ComputeHash(enc.GetBytes(ServerSettings.Salt + name))).Replace("-", "").ToLower().TrimStart('0')))) {
                     if (ServerSettings.GetSettingBoolean("VerifyNames")) {
                         SKick("Account could not be verified, try again.");
                         //Logger.Log("'" + verify + "' != '" + BitConverter.ToString(md5.ComputeHash(enc.GetBytes(ServerSettings.salt + name))).Replace("-", "").ToLower().TrimStart('0') + "'");
@@ -622,7 +653,7 @@ namespace MCForge.Entity {
                     }
                 }
             }
-            if (name.Length > 16 || !ValidName(name)) {
+            if (name.Length > 50 || !ValidName(name)) {
                 SKick("Illegal name!");
                 return false;
             }
@@ -635,7 +666,7 @@ namespace MCForge.Entity {
         /// <param name="name">the name to check</param>
         /// <returns>returns true if name is valid</returns>
         public static bool ValidName(string name) {
-            const string allowedchars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234567890._";
+            const string allowedchars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234567890._+@";
             foreach (char ch in name) { if (allowedchars.IndexOf(ch) == -1) { return false; } } return true;
         }
         #endregion

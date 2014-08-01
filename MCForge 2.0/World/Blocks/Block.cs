@@ -413,6 +413,23 @@ namespace MCForge.World {
             /// </summary>
             public const byte OBSIDIAN = 49;
 
+            public const byte cobblestoneslab = (byte)50;
+            public const byte rope = (byte)51;
+            public const byte sandstone = (byte)52;
+            public const byte snow = (byte)53;
+            public const byte fire = (byte)54;
+            public const byte lightpinkwool = (byte)55;
+            public const byte forestgreenwool = (byte)56;
+            public const byte brownwool = (byte)57;
+            public const byte deepblue = (byte)58;
+            public const byte turquoise = (byte)59;
+            public const byte ice = (byte)60;
+            public const byte ceramictile = (byte)61;
+            public const byte magma = (byte)62;
+            public const byte pillar = (byte)63;
+            public const byte crate = (byte)64;
+            public const byte stonebrick = (byte)65;
+
             /// <summary>
             /// Unknown Block
             /// </summary>
