@@ -74,7 +74,23 @@ namespace MCForge.World {
              new TNT(),
              new Bookcase(),
              new MossyCobbleStone(),
-             new Obsidian()
+             new Obsidian(),
+             new CobblestoneSlab(),
+             new Rope(),
+             new SandStone(),
+             new Snow(),
+             new Fire(),
+             new LightPink(),
+             new ForestGreen(),
+             new Brown(),
+             new DeepBlue(),
+             new Turquoise(),
+             new Ice(),
+             new CeramicTile(),
+             new MagmaBlock(),
+             new Pillar(),
+             new Crate(),
+             new StoneBrick()
     };
         internal static readonly List<Block> CustomBlockList = new List<Block>();
         public abstract byte VisibleBlock { get; }
@@ -116,7 +132,7 @@ namespace MCForge.World {
         /// <returns>A byte of the block</returns>
         public static byte NameToBlock(string name) {
             foreach (var block in Blocks)
-                if (block.Name == name)
+                if (name == block.Name)
                     return block;
             foreach (var block in CustomBlockList)
                 if (block.Name == name)
@@ -166,7 +182,7 @@ namespace MCForge.World {
         /// <param name="blockToCheck">Byte or block to check its validness</param>
         /// <returns>A boolean stating whether its valid</returns>
         public static bool IsValidBlock(byte blockToCheck) {
-            return (blockToCheck < 50);
+            return (blockToCheck < 66);
         }
 
         public static bool CanWalkThrough(byte blockToCheck) {
@@ -179,7 +195,7 @@ namespace MCForge.World {
                 blockToCheck == BlockList.RED_MUSHROOM ||
                 blockToCheck == BlockList.YELLOW_FLOWER ||
                 blockToCheck == BlockList.BROWN_MUSHROOM ||
-                blockToCheck == BlockList.SAPLING);
+                blockToCheck == BlockList.SAPLING || blockToCheck == BlockList.fire || blockToCheck == BlockList.rope);
         }
 
         public static bool CanPassLight(byte blockToCheck) {
