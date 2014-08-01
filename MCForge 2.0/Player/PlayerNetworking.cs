@@ -102,6 +102,9 @@ namespace MCForge.Entity
                     case 5: length = 8; break; // blockchange
                     case 8: length = 9; break; // input
                     case 13: length = 65; break; // chat
+                    case 16: length = 66; break;
+                    case 17: length = 68; break;
+                    case 19: length = 1; break;
                     default:
                         {
                             PacketEventArgs args = new PacketEventArgs(buffer, true, (Packet.Types)msg);
@@ -214,6 +217,7 @@ namespace MCForge.Entity
                 {
                     Kick("Disconnected by canceled ConnectionEventArgs!");
                 }
+                SendMotd();
             Gotos_Are_The_Devil:
                 if (Server.PlayerCount >= ServerSettings.GetSettingInt("MaxPlayers") && !Server.VIPs.Contains(Username) && !Server.Devs.Contains(Username))
                 {
@@ -253,8 +257,21 @@ namespace MCForge.Entity
                 ExtraData.CreateIfNotExist("Mark1", new Vector3S());
                 ExtraData.CreateIfNotExist("Mark2", new Vector3S());
                 byte type = message[129];
+                Logger.Log(message[129].ToString());
+                IsLoading = true;
+                IsLoggedIn = true;
+                if (Level == null)
+                    Level = Server.Mainlevel;
+                else
+                    Level = Level;
+
+                ID = FreeId();
+                if (Server.PlayerCount >= ServerSettings.GetSettingInt("MaxPlayers"))
+                    goto Gotos_Are_The_Devil;                                          //Gotos are literally the devil, but it works here so two players dont login at once
+                UpgradeConnectionToPlayer();
                 if (type == 0x42)
                 {
+                    Logger.Log("test");
                     extension = true;
                     SendExtInfo(15);
                     SendExtEntry("ClickDistance", 1);
@@ -273,19 +290,7 @@ namespace MCForge.Entity
                     SendExtEntry("MessageTypes", 1);
                     SendCustomBlockSupportLevel(1);
                 }
-                SendMotd();
-                IsLoading = true;
-                IsLoggedIn = true;
-                if (Level == null)
-                    Level = Server.Mainlevel;
-                else
-                    Level = Level;
-
-                ID = FreeId();
-                if (Server.PlayerCount >= ServerSettings.GetSettingInt("MaxPlayers"))
-                    goto Gotos_Are_The_Devil;                                          //Gotos are literally the devil, but it works here so two players dont login at once
-                UpgradeConnectionToPlayer();
-
+                //SendMotd();*/
                 short x = (short)((0.5 + Level.SpawnPos.x) * 32);
                 short y = (short)((1 + Level.SpawnPos.y) * 32);
                 short z = (short)((0.5 + Level.SpawnPos.z) * 32);
@@ -338,7 +343,7 @@ namespace MCForge.Entity
         }
         private void HandleBlockchange(ushort x, ushort y, ushort z, byte action, byte newType, bool fake) {
             LastClick = new Vector3S(x, y, z);
-            if (newType > 49 || (newType == 7 && !IsAdmin)) {
+            if (newType > 65) {
                 Kick("HACKED CLIENT!");
                 //TODO Send message to op's for adminium hack
                 return;
@@ -380,17 +385,12 @@ namespace MCForge.Entity
                 Level.BlockChange(x, z, y, newType, this);
             }
         }
-        private void HandleIncomingPos(byte[] message) {
+        private void HandleIncomingPos(byte[] message)
+        {
             if (!IsLoggedIn)
                 return;
 
             byte thisid = message[0];
-
-            if (thisid != 0xFF && thisid != ID && thisid != 0) {
-                //TODO Player.GlobalMessageOps("Player sent a malformed packet!");
-                Kick("Hacked Client!");
-                return;
-            }
 
             ushort x = Packet.NTHO(message, 1);
             ushort y = Packet.NTHO(message, 3);
@@ -405,41 +405,51 @@ namespace MCForge.Entity
             oldRot = Rot;
             Rot = new byte[2] { rotx, roty };
             bool needsOwnPos = false;
-            if (!(fromPosition.x == Pos.x && fromPosition.y == Pos.y && fromPosition.z == Pos.z)) {
+            if (!(fromPosition.x == Pos.x && fromPosition.y == Pos.y && fromPosition.z == Pos.z))
+            {
                 MoveEventArgs eargs = new MoveEventArgs(new Vector3S(fromPosition), new Vector3S(Pos));
                 eargs = OnPlayerMove.Call(this, eargs, OnAllPlayersMove);
-                if (eargs.Canceled) {
+                if (eargs.Canceled)
+                {
                     Pos = fromPosition;
                     oldPos = fromPosition;
                     needsOwnPos = true;
                 }
-                else {
-                    if (eargs.ToPosition / 32 != eargs.FromPosition / 32) {
+                else
+                {
+                    if (eargs.ToPosition / 32 != eargs.FromPosition / 32)
+                    {
                         eargs = OnPlayerBigMove.Call(this, eargs, OnAllPlayersBigMove);
-                        if (eargs.Canceled) {
+                        if (eargs.Canceled)
+                        {
                             Pos = fromPosition;
                             oldPos = fromPosition;
                             needsOwnPos = true;
                         }
-                        else {
+                        else
+                        {
                             Pos = eargs.ToPosition;
                             oldPos = eargs.FromPosition;
                         }
                     }
-                    else {
+                    else
+                    {
                         Pos = eargs.ToPosition;
                         oldPos = eargs.FromPosition;
                     }
                 }
             }
-            if (oldRot[0] != Rot[0] || oldRot[1] != Rot[1]) {
+            if (oldRot[0] != Rot[0] || oldRot[1] != Rot[1])
+            {
                 RotateEventArgs eargs = new RotateEventArgs(Rot[0], Rot[1]);
                 eargs = OnPlayerRotate.Call(this, eargs, OnAllPlayersRotate);
-                if (eargs.Canceled) {
+                if (eargs.Canceled)
+                {
                     Rot = eargs.Rot;
                     needsOwnPos = true;
                 }
-                else {
+                else
+                {
                     Rot = eargs.Rot;
                 }
             }
@@ -1202,7 +1212,7 @@ namespace MCForge.Entity
             pa.Add(count);
             SendPacket(pa);
         }
-        public void SendExtEntry(string name, short version)
+        public void SendExtEntry(string name, int version)
         {
             Packet pa = new Packet();
             pa.Add(Packet.Types.ExtEntry);
