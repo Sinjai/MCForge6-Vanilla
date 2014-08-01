@@ -131,6 +131,7 @@ namespace MCForge.Gui.Forms {
                 {
                     GlobalChat.SendConsoleMessage(txtMessage.Text);
                     Logger.Log("<GC> &0[&2Console&0]: " + txtMessage.Text);
+                    txtMessage.Text = "";
                 }
                 else {
                     Player.UniversalChat("&a[&fConsole&a]:&f " + txtMessage.Text);

@@ -27,6 +27,7 @@ using MCForge.SQL;
 using MCForge.Utils;
 using MCForge.Utils.Settings;
 using MCForge.World;
+using MCForge.Core.RelayChat;
 
 namespace MCForge.Entity
 {
@@ -665,7 +666,9 @@ namespace MCForge.Entity
             ExtraData.CreateIfNotExist("AdminChat", false);
             if (incomingText[0] == '+' || (bool)ExtraData.GetIfExist("AdminChat")) //Admin chat
             {
-                incomingText = incomingText.Remove(0, 1);
+                if (incomingText.StartsWith("+"))
+                    incomingText = incomingText.Remove(0, 1);
+
                 if (incomingText == "")
                 {
                     return;
@@ -700,6 +703,22 @@ namespace MCForge.Entity
                 to.SendMessage("[<] " + Username + ":&f " + incomingText);
                 return;
             }
+
+            ExtraData.CreateIfNotExist("GlobalChat", false);
+            if (incomingText[0] == '~' || (bool)ExtraData.GetIfExist("GlobalChat")) //Admin chat
+            {
+                if(incomingText.StartsWith("~"))
+                    incomingText = incomingText.Remove(0, 1);
+
+                if (incomingText == "")
+                    return;
+                
+                GlobalChat.SendMessage(this, incomingText);
+                Player.UniversalChat(String.Format("[GC] {0}: {1}", this.Username, incomingText));
+                Logger.Log("<GC> <" + Username + "> " + incomingText);
+                return;
+            }
+
             if (incomingText[0] == '@') //Whisper whisper woosh woosh
             {
                 incomingText = incomingText.Trim();

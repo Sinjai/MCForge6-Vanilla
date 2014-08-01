@@ -1,14 +1,12 @@
-﻿using MCForge.Core.RelayChat;
+﻿using System;
 using MCForge.Entity;
 using MCForge.Interface.Command;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using MCForge.Utils;
+using MCForge.Core.RelayChat;
 
 namespace MCForge.Commands.Misc
 {
-    class CmdGC : ICommand
+    public class CmdGC : ICommand
     {
         public string Name { get { return "GlobalChat";  } }
         public CommandTypes Type { get { return CommandTypes.Misc; } }
@@ -19,7 +17,26 @@ namespace MCForge.Commands.Misc
 
         public void Use(Player p, string[] args)
         {
-            GlobalChat.SendMessage(p, String.Join(" ", args));
+            if(args.Length > 0)
+            {
+                string msg = String.Join(" ", args);
+
+                GlobalChat.SendMessage(p, msg);
+                Player.UniversalChat(String.Format("[GC] {0}: {1}", p.Username, msg));
+                return;
+            }
+
+            p.ExtraData.CreateIfNotExist("GlobalChat", true);
+            if (!(bool)p.ExtraData["GlobalChat"])
+            {
+                p.SendMessage("GlobalChat activated. All messages will be sent to GC!");
+                p.ExtraData["GlobalChat"] = true;
+            }
+            else
+            {
+                p.SendMessage("GlobalChat off!");
+                p.ExtraData["GlobalChat"] = false;
+            } 
         }
 
         public void Help(Player p)

@@ -151,14 +151,17 @@ namespace MCForge.Gui.Components {
                 return;
             }
 
-            SelectionStart = TextLength;
-            SelectionLength = 0;
-            SelectionColor = foreColor;
-            SelectionBackColor = bgColor;
-            AppendText( text );
-            SelectionBackColor = BackColor;
-            SelectionColor = ForeColor;
-
+            try
+            {
+                SelectionStart = TextLength;
+                SelectionLength = 0;
+                SelectionColor = foreColor;
+                SelectionBackColor = bgColor;
+                AppendText(text);
+                SelectionBackColor = BackColor;
+                SelectionColor = ForeColor;
+            }
+            catch (Exception e) { } //because it can cause a crash on shutdown
         }
 
         private void ColoredReader_LinkClicked( object sender, System.Windows.Forms.LinkClickedEventArgs e ) {
