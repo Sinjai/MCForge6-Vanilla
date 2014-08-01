@@ -26,7 +26,7 @@ using MCForge.Core;
 using MCForge.Entity;
 using MCForge.Utils.Settings;
 
-namespace MCForge.Core
+namespace MCForge.Core.RelayChat
 {
     /// <summary>
     /// IRC Class to connect to an Internet Relay Chat Server
@@ -43,7 +43,7 @@ namespace MCForge.Core
         StreamReader sread;
         NetworkStream sstream;
         TcpClient irc;
-        bool debug = false;
+        bool debug = true;
         public bool botOn = false;
         public bool connected = false;
         string line;
@@ -51,19 +51,19 @@ namespace MCForge.Core
         string[] splitLine;
         private static ConsolePlayer cp;
         private static CommandIO cio = new CommandIO();
+        protected string type = "IRC";
 
         public IRC() { }
 
-        public void Start()
+        public void Start(string server, int port, string nick, string channel, string password = null, string opchannel = null)
         {
-            server = ServerSettings.GetSetting("IRC-Server");
-            port = ServerSettings.GetSettingInt("IRC-Port");
-            nickname = ServerSettings.GetSetting("IRC-Nickname");
-            channel = ServerSettings.GetSetting("IRC-Channel");
-            opChannel = ServerSettings.GetSetting("IRC-OPChannel");
-            password = ServerSettings.GetSetting("IRC-NickServ");
-            if (nickname == "" || server == "" || channel == "#" || channel == "" || port == -1 || !ServerSettings.GetSettingBoolean("IRC-Enabled"))
-                return;
+            this.server = server;
+            this.port = port;
+            this.nickname = nick;
+            this.channel = channel;
+            this.password = password;
+            this.opChannel = opChannel;
+
             ircControllers = LoadIrcControllers();
             Logger.Log("Connecting to IRC...");
             botOn = true;
@@ -174,8 +174,8 @@ namespace MCForge.Core
                             {
                                 try
                                 {
-                                    Player.UniversalChat("[IRC] <" + GetUsernameSpeaking(line) + ">: " + IRCToClassic(GetSpokenLine(line)));
-                                    Logger.Log("[IRC] <" + GetUsernameSpeaking(line) + ">: " + IRCToClassic(GetSpokenLine(line)));
+                                    Player.UniversalChat("[" + this.type + "] <" + GetUsernameSpeaking(line) + ">: " + IRCToClassic(GetSpokenLine(line)));
+                                    Logger.Log("[" + this.type + "] <" + GetUsernameSpeaking(line) + ">: " + IRCToClassic(GetSpokenLine(line)));
                                 }
                                 catch { }
                             }

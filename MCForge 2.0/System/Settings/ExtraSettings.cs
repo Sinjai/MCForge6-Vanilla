@@ -235,7 +235,7 @@ namespace MCForge.Utils.Settings {
                         ? v.Value
                         : v.Description == null
                             ? string.Format("{0}={1}" + (v != Values.Last() ? Environment.NewLine : ""), v.Key, v.Value)
-                            : string.Format("#{0}" + Environment.NewLine + "{1}={2}" + (v != Values.Last() ? Environment.NewLine : ""), v.Description, v.Key, v.Value));
+                            : string.Format("#{0}" + Environment.NewLine + "{1}={2}", v.Description, v.Key, v.Value));
 
                 }
             }

@@ -30,6 +30,7 @@ using MCForge.Utils;
 using MCForge.Utils.Settings;
 using MCForge.World;
 using MCForge.World.Physics;
+using MCForge.Core.RelayChat;
 
 namespace MCForge.Core {
     public static class Server {
@@ -325,11 +326,24 @@ namespace MCForge.Core {
             Logger.Log("[Important]: Server Started.", Color.Black, Color.White);
             if (!ServerSettings.GetSettingBoolean("VerifyNames"))
                 Logger.Log("[Important]: The server is running with verify names off! This could lead to bad things! Please turn on verify names if you dont know the risk and dont want these bad things to happen!", LogType.Critical);
-            IRC = new IRC();
+            
+            ServerChat irc = new ServerChat();
             try {
-                IRC.Start();
+                irc.Connect();
             }
             catch { }
+
+            if (ServerSettings.GetSettingBoolean("GC-Enabled"))
+            {
+                GlobalChat gc = new GlobalChat();
+                try
+                {
+                    gc.Connect();
+                }
+                catch { }
+            }
+
+
             PlayerConnectionTimeoutChecker = new Thread(() => {
                 int sleep = ServerSettings.GetSettingInt("AutoTimeout");
                 if (sleep < 0) sleep = 30;

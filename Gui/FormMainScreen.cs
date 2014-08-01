@@ -94,6 +94,7 @@ namespace MCForge.Gui.Forms {
                     if (cmd == null)
                     {
                         Logger.Log("Command not found!");
+                        txtMessage.Text = "";
                         return; // cannot run the command
                     }
                     if (cp == null)

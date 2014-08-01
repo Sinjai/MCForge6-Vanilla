@@ -83,6 +83,8 @@ namespace MCForge.Utils.Settings {
                     new SettingNode("IRC-Channel", "#", "IRC channel to connect to"),
                     new SettingNode("IRC-OPChannel", "#", "IRC operator channel to connect to"),
                     new SettingNode("IRC-NickServ", "password", "IRC NickServ password (optional when IRC is enabled)"),
+                    new SettingNode("GC-Enabled", "true", "Global Chat"),
+                    new SettingNode("GC-Nick", "", "Global Chat Nick"),
                     new SettingNode("AgreeingToRules", "true", "If set to true players below op will need to read the rules and agree before they can use commands"),
                     new SettingNode("$Before$Name", "true", "Puts a $ before the name of the variable if used. For example, if $name was typed in chat it would bring up $headdetect instead of just headdetect"),
                     new SettingNode("TreesGoThrough", "false", "Can /tree go through other blocks. Set to false to prevent players from using /tree to grief!"),
