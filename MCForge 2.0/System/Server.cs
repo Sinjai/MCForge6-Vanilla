@@ -449,15 +449,15 @@ namespace MCForge.Core {
             Players.Add(p);
         }
         internal static void RemovePlayer(Player p) {
-            Connections.Remove(p);
-            Players.Remove(p);
             Players.ForEach(delegate(Player pl)
             {
                 if (pl != p && pl.extension)
                 {
-                    p.SendExtRemovePlayerName(p.ID);
+                    pl.SendExtRemovePlayerName(p.ID);
                 }
             });
+            Connections.Remove(p);
+            Players.Remove(p);
         }
         /// <summary>
         /// Add a method to be called in a specified time for a specified number of repetitions

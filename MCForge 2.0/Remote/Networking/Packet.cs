@@ -43,23 +43,6 @@ namespace MCForge.Remote {
             typeof(PacketInvalid), // 0x0d
             typeof(PacketInvalid), // 0x0e
             typeof(PacketInvalid), // 0x0f
-            typeof(PacketInvalid), // 0x10
-            typeof(PacketInvalid), // 0x11
-            typeof(PacketInvalid), // 0x12
-            typeof(PacketInvalid), // 0x13
-            typeof(PacketInvalid), // 0x14
-            typeof(PacketInvalid), // 0x15
-            typeof(PacketInvalid), // 0x16
-            typeof(PacketInvalid), // 0x17
-            typeof(PacketInvalid), // 0x18
-            typeof(PacketInvalid), // 0x19
-            typeof(PacketInvalid), // 0x1a
-            typeof(PacketInvalid), // 0x1b
-            typeof(PacketInvalid), // 0x1c
-            typeof(PacketInvalid), // 0x1d
-            typeof(PacketInvalid), // 0x1e
-            typeof(PacketInvalid), // 0x1f
-            typeof(PacketInvalid), // 0x20
             typeof(PacketInvalid), // 0x21
             typeof(PacketInvalid), // 0x22
             typeof(PacketInvalid), // 0x23

@@ -62,7 +62,7 @@ namespace MCForge.Core.RelayChat
             this.nickname = nick;
             this.channel = channel;
             this.password = password;
-            this.opChannel = opChannel;
+            this.opChannel = opchannel;
 
             ircControllers = LoadIrcControllers();
             Logger.Log("Connecting to IRC...");

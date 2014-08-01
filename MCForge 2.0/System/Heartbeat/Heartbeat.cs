@@ -78,7 +78,7 @@ namespace MCForge.Core.HeartService
 			}
 			else
 			{
-				if (Server.URL != output[0]) Logger.Log("URL Found/Updated: " + output[0], Color.Green, Color.Black);
+                if (Server.URL != output[0]) Logger.Log("URL Found/Updated: " + output[0], Color.Green, Color.Black); Logger.Log("MC URL Found: " + output[1], Color.Green, Color.Black);
 				Server.URL = output[0];
 				writeURL(output[0], "text/heartbeaturl.txt");
 			}

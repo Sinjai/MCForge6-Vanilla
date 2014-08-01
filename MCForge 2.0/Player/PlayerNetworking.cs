@@ -190,7 +190,6 @@ namespace MCForge.Entity
                 foreach (string line in Server.UsernameBans) { if (line == Username) banned = true; }
                 if (banned) { if (BanReason == "No reason given.") { SKick("You are banned because " + BanReason); } else { SKick("You are banned!"); } }
                 string verify = enc.GetString(message, 65, 32).Trim();
-                byte type = message[129];
                 if (!VerifyAccount(Username, verify)) return;
                 if (Server.Verifying) IsVerified = false;
                 else IsVerified = true;
@@ -233,28 +232,6 @@ namespace MCForge.Entity
                     }
                 }
 
-            if (type == 0x42)
-            {
-                extension = true;
-                SendExtInfo(14);
-                SendExtEntry("ClickDistance", 1);
-                SendExtEntry("CustomBlocks", 1);
-                SendExtEntry("HeldBlock", 1);
-                SendExtEntry("TextHotKey", 1);
-                SendExtEntry("ExtPlayerList", 1);
-                SendExtEntry("EnvColors", 1);
-                SendExtEntry("SelectionCuboid", 1);
-                SendExtEntry("BlockPermissions", 1);
-                SendExtEntry("ChangeModel", 1);
-                SendExtEntry("EnvMapAppearance", 1);
-                SendExtEntry("EnvWeatherType", 1);
-                SendExtEntry("HackControl", 1);
-                SendExtEntry("EmoteFix", 1);
-                SendExtEntry("MessageTypes", 1);
-
-                SendCustomBlockSupportLevel(1);
-            }
-
                 //TODO Database Stuff
 
                 Logger.Log("[System]: " + Ip + " logging in as " + Username + ".", System.Drawing.Color.Green, System.Drawing.Color.Black);
@@ -275,7 +252,27 @@ namespace MCForge.Entity
                 ExtraData.CreateIfNotExist("HasMarked", false);
                 ExtraData.CreateIfNotExist("Mark1", new Vector3S());
                 ExtraData.CreateIfNotExist("Mark2", new Vector3S());
-
+                byte type = message[129];
+                if (type == 0x42)
+                {
+                    extension = true;
+                    SendExtInfo(15);
+                    SendExtEntry("ClickDistance", 1);
+                    SendExtEntry("CustomBlocks", 1);
+                    SendExtEntry("HeldBlock", 1);
+                    SendExtEntry("TextHotKey", 1);
+                    SendExtEntry("ExtPlayerList", 1);
+                    SendExtEntry("EnvColors", 1);
+                    SendExtEntry("SelectionCuboid", 1);
+                    SendExtEntry("BlockPermissions", 1);
+                    SendExtEntry("ChangeModel", 1);
+                    SendExtEntry("EnvMapAppearance", 1);
+                    SendExtEntry("EnvWeatherType", 1);
+                    SendExtEntry("HackControl", 1);
+                    SendExtEntry("EmoteFix", 1);
+                    SendExtEntry("MessageTypes", 1);
+                    SendCustomBlockSupportLevel(1);
+                }
                 SendMotd();
                 IsLoading = true;
                 IsLoggedIn = true;
@@ -307,7 +304,7 @@ namespace MCForge.Entity
                 {
                     if (p != this && p.HasExtension("ExtPlayerList"))
                     {
-                        p.SendExtAddPlayerName(ID, Username, p.Group, p.Color + p.Username);
+                        p.SendExtAddPlayerName(ID, Username, Group, Color + Username);
                     }
                     if (HasExtension("ExtPlayerList"))
                     {
@@ -1198,6 +1195,7 @@ namespace MCForge.Entity
 
         public void SendExtInfo(short count)
         {
+            SendPacket(pingPacket);
             Packet pa = new Packet();
             pa.Add(Packet.Types.ExtInfo);
             pa.Add("MCForge-Redux", 64);
@@ -1248,13 +1246,12 @@ namespace MCForge.Entity
         {
             Packet pa = new Packet();
             pa.Add(Packet.Types.ExtAddPlayerName);
-            byte[] buffer = new byte[195];
             pa.Add(id);
             pa.Add(name, 64);
-            if (displayname == "") { displayname = name; }
+            if (displayname == "") { displayname = Color + name; }
             pa.Add(displayname, 64);
             pa.Add(grp.Name.ToUpper() + "s:", 64);
-            pa.Add(121 - grp.Permission);
+            pa.Add((byte)(grp.Permission));
             SendPacket(pa);
         }
 

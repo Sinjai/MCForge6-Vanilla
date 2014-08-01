@@ -132,7 +132,7 @@ namespace MCForge.World {
         /// <returns>A byte of the block</returns>
         public static byte NameToBlock(string name) {
             foreach (var block in Blocks)
-                if (name == block.Name)
+                if (block.Name == name)
                     return block;
             foreach (var block in CustomBlockList)
                 if (block.Name == name)
@@ -171,7 +171,7 @@ namespace MCForge.World {
         /// Converts a byte to a Block
         /// </summary>
         public static implicit operator Block(byte b) {
-            if (b >= 49)
+            if (b >= 66)
                 return UnknownBlock;
             return Blocks[b];
         }
