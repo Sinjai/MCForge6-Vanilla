@@ -834,9 +834,10 @@ namespace MCForge.Entity
             {
                 foreach (string line in LineWrapping(message))
                 {
+                    Logger.Log(line);
                     Packet pa = new Packet();
                     pa.Add(Packet.Types.Message);
-                    pa.Add(PlayerID);
+                    pa.Add(0);
                     pa.Add(line, 64);
                     SendPacket(pa);
                 }

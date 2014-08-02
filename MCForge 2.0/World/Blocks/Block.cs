@@ -42,7 +42,7 @@ namespace MCForge.World {
              new Gold_Ore(),
              new Iron_Ore(),
              new Coal(),
-             new Tree(),
+             new Trunk(),
              new Leaves(),
              new Sponge(),
              new Glass(),

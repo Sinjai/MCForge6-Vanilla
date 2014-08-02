@@ -15,11 +15,11 @@ permissions and limitations under the Licenses.
 
 namespace MCForge.World.Blocks
 {
-    public class Tree : Block
+    public class Trunk : Block
     {
         public override string Name
         {
-            get { return "tree"; }
+            get { return "trunk"; }
         }
         public override byte VisibleBlock
         {
