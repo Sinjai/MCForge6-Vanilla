@@ -87,7 +87,7 @@ namespace MCForge.Commands
             p.SendMessage(buffer.Count.ToString() + " blocks.");
             buffer.ForEach(delegate(Vector3S pos)
             {
-                p.Level.BlockChange((ushort)(pos.x), (ushort)(pos.z), (ushort)(pos.y), newType, p);
+                BlockQueue.Addblock(p, (ushort)(pos.x), (ushort)(pos.y), (ushort)(pos.z), newType);
             });
             p.SendMessage("&4/replaceall finished!");
         }

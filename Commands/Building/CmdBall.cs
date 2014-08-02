@@ -76,7 +76,7 @@ namespace MCForge.Commands.Building
             {
                 if (v.x > 0 && v.z > 0 && v.y > 0 && v.x < sender.Level.Size.x && v.z < sender.Level.Size.z && v.y < sender.Level.Size.y)
                 {
-                    sender.Level.BlockChange(v, args.Holding, sender);
+                    BlockQueue.Addblock(sender, (ushort)v.x, (ushort)v.y, (ushort)v.z, args.Holding);
                     count++;
                 }
             }

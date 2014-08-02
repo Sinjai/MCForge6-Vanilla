@@ -215,6 +215,7 @@
     <Compile Include="Utils\Vector2S.cs" />
     <Compile Include="Utils\Vector3D.cs" />
     <Compile Include="Utils\Vector3S.cs" />
+    <Compile Include="World\BlockQueue.cs" />
     <Compile Include="World\Blocks\BlockChange.cs" />
     <Compile Include="World\Blocks\Custom\Griefer_stone.cs" />
     <Compile Include="World\Blocks\DefaultBlocks\Black.cs" />

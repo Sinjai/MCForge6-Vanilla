@@ -98,7 +98,7 @@ namespace MCForge.Commands.Building {
                 foreach (var pos in path) {
                     if (!sender.Level.IsInBounds(pos))
                         continue;
-                    sender.Level.BlockChange(pos, block);
+                    BlockQueue.Addblock(sender, (ushort)pos.x, (ushort)pos.y, (ushort)pos.z, block);
                 }
 
 

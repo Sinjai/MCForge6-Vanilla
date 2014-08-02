@@ -16,6 +16,7 @@ using MCForge.Entity;
 using MCForge.Interface.Command;
 using MCForge.Utils;
 using MCForge.API.Events;
+using MCForge.World;
 using System.Drawing;
 using System.Collections.Generic;
 
@@ -49,7 +50,7 @@ namespace MCForge.Commands {
             sender.OnPlayerBlockChange.Normal -= BlockChange2;
             CatchPos cpos = (CatchPos)sender.GetDatapass(this.Name);
             foreach (Vector3S v in BlockString(cpos.message, cpos.pos, new Vector3S(args.X, args.Z, args.Y), sender.Level.Size)) {
-                sender.Level.BlockChange(v, args.Holding, sender);
+                BlockQueue.Addblock(sender, (ushort)v.x, (ushort)v.y, (ushort)v.z, args.Holding);
             }
             args.Cancel();
             return;

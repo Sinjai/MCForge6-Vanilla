@@ -48,6 +48,8 @@ namespace MCForge.World {
         /// </summary>
         public static List<Level> Levels { get; set; }
 
+        public List<BlockQueue.block> blockqueue = new List<BlockQueue.block>();
+
         /// <summary>
         /// Gets the unloaded levels.
         /// </summary>
@@ -312,6 +314,7 @@ namespace MCForge.World {
             OnLevelUnload.Call(this, new LevelLoadEventArgs(false), OnAllLevelsUnload);
             if (save)
                 SaveToBinary();
+            blockqueue.Clear();
             Levels.Remove(this);
         }
 

@@ -302,7 +302,7 @@ namespace MCForge.Core {
             Level.Levels.Add(Mainlevel);
             if (ServerSettings.GetSettingBoolean("LoadAllLevels"))
                 Level.LoadAllLevels();
-
+            BlockQueue.Start();
             Backup.StartBackup();
 
             Database.Init();

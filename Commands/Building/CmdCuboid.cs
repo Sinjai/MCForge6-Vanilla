@@ -14,6 +14,7 @@ permissions and limitations under the Licenses.
 */
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using MCForge.Entity;
 using MCForge.Interface.Command;
 using MCForge.World;
@@ -213,7 +214,7 @@ namespace MCForge.Commands
             p.SendMessage(buffer.Count.ToString() + " blocks.");
             buffer.ForEach(delegate(Pos pos)
             {
-                p.Level.BlockChange((ushort)(pos.pos.x), (ushort)(pos.pos.z), (ushort)(pos.pos.y), cpos.block, p);
+                BlockQueue.Addblock(p, (ushort)(pos.pos.x), (ushort)(pos.pos.y), (ushort)(pos.pos.z), cpos.block);
             });
         }
 

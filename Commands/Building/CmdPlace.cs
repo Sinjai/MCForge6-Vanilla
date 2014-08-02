@@ -86,7 +86,7 @@ namespace MCForge.Commands
             {
                 y = (ushort)(p.Level.Size.y - 1);
             }
-            p.Level.BlockChange(x, z, y, b, p);
+            BlockQueue.Addblock(p, x, y, z, b);
             p.SendMessage("An " + ((Block)b).Name + " block was placed at (" + x + ", " + z + ", " + y + ").");
         }
         public void Help(Player p)
