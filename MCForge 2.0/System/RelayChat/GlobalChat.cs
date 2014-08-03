@@ -1,4 +1,5 @@
 ﻿using MCForge.Entity;
+using MCForge.Utils;
 using MCForge.Utils.Settings;
 using System;
 using System.Collections.Generic;
@@ -30,9 +31,9 @@ namespace MCForge.Core.RelayChat
             try
             {
                 using (WebClient c = new WebClient()) // .dev is local testing domain, this will change once the php code is pushed live
-                    gcban = c.DownloadString("http://mcforge.dev/gcbans/get"); 
+                    gcban = c.DownloadString("http://mcforge.org/gcban/get"); 
             }
-            catch (Exception e) { }
+            catch (Exception e) { Logger.LogError(e); }
 
             this.bans = gcban.Split(',');
         }
