@@ -13,7 +13,7 @@ using MCForge.Gui.Utils;
 namespace MCForge.Gui.Dialogs {
     public partial class NewsDialog : Form {
 
-        public const string URL = "http://server.mcforge.net/news/index.html";
+        public const string URL = "http://mcforge.org/changelog";
         private BackgroundWorker mNewsFetcher;
 
         public NewsDialog() {

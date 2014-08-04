@@ -20,6 +20,7 @@ namespace MCForge.Gui.Components {
         /// <value>
         /// The color top.
         /// </value>
+        [Obsolete]
         public Color ColorTop { get; set; }
         /// <summary>
         /// Gets or sets the color bottom.
@@ -34,6 +35,7 @@ namespace MCForge.Gui.Components {
         /// <value>
         /// The color outline outer.
         /// </value>
+        [Obsolete]
         public Color ColorOutlineOuter { get; set; }
         /// <summary>
         /// Gets or sets the color outline inner.
@@ -63,25 +65,17 @@ namespace MCForge.Gui.Components {
                 contentLength += item.Width + 2;
             }
 
-            var brush = new LinearGradientBrush(new PointF(), new Point(0, Height), ColorTop, ColorBottom);
+            var brush = new SolidBrush(ColorBottom);
             var penInner = new Pen(ColorOutlineInner);
-            var penOuter = new Pen(ColorOutlineOuter);
 
 
             //Rectangles of all sorts of shapes and sizes
-            var rectInner = new RectangleF {
+            var rectInner = new Rectangle {
                 X = ClientRectangle.X + 5,
                 Y = ClientRectangle.Y + 2,
                 Width = contentLength,
                 Height = ClientRectangle.Height + 1
             };
-            var rectOuter = new RectangleF {
-                X = ClientRectangle.X + 4.5f,
-                Y = ClientRectangle.Y + 1.5f,
-                Width = contentLength + 1f,
-                Height = ClientRectangle.Height + 2f
-            };
-
 
             if (DesignMode) {
                 e.Graphics.Clear(Color.FromArgb(0xD7, 0xE4, 0xF2));
@@ -92,12 +86,11 @@ namespace MCForge.Gui.Components {
 
 
 
-            e.Graphics.DrawRoundedRectangle(penOuter, rectOuter, 5f);
-            e.Graphics.DrawRoundedRectangle(penInner, rectInner, 5f);
-            e.Graphics.FillRoundedRectangle(brush, rectInner, 5f);
+            e.Graphics.DrawRectangle(penInner, rectInner);
+            e.Graphics.FillRectangle(brush, rectInner);
 
             penInner.Dispose();
-            penOuter.Dispose();
+
             brush.Dispose();
 
             base.OnPaint(e);
