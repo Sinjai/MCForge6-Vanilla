@@ -26,6 +26,7 @@ namespace MCForge.Gui.Components {
         /// </value>
         [Browsable(true)]
         [DefaultValue(typeof(Color), "0,0,0,0")]
+        [Obsolete]
         public Color GradiantColorTop {
             get {
                 return _gradTop;
@@ -91,7 +92,7 @@ namespace MCForge.Gui.Components {
         }
 
         private void DrawBackground(PaintEventArgs e) {
-            using (LinearGradientBrush brush = new LinearGradientBrush(new Point(), new Point(0, ContentRectangle.Height), GradiantColorTop, GradiantColorBottom)) {
+            using (var brush = new SolidBrush(GradiantColorBottom)) {
                 using (Pen pen = new Pen(OutlineColor)) {
 
                     Rectangle region = Rectangle.FromLTRB(0, 0, Width - 1, Height - 2);

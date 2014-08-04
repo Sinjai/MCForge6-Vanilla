@@ -314,11 +314,11 @@ namespace MCForge.Gui.Forms {
         }
 
         private void changelogToolStripMenuItem_Click(object sender, EventArgs e) {
-            using ( TextOnlyDialog dialog = new TextOnlyDialog() ) {
-                dialog.Text = "ChangeLog";
-                dialog.ContentText = "Logs of change\nLogs of changyyy\nOMGESUS";
-                dialog.ShowDialog();
+            try
+            {
+                Process.Start("http://mcforge.org/changelog");
             }
+            catch { }
         }
 
         private void makerToolStripMenuItem_Click(object sender, EventArgs e)
