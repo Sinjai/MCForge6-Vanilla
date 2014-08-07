@@ -217,13 +217,39 @@ namespace MCForge.World {
             return (blockToCheck == BlockList.WATER ||
                 blockToCheck == BlockList.LAVA ||
                 blockToCheck == BlockList.ACTIVE_LAVA ||
-                blockToCheck == BlockList.ACTIVE_WATER);
+                blockToCheck == BlockList.ACTIVE_WATER || blockToCheck == BlockList.rope);
         }
 
         public static bool IsOPBlock(byte blockToCheck) {
             return blockToCheck == Block.BlockList.BEDROCK;
         }
-
+        /// <summary>
+        /// Converts the ClassiCube blocks into non-CPE client fallbacks
+        /// </summary>
+        public static byte ConvertCPE(byte b)
+        {
+            switch (b)
+            {
+                case BlockList.cobblestoneslab: return BlockList.STAIR;
+                case BlockList.rope: return BlockList.BROWN_MUSHROOM;
+                case BlockList.sandstone: return BlockList.SAND;
+                case BlockList.snow: return BlockList.AIR;
+                case BlockList.fire: return BlockList.LAVA;
+                case BlockList.lightpinkwool: return BlockList.PINK_CLOTH;
+                case BlockList.forestgreenwool: return BlockList.GREEN_CLOTH;
+                case BlockList.brownwool: return BlockList.DIRT;
+                case BlockList.deepblue: return BlockList.PURPLE_CLOTH;
+                case BlockList.turquoise: return BlockList.BLUE_CLOTH;
+                case BlockList.ice: return BlockList.GLASS;
+                case BlockList.ceramictile: return BlockList.IRON_BLOCK;
+                case BlockList.magma: return BlockList.OBSIDIAN;
+                case BlockList.pillar: return BlockList.WHITE_CLOTH;
+                case BlockList.crate: return BlockList.WOOD;
+                case BlockList.stonebrick: return BlockList.STONE;
+                default:
+                    return b;
+            }
+        }
         /// <summary>
         /// List of blocks (in the form of a byte)
         /// </summary>

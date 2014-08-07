@@ -1,4 +1,4 @@
-/*
+﻿/*
 Copyright 2011 MCForge
 Dual-licensed under the Educational Community License, Version 2.0 and
 the GNU General Public License, Version 3 (the "Licenses"); you may
@@ -13,6 +13,7 @@ or implied. See the Licenses for the specific language governing
 permissions and limitations under the Licenses.
 */
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
@@ -33,6 +34,174 @@ namespace MCForge.Entity
 {
     public partial class Player : Sender
     {
+        private static readonly char[] UnicodeReplacements = " ☺☻♥♦♣♠•◘○\n♂♀♪♫☼►◄↕‼¶§▬↨↑↓→←∟↔▲▼".ToCharArray();
+
+        /// <summary> List of chat keywords, and emotes that they stand for. </summary>
+        public static readonly Dictionary<string, char> EmoteKeywords = new Dictionary<string, char> {
+            { "smile", '\u0001' },
+
+			{ "darksmile", '\u0002' }, // ☻
+
+            { "heart", '\u0003' }, // ♥
+            { "hearts", '\u0003' },
+
+            { "diamond", '\u0004' }, // ♦
+            { "diamonds", '\u0004' },
+            { "rhombus", '\u0004' },
+
+            { "club", '\u0005' }, // ♣
+            { "clubs", '\u0005' },
+            { "clover", '\u0005' },
+            { "shamrock", '\u0005' },
+
+            { "spade", '\u0006' }, // ♠
+            { "spades", '\u0006' },
+
+            { "*", '\u0007' }, // •
+            { "bullet", '\u0007' },
+            { "dot", '\u0007' },
+            { "point", '\u0007' },
+
+            { "hole", '\u0008' }, // ◘
+
+            { "circle", '\u0009' }, // ○
+            { "o", '\u0009' },
+
+            { "male", '\u000B' }, // ♂
+            { "mars", '\u000B' },
+
+            { "female", '\u000C' }, // ♀
+            { "venus", '\u000C' },
+
+            { "8", '\u000D' }, // ♪
+            { "note", '\u000D' },
+            { "quaver", '\u000D' },
+
+            { "notes", '\u000E' }, // ♫
+            { "music", '\u000E' },
+
+            { "sun", '\u000F' }, // ☼
+            { "celestia", '\u000F' },
+
+            { ">>", '\u0010' }, // ►
+            { "right2", '\u0010' },
+
+            { "<<", '\u0011' }, // ◄
+            { "left2", '\u0011' },
+
+            { "updown", '\u0012' }, // ↕
+            { "^v", '\u0012' },
+
+            { "!!", '\u0013' }, // ‼
+
+            { "p", '\u0014' }, // ¶
+            { "para", '\u0014' },
+            { "pilcrow", '\u0014' },
+            { "paragraph", '\u0014' },
+
+            { "s", '\u0015' }, // §
+            { "sect", '\u0015' },
+            { "section", '\u0015' },
+
+            { "-", '\u0016' }, // ▬
+            { "_", '\u0016' },
+            { "bar", '\u0016' },
+            { "half", '\u0016' },
+
+            { "updown2", '\u0017' }, // ↨
+            { "^v_", '\u0017' },
+
+            { "^", '\u0018' }, // ↑
+            { "up", '\u0018' },
+
+            { "v", '\u0019' }, // ↓
+            { "down", '\u0019' },
+
+            { ">", '\u001A' }, // →
+            { "->", '\u001A' },
+            { "right", '\u001A' },
+
+            { "<", '\u001B' }, // ←
+            { "<-", '\u001B' },
+            { "left", '\u001B' },
+
+            { "l", '\u001C' }, // ∟
+            { "angle", '\u001C' },
+            { "corner", '\u001C' },
+
+            { "<>", '\u001D' }, // ↔
+            { "<->", '\u001D' },
+            { "leftright", '\u001D' },
+
+            { "^^", '\u001E' }, // ▲
+            { "up2", '\u001E' },
+
+            { "vv", '\u001F' }, // ▼
+            { "down2", '\u001F' },
+
+            { "house", '\u007F' } // ⌂
+        };
+
+        public static string ReplaceEmoteKeywords(string message)
+        {
+            if (message == null)
+                throw new ArgumentNullException("message");
+            int startIndex = message.IndexOf('(');
+            if (startIndex == -1)
+            {
+                return message; // break out early if there are no opening braces
+            }
+
+            StringBuilder output = new StringBuilder(message.Length);
+            int lastAppendedIndex = 0;
+            while (startIndex != -1)
+            {
+                int endIndex = message.IndexOf(')', startIndex + 1);
+                if (endIndex == -1)
+                {
+                    break; // abort if there are no more closing braces
+                }
+
+                // see if emote was escaped (if odd number of backslashes precede it)
+                bool escaped = false;
+                for (int i = startIndex - 1; i >= 0 && message[i] == '\\'; i--)
+                {
+                    escaped = !escaped;
+                }
+                // extract the keyword
+                string keyword = message.Substring(startIndex + 1, endIndex - startIndex - 1);
+                char substitute;
+                if (EmoteKeywords.TryGetValue(keyword.ToLowerInvariant(), out substitute))
+                {
+                    if (escaped)
+                    {
+                        // it was escaped; remove escaping character
+                        startIndex++;
+                        output.Append(message, lastAppendedIndex, startIndex - lastAppendedIndex - 2);
+                        lastAppendedIndex = startIndex - 1;
+                    }
+                    else
+                    {
+                        // it was not escaped; insert substitute character
+                        output.Append(message, lastAppendedIndex, startIndex - lastAppendedIndex);
+                        output.Append(substitute);
+                        startIndex = endIndex + 1;
+                        lastAppendedIndex = startIndex;
+                    }
+                }
+                else
+                {
+                    startIndex++; // unrecognized macro, keep going
+                }
+                startIndex = message.IndexOf('(', startIndex);
+            }
+            // append the leftovers
+            output.Append(message, lastAppendedIndex, message.Length - lastAppendedIndex);
+            return output.ToString();
+        }
+
+
+        private static readonly Regex EmoteSymbols = new Regex("[\x00-\x1F\x7F☺☻♥♦♣♠•◘○\n♂♀♪♫☼►◄↕‼¶§▬↨↑↓→←∟↔▲▼⌂]");
         #region Incoming Data
         private static void Incoming(IAsyncResult result)
         {
@@ -217,7 +386,7 @@ namespace MCForge.Entity
                 {
                     Kick("Disconnected by canceled ConnectionEventArgs!");
                 }
-                SendMotd();
+                byte type = message[129];
             Gotos_Are_The_Devil:
                 if (Server.PlayerCount >= ServerSettings.GetSettingInt("MaxPlayers") && !Server.VIPs.Contains(Username) && !Server.Devs.Contains(Username))
                 {
@@ -237,7 +406,6 @@ namespace MCForge.Entity
                 }
 
                 //TODO Database Stuff
-
                 Logger.Log("[System]: " + Ip + " logging in as " + Username + ".", System.Drawing.Color.Green, System.Drawing.Color.Black);
                 try
                 {
@@ -256,22 +424,11 @@ namespace MCForge.Entity
                 ExtraData.CreateIfNotExist("HasMarked", false);
                 ExtraData.CreateIfNotExist("Mark1", new Vector3S());
                 ExtraData.CreateIfNotExist("Mark2", new Vector3S());
-                byte type = message[129];
-                Logger.Log(message[129].ToString());
                 IsLoading = true;
                 IsLoggedIn = true;
-                if (Level == null)
-                    Level = Server.Mainlevel;
-                else
-                    Level = Level;
-
-                ID = FreeId();
-                if (Server.PlayerCount >= ServerSettings.GetSettingInt("MaxPlayers"))
-                    goto Gotos_Are_The_Devil;                                          //Gotos are literally the devil, but it works here so two players dont login at once
-                UpgradeConnectionToPlayer();
+                SendMotd();
                 if (type == 0x42)
                 {
-                    Logger.Log("test");
                     extension = true;
                     SendExtInfo(15);
                     SendExtEntry("ClickDistance", 1);
@@ -290,7 +447,16 @@ namespace MCForge.Entity
                     SendExtEntry("MessageTypes", 1);
                     SendCustomBlockSupportLevel(1);
                 }
-                //SendMotd();*/
+                if (Level == null)
+                    Level = Server.Mainlevel;
+                else
+                    Level = Level;
+
+                ID = FreeId();
+                if (Server.PlayerCount >= ServerSettings.GetSettingInt("MaxPlayers"))
+                    goto Gotos_Are_The_Devil; 
+                                         //Gotos are literally the devil, but it works here so two players dont login at once
+                UpgradeConnectionToPlayer();
                 short x = (short)((0.5 + Level.SpawnPos.x) * 32);
                 short y = (short)((1 + Level.SpawnPos.y) * 32);
                 short z = (short)((0.5 + Level.SpawnPos.z) * 32);
@@ -540,6 +706,8 @@ namespace MCForge.Entity
                 int a = playerRandom.Next(0, Server.JokerMessages.Count);
                 incomingText = Server.JokerMessages[a];
             }
+
+            incomingText = ReplaceEmoteKeywords(incomingText.ToString());
 
             //Message appending stuff.
             if (ServerSettings.GetSettingBoolean("messageappending"))
@@ -829,16 +997,23 @@ namespace MCForge.Entity
             // caused ^detail.user to remove color from names in normal chat, not needed since wom only detects at beginning of string.
             // might i suggest adding a parameter for adding default color (for womsenddetail and preventing /say to change everyones)
                 message = Server.DefaultColor + message;
-
+                string newLine;
             try
             {
                 foreach (string line in LineWrapping(message))
                 {
-                    Logger.Log(line);
+                    if (line.TrimEnd(' ')[line.TrimEnd(' ').Length - 1] < '!')
+                    {
+                            newLine = line + '\'';
+                    }
+                    else
+                    {
+                        newLine = line;
+                    }
                     Packet pa = new Packet();
                     pa.Add(Packet.Types.Message);
                     pa.Add(0);
-                    pa.Add(line, 64);
+                    pa.Add(newLine, 64);
                     SendPacket(pa);
                 }
             }
@@ -857,13 +1032,7 @@ namespace MCForge.Entity
 
             try
             {
-                IsLoading = true;
-                SendPacket(mapSendStartPacket); //Send the pre-fab map start packet
-
-                Packet pa = new Packet(); //Create a packet to handle the data for the map
-                pa.Add(Level.TotalBlocks); //Add the total amount of blocks to the packet
                 byte[] blocks = new byte[Level.TotalBlocks]; //Temporary byte array so we dont have to keep modding the packet array
-
                 byte block; //A block byte outside the loop, we save cycles by not making this for every loop iteration
                 Level.ForEachBlock(pos =>
                 {
@@ -873,6 +1042,11 @@ namespace MCForge.Entity
                     //TODO ADD CHECKING
                     blocks[pos] = block;
                 });
+                IsLoading = true;
+                SendPacket(mapSendStartPacket); //Send the pre-fab map start packet
+
+                Packet pa = new Packet(); //Create a packet to handle the data for the map
+                pa.Add(Level.TotalBlocks); //Add the total amount of blocks to the packet
 
                 pa.Add(blocks); //add the blocks to the packet
                 pa.GZip(); //GZip the packet
@@ -948,7 +1122,6 @@ namespace MCForge.Entity
         public void SendBlockChange(ushort x, ushort z, ushort y, byte type)
         {
             if (x >= Level.Size.x || y >= Level.Size.y || z >= Level.Size.z) return;
-
             Packet pa = new Packet();
             pa.Add(Packet.Types.SendBlockchange);
             pa.Add(x);

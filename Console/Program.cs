@@ -96,7 +96,7 @@ namespace MCForge.Core {
             Logger.Init();
             ServerSettings.Init();
             bool checker = CheckArgs(args);
-            Console.Title = ServerSettings.GetSetting("ServerName") + " - MCForge 6"; //TODO: Do know what MCForge version we are using yet.
+            Console.Title = ServerSettings.GetSetting("ServerName") + " - MCForge 7"; //TODO: Do know what MCForge version we are using yet.
             if (!checker)
                 new Thread(new ThreadStart(Server.Init)).Start();
             else
