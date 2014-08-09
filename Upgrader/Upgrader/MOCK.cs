@@ -285,7 +285,7 @@ namespace MCForge_.Gui
                         else
                         {
                             Console.ForegroundColor = ConsoleColor.Yellow;
-                            Console.WriteLine("Level didnt load, must be a MCForge 6 level..");
+                            Console.WriteLine("Level didnt load, must be a MCForge 7 level..");
                         }
                     }
                     catch (Exception e) {
