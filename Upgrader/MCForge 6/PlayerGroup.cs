@@ -63,7 +63,7 @@ namespace MCForge.Groups
         Owner = 120
     }
     /// <summary>
-    /// The main permission system for MCForge 6
+    /// The main permission system for MCForge 7
     /// </summary>
     /// <remarks></remarks>
     public class PlayerGroup

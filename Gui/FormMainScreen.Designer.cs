@@ -450,7 +450,7 @@
             this.Controls.Add(this.txtLog);
             this.Controls.Add(this.glassMenu);
             this.Name = "FormMainScreen";
-            this.Text = "MCForge 6";
+            this.Text = "MCForge 7";
             this.Load += new System.EventHandler(this.FormMainScreen_Load);
             this.Shown += new System.EventHandler(this.FormMainScreen_Shown);
             this.glassMenu.ResumeLayout(false);
