@@ -639,13 +639,6 @@ namespace MCForge.Entity
 
             incomingText = Regex.Replace(incomingText, @"\s\s+", " ");
 
-            if (incomingText.StartsWith("/womid"))
-            {
-                //UsingWom = true;
-                //WOM.SendDetail(this); //Will make this editable later ?
-                return;
-            }
-
             if (StringUtils.ContainsBadChar(incomingText))
             {
                 Kick("Illegal character in chat message!");
