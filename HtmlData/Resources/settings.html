@@ -98,7 +98,7 @@
                     </div>
                     <div class="row">
                         <div class="medium-4 columns">
-                            <label class="inline right" for="shutdownmessage">Showdown Message</label>
+                            <label class="inline right" for="shutdownmessage">Shutdown Message</label>
                         </div>
                         <div class="medium-8 columns">
                             <input type="text" value="{{{shutdownmessage}}}" id="shutdownmessage" name="shutdownmessage" required />
@@ -201,7 +201,130 @@
                 </section>
 
                 <section id="database-module" class="module">
-
+                    <div class="row">
+                        <div class="medium-4 columns">
+                            <label class="inline right" for="databasetype">Database Type</label>
+                        </div>
+                        <div class="medium-8 columns">
+                            <select name="databasetype" id="databasetype" data-db-select data-current-value="{{{databasetype}}}">
+                                <option value="sqlite">SQLite</option>
+                                <option value="mysql">MySQL</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="medium-4 columns">
+                            <label class="inline right">Database Queuing</label>
+                        </div>
+                        <div class="medium-8 columns">
+                            <input type="hidden" name="database-queuing" value="false" />
+                            <div class="switch">
+                                <script>var database_queuing_checked = "{{{database-queuing}}}";</script>
+                                <input id="database-queuing" type="checkbox" name="database-queuing">
+                                <label for="database-queuing"></label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="medium-4 columns">
+                            <label class="inline right" for="database-flush_interval">Database Flush Interval</label>
+                        </div>
+                        <div class="medium-8 columns">
+                            <input type="number" value="{{{database-flush_interval}}}" id="database-flush_interval" name="database-flush_interval" required/>
+                        </div>
+                    </div>
+                    <hr/>
+                    <section id="database-sqlite" style="display: none;" class="db-item">
+                        <div class="row">
+                            <div class="medium-4 columns">
+                                <label class="inline right">Save SQLite to memory</label>
+                            </div>
+                            <div class="medium-8 columns">
+                                <input type="hidden" name="sqlite-inmemory" value="false" />
+                                <div class="switch">
+                                    <script>var sqlite_inmemory_checked = "{{{sqlite-inmemory}}}";</script>
+                                    <input id="sqlite-inmemory" type="checkbox" name="sqlite-inmemory">
+                                    <label for="sqlite-inmemory"></label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="medium-4 columns">
+                                <label class="inline right" for="sqlite-filepath">SQLite DB Path</label>
+                            </div>
+                            <div class="medium-8 columns">
+                                <input type="text" value="{{{sqlite-filepath}}}" id="sqlite-filepath" name="sqlite-filepath" required/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="medium-4 columns">
+                                <label class="inline right">SQLite Pooling</label>
+                            </div>
+                            <div class="medium-8 columns">
+                                <input type="hidden" name="sqlite-pooling" value="false" />
+                                <div class="switch">
+                                    <script>var sqlite_pooling_checked = "{{{sqlite-pooling}}}";</script>
+                                    <input id="sqlite-pooling" type="checkbox" name="sqlite-pooling">
+                                    <label for="sqlite-pooling"></label>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    <section id="database-mysql" style="display: none;" class="db-item">
+                        <div class="row">
+                            <div class="medium-4 columns">
+                                <label class="inline right" for="mysql-ip">MySQL IP</label>
+                            </div>
+                            <div class="medium-8 columns">
+                                <input type="text" value="{{{mysql-ip}}}" id="mysql-ip" name="mysql-ip" required/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="medium-4 columns">
+                                <label class="inline right" for="mysql-port">MySQL Port</label>
+                            </div>
+                            <div class="medium-8 columns">
+                                <input type="number" value="{{{mysql-port}}}" id="mysql-port" name="mysql-port" required maxlength="5" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="medium-4 columns">
+                                <label class="inline right" for="mysql-username">MySQL User</label>
+                            </div>
+                            <div class="medium-8 columns">
+                                <input type="text" value="{{{mysql-username}}}" id="mysql-username" name="mysql-username" required/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="medium-4 columns">
+                                <label class="inline right" for="mysql-password">MySQL Password</label>
+                            </div>
+                            <div class="medium-8 columns">
+                                <input type="text" value="{{{mysql-password}}}" id="mysql-password" name="mysql-password" required/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="medium-4 columns">
+                                <label class="inline right" for="mysql-dbname">MySQL Database</label>
+                            </div>
+                            <div class="medium-8 columns">
+                                <input type="text" value="{{{mysql-dbname}}}" id="mysql-dbname" name="mysql-dbname" required/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="medium-4 columns">
+                                <label class="inline right">MySQL Pooling</label>
+                            </div>
+                            <div class="medium-8 columns">
+                                <input type="hidden" name="mysql-pooling" value="false" />
+                                <div class="switch">
+                                    <script>var mysql_pooling_checked = "{{{mysql-pooling}}}";</script>
+                                    <input id="mysql-pooling" type="checkbox" name="mysql-pooling">
+                                    <label for="mysql-pooling"></label>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
                 </section>
 
                 <section id="updates-module" class="module">
