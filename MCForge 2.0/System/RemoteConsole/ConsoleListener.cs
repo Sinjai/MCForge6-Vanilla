@@ -121,6 +121,7 @@ namespace MCForge.Core.RemoteConsole
 
             foreach (SettingNode node in ex)
             {
+                Console.WriteLine("ASSIGN: " + node.Key + " TO " + node.Value);
                 file = file.Replace("{{{" + node.Key + "}}}", node.Value);
             }
 

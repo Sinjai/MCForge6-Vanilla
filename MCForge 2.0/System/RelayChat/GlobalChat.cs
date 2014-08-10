@@ -3,6 +3,7 @@ using MCForge.Utils;
 using MCForge.Utils.Settings;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -24,6 +25,7 @@ namespace MCForge.Core.RelayChat
         /// </summary>
         public GlobalChat()
         {
+            ServerSettings.OnSettingChanged += ServerSettings_OnSettingChanged;
             gc = this;
 
             string gcban = "";
@@ -36,6 +38,33 @@ namespace MCForge.Core.RelayChat
             catch (Exception e) { Logger.LogError(e); }
 
             this.bans = gcban.Split(',');
+
+            this.AddCommand("^GETINFO", new IRCCommand(delegate(string[] cmd) 
+            {
+                if(cmd[1] == this.gcNick) 
+                {
+                    this.SendMessage("^NAME: " + ServerSettings.GetSetting("servername"));
+                    this.SendMessage("^MOTD: " + ServerSettings.GetSetting("motd"));
+                    this.SendMessage("^VERSION: MCForge 7"); // TODO: GET THIS FROM THE SERVER
+                    this.SendMessage("^URL: " + Server.URL);
+                    this.SendMessage("^PLAYERS: " + Server.PlayerCount + "/" + ServerSettings.GetSetting("maxplayers"));
+                }
+            }));
+
+            this.AddCommand("^PLAYERS", new IRCCommand(delegate(string[] cmd) 
+            {
+                if(cmd[1] == this.gcNick)
+                    this.SendMessage("^PLAYERS: " + String.Join(",", Server.Players.Select(p => p.Username).ToArray()));
+            }));
+        }
+
+        void ServerSettings_OnSettingChanged(object sender, SettingsChangedEventArgs e)
+        {
+            if (e.Key == "gc-nick")
+            {
+                this.gcNick = e.NewValue;
+                base.SetNick(e.NewValue);
+            }
         }
 
         /// <summary>

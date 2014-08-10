@@ -54,6 +54,9 @@ namespace MCForge.Core.RelayChat
         private static CommandIO cio = new CommandIO();
         protected string type = "IRC";
 
+        private Dictionary<string, IRCCommand> commands = new Dictionary<string, IRCCommand> { };
+        public delegate void IRCCommand(string[] message);
+
         public IRC() { }
 
         public void Start(string server, int port, string nick, string channel, string password = null, string opchannel = null)
@@ -128,7 +131,15 @@ namespace MCForge.Core.RelayChat
                             if (line.Split(' ')[2] != channel && line.Split(' ')[2] != opChannel) replyChannel = line.Split('!')[0].Remove(0, 1);
                             else replyChannel = line.Split(' ')[2];
                             line = line.Replace("%", "&");
-                            if (GetSpokenLine(line).Equals("!players"))
+
+                            string spoke = GetSpokenLine(line);
+                            string[] cmd = spoke.Split(' ');
+
+                            if(this.commands.ContainsKey(cmd[0]))
+                            {
+                                this.commands[cmd[0]](cmd);
+                            }
+                            else if (GetSpokenLine(line).Equals("!players"))
                             {
                                 swrite.WriteLine("PRIVMSG {0} :" + "There are " + Server.Players.Count + " player(s) online:",
                                              replyChannel);
@@ -194,7 +205,7 @@ namespace MCForge.Core.RelayChat
                             }
                         }
                     }
-                    catch { }
+                    catch (Exception e) { Logger.LogError(e); }
                 }
                 // Clean up
                 connected = false;
@@ -204,6 +215,17 @@ namespace MCForge.Core.RelayChat
             }));
 
             trd.Start();
+        }
+
+        public void AddCommand(string cmd, IRCCommand func)
+        {
+            this.commands.Add(cmd, func);
+        }
+
+        public void SetNick(string nick)
+        {
+            swrite.WriteLine("NICK {0}", nick);
+            swrite.Flush();
         }
 
         private static string GetUsernameSpeaking(string line)

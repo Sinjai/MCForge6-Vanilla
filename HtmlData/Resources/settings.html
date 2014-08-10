@@ -10,197 +10,292 @@
         <link rel="stylesheet" href="css/font-awesome.css"/>
         <link rel="stylesheet" href="css/main.css"/>
 
-        <script src="js/vendor/modernizr.js"></script>
+        <script src="js/modernizr.js"></script>
     </head>
     <body>
-        <form data-abide method="post">
-            <section id="menu-bar">
-                <a class="tiny button" data-show-all>Show All</a>
-            </section>
-            <section id="save-bar">
-                <button type="submit" class="tiny success button right">Save Settings</button>
-            </section>
-            <h3 id="module-title"></h3>
+        <section id="menu-bar" class="fixed">
+            <a class="tiny button" data-show-all>Show All</a>
+        </section>
+        <section id="wrapper">
+            <form data-abide method="post" id="form">
+                <h3 id="module-title"></h3>
 
-            <section id="server-module" class="module">
-                <div class="row">
-                    <div class="medium-4 columns">
-                        <label class="inline" for="servername">Server Name</label>
-                    </div>
-                    <div class="medium-8 columns">
-                        <input type="text" value="{{{servername}}}" id="servername" name="servername" required/>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="medium-4 columns">
-                        <label class="inline" for="port">Server Port</label>
-                    </div>
-                    <div class="medium-8 columns">
-                        <input type="text" value="{{{port}}}" id="port" name="port" required maxlength="5"/>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="medium-4 columns">
-                        <label class="inline" for="motd">MOTD</label>
-                    </div>
-                    <div class="medium-8 columns">
-                        <input type="text" value="{{{motd}}}" id="motd" name="motd" required />
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="medium-4 columns">
-                        <label class="inline" for="serverowner">Server Owner</label>
-                    </div>
-                    <div class="medium-8 columns">
-                        <input type="text" value="{{{serverowner}}}" id="serverowner" name="serverowner" required />
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="medium-4 columns">
-                        <label class="inline" for="main-level">Main Level</label>
-                    </div>
-                    <div class="medium-8 columns">
-                        <input type="text" value="{{{main-level}}}" id="main-level" name="main-level" required />
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="medium-4 columns">
-                        <label class="inline">Public</label>
-                    </div>
-                    <div class="medium-8 columns">
-                        <input type="hidden" name="public" value="false" />
-                        <div class="switch">
-                            <script>var public_checked = "{{{public}}}";</script>
-                            <input id="is-public" type="checkbox" name="public">
-                            <label for="is-public"></label>
+                <section id="server-module" class="module">
+                    <div class="row">
+                        <div class="medium-4 columns">
+                            <label class="inline" for="servername">Server Name</label>
+                        </div>
+                        <div class="medium-8 columns">
+                            <input type="text" value="{{{servername}}}" id="servername" name="servername" required/>
                         </div>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="medium-4 columns">
-                        <label class="inline">Load <strong>ALL</strong> Levels</label>
-                    </div>
-                    <div class="medium-8 columns">
-                        <input type="hidden" name="loadalllevels" value="false" />
-                        <div class="switch">
-                            <script>var loadalllevels_checked = "{{{loadalllevels}}}";</script>
-                            <input id="loadalllevels" type="checkbox" name="loadalllevels">
-                            <label for="loadalllevels"></label>
+                    <div class="row">
+                        <div class="medium-4 columns">
+                            <label class="inline" for="port">Server Port</label>
+                        </div>
+                        <div class="medium-8 columns">
+                            <input type="text" value="{{{port}}}" id="port" name="port" required maxlength="5"/>
                         </div>
                     </div>
-                </div>
-            </section>
+                    <div class="row">
+                        <div class="medium-4 columns">
+                            <label class="inline" for="motd">MOTD</label>
+                        </div>
+                        <div class="medium-8 columns">
+                            <input type="text" value="{{{motd}}}" id="motd" name="motd" required />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="medium-4 columns">
+                            <label class="inline" for="serverowner">Server Owner</label>
+                        </div>
+                        <div class="medium-8 columns">
+                            <input type="text" value="{{{serverowner}}}" id="serverowner" name="serverowner" required />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="medium-4 columns">
+                            <label class="inline" for="main-level">Main Level</label>
+                        </div>
+                        <div class="medium-8 columns">
+                            <input type="text" value="{{{main-level}}}" id="main-level" name="main-level" required />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="medium-4 columns">
+                            <label class="inline">Public</label>
+                        </div>
+                        <div class="medium-8 columns">
+                            <input type="hidden" name="public" value="false" />
+                            <div class="switch">
+                                <script>var public_checked = "{{{public}}}";</script>
+                                <input id="is-public" type="checkbox" name="public">
+                                <label for="is-public"></label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="medium-4 columns">
+                            <label class="inline">Load <strong>ALL</strong> Levels</label>
+                        </div>
+                        <div class="medium-8 columns">
+                            <input type="hidden" name="loadalllevels" value="false" />
+                            <div class="switch">
+                                <script>var loadalllevels_checked = "{{{loadalllevels}}}";</script>
+                                <input id="loadalllevels" type="checkbox" name="loadalllevels">
+                                <label for="loadalllevels"></label>
+                            </div>
+                        </div>
+                    </div>
+                </section>
 
-            <section id="player-module" class="module">
-                <div class="row">
-                    <div class="medium-4 columns">
-                        <label class="inline" for="maxplayers">Max Players</label>
-                    </div>
-                    <div class="medium-8 columns">
-                        <input type="number" value="{{{maxplayers}}}" id="maxplayers" name="maxplayers" required/>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="medium-4 columns">
-                        <label class="inline">Verify Names</label>
-                    </div>
-                    <div class="medium-8 columns">
-                        <input type="hidden" name="verifynames" value="false" />
-                        <div class="switch">
-                            <script>var verifynames_checked = "{{{verifynames}}}";</script>
-                            <input id="verifynames" type="checkbox" name="verifynames">
-                            <label for="verifynames"></label>
+                <section id="irc-module" class="module">
+                    <div class="row">
+                        <div class="medium-4 columns">
+                            <label class="inline">Enable IRC</label>
+                        </div>
+                        <div class="medium-8 columns">
+                            <input type="hidden" name="irc-enabled" value="false" />
+                            <div class="switch">
+                                <script>var irc_enabled_checked = "{{{irc-enabled}}}";</script>
+                                <input id="irc-enabled" type="checkbox" name="irc-enabled">
+                                <label for="irc-enabled"></label>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="medium-4 columns">
-                        <label class="inline" for="verifying">Verifying <small>Use /pass when logging into server?</small></label>
-                    </div>
-                    <div class="medium-8 columns">
-                        <input type="hidden" name="verifying" value="false" />
-                        <div class="switch">
-                            <script>var verifying_checked = "{{{verifying}}}";</script>
-                            <input id="verifying" type="checkbox" name="verifying">
-                            <label for="verifying"></label>
+                    <div class="row">
+                        <div class="medium-4 columns">
+                            <label class="inline" for="irc-server">Server</label>
+                        </div>
+                        <div class="medium-8 columns">
+                            <input type="text" value="{{{irc-server}}}" id="irc-server" name="irc-server" required />
                         </div>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="medium-4 columns">
-                        <label class="inline" for="verifygroup">Verifying Group</label>
-                    </div>
-                    <div class="medium-8 columns">
-                        <select name="verifygroup" id="verifygroup" data-group-list="option" data-option-value="name" data-current-value="{{{verifygroup}}}"></select>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="medium-4 columns">
-                        <label class="inline" for="defaultgroup">Default Group</label>
-                    </div>
-                    <div class="medium-8 columns">
-                        <select name="defaultgroup" id="defaultgroup" data-group-list="option" data-option-value="name" data-current-value="{{{defaultgroup}}}"></select>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="medium-4 columns">
-                        <label class="inline" for="verifying">Force agree to rules</label>
-                    </div>
-                    <div class="medium-8 columns">
-                        <input type="hidden" name="agreeingtorules" value="false" />
-                        <div class="switch">
-                            <script>var agreeingtorules_checked = "{{{agreeingtorules}}}";</script>
-                            <input id="agreeingtorules" type="checkbox" name="agreeingtorules">
-                            <label for="agreeingtorules"></label>
+                    <div class="row">
+                        <div class="medium-4 columns">
+                            <label class="inline" for="irc-port">Port</label>
+                        </div>
+                        <div class="medium-8 columns">
+                            <input type="number" value="{{{irc-port}}}" id="irc-port" name="irc-port" required maxlength="5" />
                         </div>
                     </div>
-                </div>
-            </section>
+                    <div class="row">
+                        <div class="medium-4 columns">
+                            <label class="inline" for="irc-nickname">Nickname</label>
+                        </div>
+                        <div class="medium-8 columns">
+                            <input type="text" value="{{{irc-nickname}}}" id="irc-nickname" name="irc-nickname" required />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="medium-4 columns">
+                            <label class="inline" for="irc-channel">Channel</label>
+                        </div>
+                        <div class="medium-8 columns">
+                            <input type="text" value="{{{irc-channel}}}" id="irc-channel" name="irc-channel" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="medium-4 columns">
+                            <label class="inline" for="irc-opchannel">OP Channel</label>
+                        </div>
+                        <div class="medium-8 columns">
+                            <input type="text" value="{{{irc-opchannel}}}" id="irc-opchannel" name="irc-opchannel" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="medium-4 columns">
+                            <label class="inline" for="irc-nickserv">NickServ Password</label>
+                        </div>
+                        <div class="medium-8 columns">
+                            <input type="text" value="{{{irc-nickserv}}}" id="irc-nickserv" name="irc-nickserv" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="medium-4 columns">
+                            <label class="inline">Enable Global Chat</label>
+                        </div>
+                        <div class="medium-8 columns">
+                            <input type="hidden" name="irc-enabled" value="false" />
+                            <div class="switch">
+                                <script>var gc_enabled_checked = "{{{gc-enabled}}}";</script>
+                                <input id="gc-enabled" type="checkbox" name="gc-enabled">
+                                <label for="gc-enabled"></label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="medium-4 columns">
+                            <label class="inline" for="gc-nick">Global Chat Nickname</label>
+                        </div>
+                        <div class="medium-8 columns">
+                            <input type="text" value="{{{gc-nick}}}" id="gc-nick" name="gc-nick" required />
+                        </div>
+                    </div>
+                </section>
 
-            <section id="main">
-                <div class="group">
-                    <h3 class="group-header">General Settings</h3>
-                    <ul class="medium-block-grid-5">
-                        <li class="settings-node" data-show-module="server" data-module-title="Server">
-                            <i class="fa fa-cog fa-3x"></i>
-                            Server
-                        </li>
-                        <li class="settings-node" data-show-module="irc">
-                            <i class="fa fa-comment fa-3x"></i>
-                            IRC
-                        </li>
-                        <li class="settings-node" data-show-module="database">
-                            <i class="fa fa-database fa-3x"></i>
-                            Database
-                        </li>
-                        <li class="settings-node" data-show-module="updates">
-                            <i class="fa fa-download fa-3x"></i>
-                            Updates
-                        </li>
-                    </ul>
-                </div>
-                <div class="group">
-                    <h3 class="group-header">Players & Groups</h3>
-                    <ul class="medium-block-grid-5">
-                        <li class="settings-node" data-show-module="player" data-module-title="Player">
-                            <i class="fa fa-user fa-3x"></i>
-                            Player
-                        </li>
-                        <li class="settings-node" data-show-module="permission" data-module-title="Permissions">
-                            <i class="fa fa-key fa-3x"></i>
-                            Permissions
-                        </li>
-                        <li class="settings-node" data-show-module="groups">
-                            <i class="fa fa-users fa-3x"></i>
-                            Groups
-                        </li>
-                    </ul>
-                </div>
-            </section>
-        </form>
-        <script src="js/vendor/jquery.js"></script>
+                <section id="idatabase-module" class="module">
+
+                </section>
+
+                <section id="updates-module" class="module">
+
+                </section>
+
+                <section id="player-module" class="module">
+                    <div class="row">
+                        <div class="medium-4 columns">
+                            <label class="inline" for="maxplayers">Max Players</label>
+                        </div>
+                        <div class="medium-8 columns">
+                            <input type="number" value="{{{maxplayers}}}" id="maxplayers" name="maxplayers" required/>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="medium-4 columns">
+                            <label class="inline">Verify Names</label>
+                        </div>
+                        <div class="medium-8 columns">
+                            <input type="hidden" name="verifynames" value="false" />
+                            <div class="switch">
+                                <script>var verifynames_checked = "{{{verifynames}}}";</script>
+                                <input id="verifynames" type="checkbox" name="verifynames">
+                                <label for="verifynames"></label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="medium-4 columns">
+                            <label class="inline" for="verifying">Verifying <small>Use /pass when logging into server?</small></label>
+                        </div>
+                        <div class="medium-8 columns">
+                            <input type="hidden" name="verifying" value="false" />
+                            <div class="switch">
+                                <script>var verifying_checked = "{{{verifying}}}";</script>
+                                <input id="verifying" type="checkbox" name="verifying">
+                                <label for="verifying"></label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="medium-4 columns">
+                            <label class="inline" for="verifygroup">Verifying Group</label>
+                        </div>
+                        <div class="medium-8 columns">
+                            <select name="verifygroup" id="verifygroup" data-group-list="option" data-option-value="name" data-current-value="{{{verifygroup}}}"></select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="medium-4 columns">
+                            <label class="inline" for="defaultgroup">Default Group</label>
+                        </div>
+                        <div class="medium-8 columns">
+                            <select name="defaultgroup" id="defaultgroup" data-group-list="option" data-option-value="name" data-current-value="{{{defaultgroup}}}"></select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="medium-4 columns">
+                            <label class="inline" for="verifying">Force agree to rules</label>
+                        </div>
+                        <div class="medium-8 columns">
+                            <input type="hidden" name="agreeingtorules" value="false" />
+                            <div class="switch">
+                                <script>var agreeingtorules_checked = "{{{agreeingtorules}}}";</script>
+                                <input id="agreeingtorules" type="checkbox" name="agreeingtorules">
+                                <label for="agreeingtorules"></label>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="main">
+                    <div class="group">
+                        <h3 class="group-header">General Settings</h3>
+                        <ul class="medium-block-grid-5">
+                            <li class="settings-node" data-show-module="server" data-module-title="Server">
+                                <i class="fa fa-cog fa-3x"></i>
+                                Server
+                            </li>
+                            <li class="settings-node" data-show-module="irc">
+                                <i class="fa fa-comment fa-3x"></i>
+                                IRC
+                            </li>
+                            <li class="settings-node" data-show-module="database">
+                                <i class="fa fa-database fa-3x"></i>
+                                Database
+                            </li>
+                            <li class="settings-node" data-show-module="updates">
+                                <i class="fa fa-download fa-3x"></i>
+                                Updates
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="group">
+                        <h3 class="group-header">Players & Groups</h3>
+                        <ul class="medium-block-grid-5">
+                            <li class="settings-node" data-show-module="player" data-module-title="Player">
+                                <i class="fa fa-user fa-3x"></i>
+                                Player
+                            </li>
+                            <li class="settings-node" data-show-module="permission" data-module-title="Permissions">
+                                <i class="fa fa-key fa-3x"></i>
+                                Permissions
+                            </li>
+                            <li class="settings-node" data-show-module="groups">
+                                <i class="fa fa-users fa-3x"></i>
+                                Groups
+                            </li>
+                        </ul>
+                    </div>
+                </section>
+            </form>
+        </section>
+        <section id="save-bar" class="fixed">
+            <button type="submit" class="tiny success button right" id="save-settings">Save Settings</button>
+        </section>
+
+        <script src="js/jquery.js"></script>
         <script src="js/foundation.min.js"></script>
-
         <script>
             var GROUPS = $.parseJSON('{{{GROUP_JSON}}}');
         </script>

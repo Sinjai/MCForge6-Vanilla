@@ -5,6 +5,8 @@ $(function() {
     if(verifynames_checked === "true") { $('#verifynames').prop('checked', true); }
     if(verifying_checked === "true") { $('#verifying').prop('checked', true); }
     if(agreeingtorules_checked === "true") { $('#agreeingtorules').prop('checked', true); }
+    if(irc_enabled_checked === "true") { $('#irc-enabled').prop('checked', true); }
+    if(gc_enabled_checked === "true") { $('#gc-enabled').prop('checked', true); }
 
     $('[data-show-module]').click(function() {
         $("#main").hide();
@@ -40,6 +42,10 @@ $(function() {
                 $(this).append("<option value=\"" + val + "\"" + selected + ">" + GROUPS[i].name + "</option>");
             }
         }
+    });
+
+    $('#save-settings').click(function() {
+        $("#form").submit();
     });
 });
 
