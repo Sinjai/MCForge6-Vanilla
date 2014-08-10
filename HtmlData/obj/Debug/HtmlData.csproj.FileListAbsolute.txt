@@ -8,3 +8,4 @@ L:\Personal\Documents\Visual Studio 2013\Projects\MCForge7\HtmlData\obj\Debug\MC
 L:\Personal\Documents\Visual Studio 2013\Projects\MCForge7\HtmlData\obj\Debug\HtmlData.csproj.GenerateResource.Cache
 L:\Personal\Documents\Visual Studio 2013\Projects\MCForge7\HtmlData\obj\Debug\MCForge.HtmlData.dll
 L:\Personal\Documents\Visual Studio 2013\Projects\MCForge7\HtmlData\obj\Debug\MCForge.HtmlData.pdb
+L:\Personal\Documents\Visual Studio 2013\Projects\MCForge7\HtmlData\obj\Debug\HtmlData.csprojResolveAssemblyReference.cache

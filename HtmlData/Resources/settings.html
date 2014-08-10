@@ -23,7 +23,7 @@
                 <section id="server-module" class="module">
                     <div class="row">
                         <div class="medium-4 columns">
-                            <label class="inline" for="servername">Server Name</label>
+                            <label class="inline right" for="servername">Server Name</label>
                         </div>
                         <div class="medium-8 columns">
                             <input type="text" value="{{{servername}}}" id="servername" name="servername" required/>
@@ -31,7 +31,7 @@
                     </div>
                     <div class="row">
                         <div class="medium-4 columns">
-                            <label class="inline" for="port">Server Port</label>
+                            <label class="inline right" for="port">Server Port</label>
                         </div>
                         <div class="medium-8 columns">
                             <input type="text" value="{{{port}}}" id="port" name="port" required maxlength="5"/>
@@ -39,7 +39,7 @@
                     </div>
                     <div class="row">
                         <div class="medium-4 columns">
-                            <label class="inline" for="motd">MOTD</label>
+                            <label class="inline right" for="motd">MOTD</label>
                         </div>
                         <div class="medium-8 columns">
                             <input type="text" value="{{{motd}}}" id="motd" name="motd" required />
@@ -47,7 +47,7 @@
                     </div>
                     <div class="row">
                         <div class="medium-4 columns">
-                            <label class="inline" for="serverowner">Server Owner</label>
+                            <label class="inline right" for="serverowner">Server Owner</label>
                         </div>
                         <div class="medium-8 columns">
                             <input type="text" value="{{{serverowner}}}" id="serverowner" name="serverowner" required />
@@ -55,7 +55,7 @@
                     </div>
                     <div class="row">
                         <div class="medium-4 columns">
-                            <label class="inline" for="main-level">Main Level</label>
+                            <label class="inline right" for="main-level">Main Level</label>
                         </div>
                         <div class="medium-8 columns">
                             <input type="text" value="{{{main-level}}}" id="main-level" name="main-level" required />
@@ -63,7 +63,7 @@
                     </div>
                     <div class="row">
                         <div class="medium-4 columns">
-                            <label class="inline">Public</label>
+                            <label class="inline right">Public</label>
                         </div>
                         <div class="medium-8 columns">
                             <input type="hidden" name="public" value="false" />
@@ -76,7 +76,7 @@
                     </div>
                     <div class="row">
                         <div class="medium-4 columns">
-                            <label class="inline">Load <strong>ALL</strong> Levels</label>
+                            <label class="inline right">Load <strong>ALL</strong> Levels</label>
                         </div>
                         <div class="medium-8 columns">
                             <input type="hidden" name="loadalllevels" value="false" />
@@ -87,12 +87,37 @@
                             </div>
                         </div>
                     </div>
+                    <hr/>
+                    <div class="row">
+                        <div class="medium-4 columns">
+                            <label class="right" for="welcomemessage">Welcome Message<br/><small>To signify a line break use "&lt;br&gt;"</small></label>
+                        </div>
+                        <div class="medium-8 columns">
+                            <input type="text" value="{{{welcomemessage}}}" id="welcomemessage" name="welcomemessage" required />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="medium-4 columns">
+                            <label class="inline right" for="shutdownmessage">Showdown Message</label>
+                        </div>
+                        <div class="medium-8 columns">
+                            <input type="text" value="{{{shutdownmessage}}}" id="shutdownmessage" name="shutdownmessage" required />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="medium-4 columns">
+                            <label class="inline right" for="moneyname">Money Name</label>
+                        </div>
+                        <div class="medium-8 columns">
+                            <input type="text" value="{{{moneyname}}}" id="moneyname" name="moneyname" required />
+                        </div>
+                    </div>
                 </section>
 
                 <section id="irc-module" class="module">
                     <div class="row">
                         <div class="medium-4 columns">
-                            <label class="inline">Enable IRC</label>
+                            <label class="inline right">Enable IRC</label>
                         </div>
                         <div class="medium-8 columns">
                             <input type="hidden" name="irc-enabled" value="false" />
@@ -105,7 +130,7 @@
                     </div>
                     <div class="row">
                         <div class="medium-4 columns">
-                            <label class="inline" for="irc-server">Server</label>
+                            <label class="inline right" for="irc-server">Server</label>
                         </div>
                         <div class="medium-8 columns">
                             <input type="text" value="{{{irc-server}}}" id="irc-server" name="irc-server" required />
@@ -113,7 +138,7 @@
                     </div>
                     <div class="row">
                         <div class="medium-4 columns">
-                            <label class="inline" for="irc-port">Port</label>
+                            <label class="inline right" for="irc-port">Port</label>
                         </div>
                         <div class="medium-8 columns">
                             <input type="number" value="{{{irc-port}}}" id="irc-port" name="irc-port" required maxlength="5" />
@@ -121,7 +146,7 @@
                     </div>
                     <div class="row">
                         <div class="medium-4 columns">
-                            <label class="inline" for="irc-nickname">Nickname</label>
+                            <label class="inline right" for="irc-nickname">Nickname</label>
                         </div>
                         <div class="medium-8 columns">
                             <input type="text" value="{{{irc-nickname}}}" id="irc-nickname" name="irc-nickname" required />
@@ -129,7 +154,7 @@
                     </div>
                     <div class="row">
                         <div class="medium-4 columns">
-                            <label class="inline" for="irc-channel">Channel</label>
+                            <label class="inline right" for="irc-channel">Channel</label>
                         </div>
                         <div class="medium-8 columns">
                             <input type="text" value="{{{irc-channel}}}" id="irc-channel" name="irc-channel" />
@@ -137,7 +162,7 @@
                     </div>
                     <div class="row">
                         <div class="medium-4 columns">
-                            <label class="inline" for="irc-opchannel">OP Channel</label>
+                            <label class="inline right" for="irc-opchannel">OP Channel</label>
                         </div>
                         <div class="medium-8 columns">
                             <input type="text" value="{{{irc-opchannel}}}" id="irc-opchannel" name="irc-opchannel" />
@@ -145,15 +170,16 @@
                     </div>
                     <div class="row">
                         <div class="medium-4 columns">
-                            <label class="inline" for="irc-nickserv">NickServ Password</label>
+                            <label class="inline right" for="irc-nickserv">NickServ Password</label>
                         </div>
                         <div class="medium-8 columns">
                             <input type="text" value="{{{irc-nickserv}}}" id="irc-nickserv" name="irc-nickserv" />
                         </div>
                     </div>
+                    <hr/>
                     <div class="row">
                         <div class="medium-4 columns">
-                            <label class="inline">Enable Global Chat</label>
+                            <label class="inline right">Enable Global Chat</label>
                         </div>
                         <div class="medium-8 columns">
                             <input type="hidden" name="irc-enabled" value="false" />
@@ -166,7 +192,7 @@
                     </div>
                     <div class="row">
                         <div class="medium-4 columns">
-                            <label class="inline" for="gc-nick">Global Chat Nickname</label>
+                            <label class="inline right" for="gc-nick">Global Chat Nickname</label>
                         </div>
                         <div class="medium-8 columns">
                             <input type="text" value="{{{gc-nick}}}" id="gc-nick" name="gc-nick" required />
@@ -174,18 +200,164 @@
                     </div>
                 </section>
 
-                <section id="idatabase-module" class="module">
+                <section id="database-module" class="module">
 
                 </section>
 
                 <section id="updates-module" class="module">
+                    <div class="row">
+                        <div class="medium-4 columns">
+                            <label class="right" for="updatecheck-interval">Update check interval<br/><small>(in Minutes)</small></label>
+                        </div>
+                        <div class="medium-8 columns">
+                            <input type="number" name="updatecheck-interval" id="updatecheck-interval" value="{{{updatecheck-interval}}}"/>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="medium-4 columns">
+                            <label class="inline right">Check For Core Updates</label>
+                        </div>
+                        <div class="medium-8 columns">
+                            <input type="hidden" name="check-core-updates" value="false" />
+                            <div class="switch">
+                                <script>var check_for_core_updates_checked = "{{{check-core-updates}}}";</script>
+                                <input id="check-core-updates" type="checkbox" name="check-core-updates">
+                                <label for="check-core-updates"></label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="medium-4 columns">
+                            <label class="inline right">Check For Misc Updates</label>
+                        </div>
+                        <div class="medium-8 columns">
+                            <input type="hidden" name="check-misc-updates" value="false" />
+                            <div class="switch">
+                                <script>var check_misc_updates_checked = "{{{check-misc-updates}}}";</script>
+                                <input id="check-misc-updates" type="checkbox" name="check-misc-updates">
+                                <label for="check-misc-updates"></label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="medium-4 columns">
+                            <label class="inline right">Allow Patch Updates</label>
+                        </div>
+                        <div class="medium-8 columns">
+                            <input type="hidden" name="check-misc-updates" value="false" />
+                            <div class="switch">
+                                <script>var allow_patch_updates_checked = "{{{allow-patch-updates}}}";</script>
+                                <input id="allow-patch-updates" type="checkbox" name="allow-patch-updates">
+                                <label for="allow-patch-updates"></label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="medium-4 columns">
+                            <label class="right">Auto Update<br/><small>Ignored if Silent Update is enabled</small></label>
+                        </div>
+                        <div class="medium-8 columns">
+                            <input type="hidden" name="auto-update" value="false" />
+                            <div class="switch">
+                                <script>var allow_update_checked = "{{{auto-update}}}";</script>
+                                <input id="auto-update" type="checkbox" name="auto-update">
+                                <label for="auto-update"></label>
+                            </div>
+                        </div>
+                    </div>
+                    <hr />
+                    <div class="row">
+                        <div class="medium-4 columns">
+                            <label class="inline right">Ask Before Doing a Core Update</label>
+                        </div>
+                        <div class="medium-8 columns">
+                            <input type="hidden" name="ask-before-core" value="false" />
+                            <div class="switch">
+                                <script>var ask_before_core_checked = "{{{ask-before-core}}}";</script>
+                                <input id="ask-before-core" type="checkbox" name="ask-before-core">
+                                <label for="ask-before-core"></label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="medium-4 columns">
+                            <label class="right">Ask before updating Commands and Plugins</label>
+                        </div>
+                        <div class="medium-8 columns">
+                            <input type="hidden" name="ask-before-misc" value="false" />
+                            <div class="switch">
+                                <script>var ask_before_misc_checked = "{{{ask-before-misc}}}";</script>
+                                <input id="ask-before-misc" type="checkbox" name="ask-before-misc">
+                                <label for="ask-before-misc"></label>
+                            </div>
+                        </div>
+                    </div>
+                    <hr/>
+                    <div class="row">
+                        <div class="medium-4 columns">
+                            <label class="inline right">Silent Update</label>
+                        </div>
+                        <div class="medium-8 columns">
+                            <input type="hidden" name="silent-update" value="false" />
+                            <div class="switch">
+                                <script>var silent_update_checked = "{{{silent-update}}}";</script>
+                                <input id="silent-update" type="checkbox" name="silent-update">
+                                <label for="silent-update"></label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="medium-4 columns">
+                            <label class="inline right">Silent Core Update</label>
+                        </div>
+                        <div class="medium-8 columns">
+                            <input type="hidden" name="silent-core-update" value="false" />
+                            <div class="switch">
+                                <script>var silent_core_update_checked = "{{{silent-core-update}}}";</script>
+                                <input id="silent-core-update" type="checkbox" name="silent-core-update">
+                                <label for="silent-core-update"></label>
+                            </div>
+                        </div>
+                    </div>
+                </section>
 
+                <section id="advanced-module" class="module">
+                    <div class="row">
+                        <div class="medium-4 columns">
+                            <label class="right">
+                                Use Console (CLI)<br/><small>Requires Restart.</small>
+                            </label>
+                        </div>
+                        <div class="medium-3 columns">
+                            <input type="hidden" name="usingconsole" value="false" />
+                            <div class="switch">
+                                <script>var usingconsole_checked = "{{{usingconsole}}}";</script>
+                                <input id="usingconsole" type="checkbox" name="usingconsole">
+                                <label for="usingconsole"></label>
+                            </div>
+                        </div>
+                        <div class="medium-5 columns">
+                            <small>You can still access this GUI at <a href="http://localhost:6969/settings.html">http://localhost:6969/settings.html</a></small>
+                        </div>
+                    </div>
+                    <hr/>
+                    <div class="row">
+                        <div class="medium-4 columns">
+                            <label class="right" for="configpath">
+                                Config File Path<br/>
+                                <small>Do <strong>not</strong> mess with unless you know what you are doing</small>
+                            </label>
+                        </div>
+                        <div class="medium-8 columns">
+                            <input type="text" name="configpath" id="configpath" value="{{{configpath}}}"/>
+                        </div>
+                    </div>
                 </section>
 
                 <section id="player-module" class="module">
                     <div class="row">
                         <div class="medium-4 columns">
-                            <label class="inline" for="maxplayers">Max Players</label>
+                            <label class="inline right" for="maxplayers">Max Players</label>
                         </div>
                         <div class="medium-8 columns">
                             <input type="number" value="{{{maxplayers}}}" id="maxplayers" name="maxplayers" required/>
@@ -193,7 +365,7 @@
                     </div>
                     <div class="row">
                         <div class="medium-4 columns">
-                            <label class="inline">Verify Names</label>
+                            <label class="inline right">Verify Names</label>
                         </div>
                         <div class="medium-8 columns">
                             <input type="hidden" name="verifynames" value="false" />
@@ -206,7 +378,7 @@
                     </div>
                     <div class="row">
                         <div class="medium-4 columns">
-                            <label class="inline" for="verifying">Verifying <small>Use /pass when logging into server?</small></label>
+                            <label class="inline right" for="verifying">Verifying <small>Use /pass when logging into server?</small></label>
                         </div>
                         <div class="medium-8 columns">
                             <input type="hidden" name="verifying" value="false" />
@@ -219,7 +391,7 @@
                     </div>
                     <div class="row">
                         <div class="medium-4 columns">
-                            <label class="inline" for="verifygroup">Verifying Group</label>
+                            <label class="inline right" for="verifygroup">Verifying Group</label>
                         </div>
                         <div class="medium-8 columns">
                             <select name="verifygroup" id="verifygroup" data-group-list="option" data-option-value="name" data-current-value="{{{verifygroup}}}"></select>
@@ -227,7 +399,7 @@
                     </div>
                     <div class="row">
                         <div class="medium-4 columns">
-                            <label class="inline" for="defaultgroup">Default Group</label>
+                            <label class="inline right" for="defaultgroup">Default Group</label>
                         </div>
                         <div class="medium-8 columns">
                             <select name="defaultgroup" id="defaultgroup" data-group-list="option" data-option-value="name" data-current-value="{{{defaultgroup}}}"></select>
@@ -235,7 +407,7 @@
                     </div>
                     <div class="row">
                         <div class="medium-4 columns">
-                            <label class="inline" for="verifying">Force agree to rules</label>
+                            <label class="inline right" for="verifying">Force agree to rules</label>
                         </div>
                         <div class="medium-8 columns">
                             <input type="hidden" name="agreeingtorules" value="false" />
@@ -256,32 +428,36 @@
                                 <i class="fa fa-cog fa-3x"></i>
                                 Server
                             </li>
-                            <li class="settings-node" data-show-module="irc">
+                            <li class="settings-node" data-show-module="irc" data-module-title="IRC">
                                 <i class="fa fa-comment fa-3x"></i>
                                 IRC
                             </li>
-                            <li class="settings-node" data-show-module="database">
+                            <li class="settings-node" data-show-module="database" data-module-title="Database">
                                 <i class="fa fa-database fa-3x"></i>
                                 Database
                             </li>
-                            <li class="settings-node" data-show-module="updates">
+                            <li class="settings-node" data-show-module="updates" data-module-title="Updates">
                                 <i class="fa fa-download fa-3x"></i>
                                 Updates
+                            </li>
+                            <li class="settings-node" data-show-module="advanced" data-module-title="Advanced">
+                                <i class="fa fa-cogs fa-3x"></i>
+                                Advanced
                             </li>
                         </ul>
                     </div>
                     <div class="group">
                         <h3 class="group-header">Players & Groups</h3>
                         <ul class="medium-block-grid-5">
-                            <li class="settings-node" data-show-module="player" data-module-title="Player">
+                            <li class="settings-node" data-show-module="player" data-module-title="Players">
                                 <i class="fa fa-user fa-3x"></i>
-                                Player
+                                Players
                             </li>
                             <li class="settings-node" data-show-module="permission" data-module-title="Permissions">
                                 <i class="fa fa-key fa-3x"></i>
                                 Permissions
                             </li>
-                            <li class="settings-node" data-show-module="groups">
+                            <li class="settings-node" data-show-module="groups" data-module-title="Groups">
                                 <i class="fa fa-users fa-3x"></i>
                                 Groups
                             </li>

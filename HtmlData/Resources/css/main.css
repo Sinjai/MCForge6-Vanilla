@@ -46,3 +46,10 @@ form {
 .module {
   padding: 20px;
   display: none; }
+
+label {
+  line-height: 1.1;
+  text-transform: capitalize; }
+  label small {
+    font-size: 65%;
+    text-transform: none; }

@@ -7,6 +7,15 @@ $(function() {
     if(agreeingtorules_checked === "true") { $('#agreeingtorules').prop('checked', true); }
     if(irc_enabled_checked === "true") { $('#irc-enabled').prop('checked', true); }
     if(gc_enabled_checked === "true") { $('#gc-enabled').prop('checked', true); }
+    if(usingconsole_checked === "true") { $('#usingconsole').prop('checked', true); }
+    if(check_for_core_updates_checked === "true") { $('#check-for-core-updates').prop('checked', true); }
+    if(check_misc_updates_checked === "true") { $('#check-misc-updates').prop('checked', true); }
+    if(allow_patch_updates_checked === "true") { $('#allow-patch-updates').prop('checked', true); }
+    if(allow_update_checked === "true") { $('#allow-update').prop('checked', true); }
+    if(silent_update_checked === "true") { $('#silent-update').prop('checked', true); }
+    if(ask_before_core_checked === "true") { $('#ask-before-core').prop('checked', true); }
+    if(ask_before_misc_checked === "true") { $('#ask-before-misc').prop('checked', true); }
+    if(silent_core_update_checked === "true") { $('#silent-core-update').prop('checked', true); }
 
     $('[data-show-module]').click(function() {
         $("#main").hide();

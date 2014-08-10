@@ -64,3 +64,13 @@ form {
     padding: 20px;
     display: none;
 }
+
+label {
+    line-height: 1.1;
+    text-transform: capitalize;
+
+    small {
+        font-size: 65%;
+        text-transform: none;
+    }
+}
