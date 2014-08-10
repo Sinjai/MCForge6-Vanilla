@@ -1005,7 +1005,7 @@ namespace MCForge.Entity
                     }
                     Packet pa = new Packet();
                     pa.Add(Packet.Types.Message);
-                    pa.Add(0);
+                    pa.Add((byte)0);
                     pa.Add(newLine, 64);
                     SendPacket(pa);
                 }
@@ -1031,7 +1031,14 @@ namespace MCForge.Entity
                 {
                     //Here we loop through the whole map and check/convert the blocks as necesary
                     //We then add them to our blocks array so we can send them to the player
-                    block = Level.Data[pos];
+                    if(!extension)
+                    {
+                        block = Block.ConvertCPE(Level.Data[pos]);
+                    }
+                    else
+                    {
+                        block = Level.Data[pos];
+                    }
                     //TODO ADD CHECKING
                     blocks[pos] = block;
                 });
@@ -1120,7 +1127,10 @@ namespace MCForge.Entity
             pa.Add(x);
             pa.Add(y);
             pa.Add(z);
-            //if (type > 49) type = Block.CustomBlocks[type].VisibleType;
+            if(type > 49 && !extension)
+            {
+                type = Block.ConvertCPE(type);
+            }
             pa.Add(type);
 
             SendPacket(pa);

@@ -270,7 +270,7 @@ namespace MCForge.Robot
             }
         }
 
-        protected byte FreeId()
+        byte FreeId()
         {
             List<byte> usedIds = new List<byte>();
 
@@ -287,7 +287,7 @@ namespace MCForge.Robot
             return 254;
         }
 
-        protected void SpawnThisBotToOtherPlayers(Bot z)
+        void SpawnThisBotToOtherPlayers(Bot z)
         {
             Server.ForeachPlayer(delegate(Player p)
             {

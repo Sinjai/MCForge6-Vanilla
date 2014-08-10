@@ -401,7 +401,18 @@ namespace MCForge.World {
                 FEBD(i);
             }
         }
-
+        /// <summary>
+        /// Causes a block change for the level
+        /// </summary>
+        /// <param name="p">A player who doesn't need the update.</param>
+        /// <param name="x">Location of x</param>
+        /// <param name="z">Location of y</param>
+        /// <param name="y">Location of z</param>
+        /// <param name="block">Block to set</param>
+        public void Blockchange(Player p, ushort x, ushort y, ushort z, byte block)
+        {
+            BlockChange(x, z, y, block, p);
+        }
         /// <summary>
         /// Causes a block change for the level
         /// </summary>
