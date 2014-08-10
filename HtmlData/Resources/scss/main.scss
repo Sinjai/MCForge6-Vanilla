@@ -1,0 +1,58 @@
+
+#save-bar,
+#menu-bar {
+    padding: 10px;
+    background: #1b1b1b;
+    border-bottom: #101010;
+
+    .button {
+        margin-bottom: 0;
+    }
+}
+
+#module-title {
+    margin: 8px 20px 0;
+}
+
+#save-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+.group {
+    border-bottom: 1px solid #ccc;
+    padding: 10px 20px 0;
+    background: #eaeaea;
+
+    .group-header {
+        font-size: 20px;
+        margin: 0;
+        padding-bottom: 10px;
+    }
+
+    .settings-node {
+        text-align: center;
+
+        i {
+            display: block;
+        }
+
+        &:hover {
+            color: #383838;
+            cursor: pointer;
+        }
+    }
+
+    &:nth-child(2n+1) {
+        background: #fff;
+    }
+}
+
+
+.module {
+    padding: 20px;
+    display: none;
+    margin-bottom: 35px;
+}

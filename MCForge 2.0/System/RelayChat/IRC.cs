@@ -25,6 +25,7 @@ using MCForge.Utils;
 using MCForge.Core;
 using MCForge.Entity;
 using MCForge.Utils.Settings;
+using System.Threading;
 
 namespace MCForge.Core.RelayChat
 {
@@ -57,147 +58,152 @@ namespace MCForge.Core.RelayChat
 
         public void Start(string server, int port, string nick, string channel, string password = null, string opchannel = null)
         {
-            this.server = server;
-            this.port = port;
-            this.nickname = nick;
-            this.channel = channel;
-            this.password = password;
-            this.opChannel = opchannel;
-
-            ircControllers = LoadIrcControllers();
-            Logger.Log("Connecting to IRC...");
-            botOn = true;
-            try
+            Thread trd = new Thread(new ThreadStart(delegate
             {
-                // Connect
-                irc = new TcpClient(server, port);
-                sstream = irc.GetStream();
-                sread = new StreamReader(sstream);
-                swrite = new StreamWriter(sstream);
-            }
-            catch (Exception e)
-            {
-                Logger.Log("Error connecting to " + server + ": " + e);
-                return;
-            }
+                this.server = server;
+                this.port = port;
+                this.nickname = nick;
+                this.channel = channel;
+                this.password = password;
+                this.opChannel = opchannel;
 
-            // Identify
-            swrite.WriteLine("USER {0} {0} {0} :{1}", nickname, nickname);
-            swrite.Flush();
-            swrite.WriteLine("NICK {0}", nickname);
-            swrite.Flush();
-
-            cp = new ConsolePlayer(cio);
-
-            while (botOn)
-            {
+                ircControllers = LoadIrcControllers();
+                Logger.Log("Connecting to IRC...");
+                botOn = true;
                 try
                 {
-                    if ((line = sread.ReadLine()) != null && botOn)
-                    {
-                        if (debug) Logger.Log(line);
-                        splitLine = line.Split(' ');
+                    // Connect
+                    irc = new TcpClient(server, port);
+                    sstream = irc.GetStream();
+                    sread = new StreamReader(sstream);
+                    swrite = new StreamWriter(sstream);
+                }
+                catch (Exception e)
+                {
+                    Logger.Log("Error connecting to " + server + ": " + e);
+                    return;
+                }
 
-                        if (splitLine.Length > 0)
+                // Identify
+                swrite.WriteLine("USER {0} {0} {0} :{1}", nickname, nickname);
+                swrite.Flush();
+                swrite.WriteLine("NICK {0}", nickname);
+                swrite.Flush();
+
+                cp = new ConsolePlayer(cio);
+
+                while (botOn)
+                {
+                    try
+                    {
+                        if ((line = sread.ReadLine()) != null && botOn)
                         {
-                            if (splitLine[1] == "376" || splitLine[1] == "422")
+                            if (debug) Logger.Log(line);
+                            splitLine = line.Split(' ');
+
+                            if (splitLine.Length > 0)
                             {
-                                swrite.WriteLine("JOIN {0}", channel);
-                                swrite.Flush();
-                                if (opChannel != "#" || opChannel != "")
+                                if (splitLine[1] == "376" || splitLine[1] == "422")
                                 {
-                                    swrite.WriteLine("JOIN {0}", opChannel);
+                                    swrite.WriteLine("JOIN {0}", channel);
+                                    swrite.Flush();
+                                    if (opChannel != "#" || opChannel != "")
+                                    {
+                                        swrite.WriteLine("JOIN {0}", opChannel);
+                                        swrite.Flush();
+                                    }
+                                    swrite.WriteLine("NS IDENTIFY {0} {1}", nickname, password);
+                                    swrite.Flush();
+                                    connected = true;
+                                    Logger.Log("Connected!");
+                                }
+
+                                if (splitLine[0] == "PING")
+                                {
+                                    swrite.WriteLine("PONG {0}", splitLine[1]);
                                     swrite.Flush();
                                 }
-                                swrite.WriteLine("NS IDENTIFY {0} {1}", nickname, password);
-                                swrite.Flush();
-                                connected = true;
-                                Logger.Log("Connected!");
                             }
-
-                            if (splitLine[0] == "PING")
+                            string replyChannel = "";
+                            if (line.Split(' ')[2] != channel && line.Split(' ')[2] != opChannel) replyChannel = line.Split('!')[0].Remove(0, 1);
+                            else replyChannel = line.Split(' ')[2];
+                            line = line.Replace("%", "&");
+                            if (GetSpokenLine(line).Equals("!players"))
                             {
-                                swrite.WriteLine("PONG {0}", splitLine[1]);
+                                swrite.WriteLine("PRIVMSG {0} :" + "There are " + Server.Players.Count + " player(s) online:",
+                                             replyChannel);
                                 swrite.Flush();
-                            }
-                        }
-                        string replyChannel = "";
-                        if (line.Split(' ')[2] != channel && line.Split(' ')[2] != opChannel) replyChannel = line.Split('!')[0].Remove(0, 1);
-                        else replyChannel = line.Split(' ')[2];
-                        line = line.Replace("%", "&");
-                        if (GetSpokenLine(line).Equals("!players"))
-                        {
-                            swrite.WriteLine("PRIVMSG {0} :" + "There are " + Server.Players.Count + " player(s) online:",
-                                         replyChannel);
-                            swrite.Flush();
-                            string playerString = "";
-                            Server.Players.ForEach(delegate(Player pl)
-                            {
-                                playerString = playerString + pl.Username + ", ";
-                            });
-                            swrite.WriteLine("PRIVMSG {0} :" + playerString.Remove(playerString.Length - 2, 2),
-                                         replyChannel);
-                            swrite.Flush();
-                        }
-                        else if (GetSpokenLine(line).Equals("!url"))
-                        {
-                            swrite.WriteLine("PRIVMSG {0} :" + "The url for the server is: " + Server.URL,
-                                         replyChannel);
-                            swrite.Flush();
-                        }
-                        else if (GetSpokenLine(line).StartsWith("!"))
-                        {
-                            if (GetSpokenLine(line).Trim().Length > 1)
-                            {
-                                string name = GetSpokenLine(line).Trim().Substring(1);
-                                ICommand c = Command.Find(name);
-                                if (c != null)
+                                string playerString = "";
+                                Server.Players.ForEach(delegate(Player pl)
                                 {
-                                    int i = GetSpokenLine(line).Trim().IndexOf(" ");
-                                    if (i > 0)
+                                    playerString = playerString + pl.Username + ", ";
+                                });
+                                swrite.WriteLine("PRIVMSG {0} :" + playerString.Remove(playerString.Length - 2, 2),
+                                             replyChannel);
+                                swrite.Flush();
+                            }
+                            else if (GetSpokenLine(line).Equals("!url"))
+                            {
+                                swrite.WriteLine("PRIVMSG {0} :" + "The url for the server is: " + Server.URL,
+                                             replyChannel);
+                                swrite.Flush();
+                            }
+                            else if (GetSpokenLine(line).StartsWith("!"))
+                            {
+                                if (GetSpokenLine(line).Trim().Length > 1)
+                                {
+                                    string name = GetSpokenLine(line).Trim().Substring(1);
+                                    ICommand c = Command.Find(name);
+                                    if (c != null)
                                     {
-                                        string[] cargs = GetSpokenLine(line).Trim().Substring(i + 1).Split(' ');
-                                        cp.replyChannel = replyChannel;
-                                        c.Use(cp, cargs);
-                                    }
-                                    else
-                                    {
-                                        cp.replyChannel = replyChannel;
-                                        c.Use(cp, new string[0]);
+                                        int i = GetSpokenLine(line).Trim().IndexOf(" ");
+                                        if (i > 0)
+                                        {
+                                            string[] cargs = GetSpokenLine(line).Trim().Substring(i + 1).Split(' ');
+                                            cp.replyChannel = replyChannel;
+                                            c.Use(cp, cargs);
+                                        }
+                                        else
+                                        {
+                                            cp.replyChannel = replyChannel;
+                                            c.Use(cp, new string[0]);
+                                        }
                                     }
                                 }
                             }
-                        }
-                        else if (line.ToLower().Contains("privmsg") && splitLine[1] != "005")
-                        {
-                            if (replyChannel != opChannel)
+                            else if (line.ToLower().Contains("privmsg") && splitLine[1] != "005")
                             {
-                                try
+                                if (replyChannel != opChannel)
                                 {
-                                    Player.UniversalChat("[" + this.type + "] <" + GetUsernameSpeaking(line) + ">: " + IRCToClassic(GetSpokenLine(line)));
-                                    Logger.Log("[" + this.type + "] <" + GetUsernameSpeaking(line) + ">: " + IRCToClassic(GetSpokenLine(line)));
+                                    try
+                                    {
+                                        Player.UniversalChat("[" + this.type + "] <" + GetUsernameSpeaking(line) + ">: " + IRCToClassic(GetSpokenLine(line)));
+                                        Logger.Log("[" + this.type + "] <" + GetUsernameSpeaking(line) + ">: " + IRCToClassic(GetSpokenLine(line)));
+                                    }
+                                    catch { }
                                 }
-                                catch { }
-                            }
-                            else if (replyChannel == opChannel)
-                            {
-                                try
+                                else if (replyChannel == opChannel)
                                 {
-                                    Player.UniversalChatOps("[OPIRC] <" + GetUsernameSpeaking(line) + ">: " + IRCToClassic(GetSpokenLine(line)));
-                                    Logger.Log("[OPIRC] <" + GetUsernameSpeaking(line) + ">: " + IRCToClassic(GetSpokenLine(line)));
+                                    try
+                                    {
+                                        Player.UniversalChatOps("[OPIRC] <" + GetUsernameSpeaking(line) + ">: " + IRCToClassic(GetSpokenLine(line)));
+                                        Logger.Log("[OPIRC] <" + GetUsernameSpeaking(line) + ">: " + IRCToClassic(GetSpokenLine(line)));
+                                    }
+                                    catch { }
                                 }
-                                catch { }
                             }
                         }
                     }
+                    catch { }
                 }
-                catch { }
-            }
-            // Clean up
-            connected = false;
-            swrite.Close();
-            sread.Close();
-            irc.Close();
+                // Clean up
+                connected = false;
+                swrite.Close();
+                sread.Close();
+                irc.Close();
+            }));
+
+            trd.Start();
         }
 
         private static string GetUsernameSpeaking(string line)

@@ -327,6 +327,12 @@ namespace MCForge.Gui.Forms {
                 dialog.ShowDialog();
         }
 
+        private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using (ServerSettingsDialog settings = new ServerSettingsDialog())
+                settings.ShowDialog();
+        }
+
         #endregion
 
 

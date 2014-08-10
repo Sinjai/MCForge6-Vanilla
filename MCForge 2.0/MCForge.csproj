@@ -191,6 +191,7 @@
     <Compile Include="System\Heartbeat\CBeat.cs" />
     <Compile Include="System\RelayChat\GlobalChat.cs" />
     <Compile Include="System\RelayChat\ServerChat.cs" />
+    <Compile Include="System\RemoteConsole\ConsoleListener.cs" />
     <Compile Include="System\Updater.cs" />
     <Compile Include="Utils\BinaryUtils.cs" />
     <Compile Include="Utils\BlockChangeHistory.cs" />
@@ -378,6 +379,12 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\HtmlData\HtmlData.csproj">
+      <Project>{ff9bff37-8609-4b00-ad00-ea5d57931f1f}</Project>
+      <Name>HtmlData</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

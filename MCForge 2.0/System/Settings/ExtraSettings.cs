@@ -47,7 +47,7 @@ namespace MCForge.Utils.Settings {
         /// </summary>
         public event EventHandler<SettingsChangedEventArgs> OnSettingChanged;
 
-
+        public List<SettingNode> All() { return this.Values; }
         /// <summary>
         /// Starts the Settings Object
         /// </summary>

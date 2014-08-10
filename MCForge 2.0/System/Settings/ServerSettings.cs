@@ -240,5 +240,10 @@ namespace MCForge.Utils.Settings {
         public static string GetDescription(string key) {
             return settings.GetDescription(key);
         }
+
+        public static List<SettingNode> All()
+        {
+            return settings.All();
+        }
     }
 }

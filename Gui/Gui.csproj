@@ -251,6 +251,9 @@
     <EmbeddedResource Include="Dialogs\PortToolsDialog.resx">
       <DependentUpon>PortToolsDialog.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\ServerSettingsDialog.resx">
+      <DependentUpon>ServerSettingsDialog.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\TextOnlyDialog.resx">
       <DependentUpon>TextOnlyDialog.cs</DependentUpon>
     </EmbeddedResource>

@@ -31,6 +31,7 @@ using MCForge.Utils.Settings;
 using MCForge.World;
 using MCForge.World.Physics;
 using MCForge.Core.RelayChat;
+using MCForge.Core.RemoteConsole;
 
 namespace MCForge.Core {
     public static class Server {
@@ -343,6 +344,12 @@ namespace MCForge.Core {
                 catch { }
             }
 
+            try
+            {
+                ConsoleListener rc = new ConsoleListener();
+                rc.Start();
+            }
+            catch (Exception e) { }
 
             PlayerConnectionTimeoutChecker = new Thread(() => {
                 int sleep = ServerSettings.GetSettingInt("AutoTimeout");

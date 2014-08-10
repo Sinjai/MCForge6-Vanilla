@@ -7,10 +7,18 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
-namespace MCForge.Gui.Dialogs {
-    public partial class ServerSettingsDialog : Form {
-        public ServerSettingsDialog() {
+namespace MCForge.Gui.Dialogs
+{
+    public partial class ServerSettingsDialog : Form
+    {
+        public ServerSettingsDialog()
+        {
             InitializeComponent();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            this.webBrowser1.Refresh();
         }
     }
 }
