@@ -103,8 +103,8 @@ namespace MCForge.Utils.Settings {
                     new SettingNode("FlyWaterSize", "5, 5, 5", "The size of the water cuboid to swim in the air. Use one number to set all dimension to the same size or use three numbers for different sizes. If it is set to false '/fly water' will be disabled")
                }, false);
 
-        internal static string Salt { get; set; }
-        internal static string Salt2 { get; set; }
+        internal static string Salt { get; internal set; }
+        internal static string Salt2 { get; internal set; }
         internal static int Version { get { return 7; } }
 
         /// <summary>
