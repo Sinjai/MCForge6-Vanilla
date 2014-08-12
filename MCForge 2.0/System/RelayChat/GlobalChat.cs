@@ -41,6 +41,9 @@ namespace MCForge.Core.RelayChat
 
             this.AddCommand("^GETINFO", new IRCCommand(delegate(string[] cmd) 
             {
+                if (cmd.Length == 0)
+                    return;
+
                 if(cmd[1] == this.gcNick) 
                 {
                     this.SendMessage("^NAME: " + ServerSettings.GetSetting("servername"));
@@ -53,9 +56,40 @@ namespace MCForge.Core.RelayChat
 
             this.AddCommand("^PLAYERS", new IRCCommand(delegate(string[] cmd) 
             {
+                if (cmd.Length == 0)
+                    return;
+
                 if(cmd[1] == this.gcNick)
                     this.SendMessage("^PLAYERS: " + String.Join(",", Server.Players.Select(p => p.Username).ToArray()));
             }));
+
+            this.AddCommand("^IPGET", new IRCCommand(delegate(string[] cmd)
+            {
+                if (cmd.Length == 0)
+                    return;
+
+                Player p = Player.Find(cmd[1]);
+
+                if (p == null)
+                    return;
+
+                this.SendMessage("^IP FOR " + cmd[1] + ": " + p.Ip);
+            }));
+
+            //hardy har harr Aviators reference
+            //http://music.soundoftheaviators.com/track/ghosts-in-the-code
+            //for robodash/dan... maybe, no idea
+            this.AddCommand("^AMIAMANORANAUTOMATION", new IRCCommand(delegate(string[] cmd)
+            {
+                if (cmd.Length == 0)
+                    return;
+
+                if (cmd[1] == this.gcNick)
+                    this.SendMessage("^IAMANAUTOMATION");
+            }));
+
+            //YES, I DID THIS. SHUT UP. I DON'T WANT TO HEAR IT. NOBODY CARES.
+            this.AddCommand("^", new IRCCommand(delegate(string[] cmd) {}));
         }
 
         void ServerSettings_OnSettingChanged(object sender, SettingsChangedEventArgs e)
