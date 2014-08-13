@@ -6,13 +6,16 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading;
 using System.Web;
-using System.Reflection;
 
 namespace MCForge.Core.RemoteConsole
 {
     public class ConsoleListener
     {
+        private static ConsoleListener self;
+        private Thread trd;
+        private HttpListener listener;
         private int port = 6969;
         private Dictionary<string, string> mimeTypes = new Dictionary<string, string>()
         { 
@@ -26,94 +29,109 @@ namespace MCForge.Core.RemoteConsole
             {".otf",    "application/x-font-otf"}
         };
 
+        public static ConsoleListener Self { get{ return self; } }
+
         public void Start()
         {
-            try
+            self = this;
+
+            this.trd = new Thread(new ThreadStart(delegate
             {
-                string searchDir = Environment.CurrentDirectory + "/files/gui";
-
-                HttpListener listener = new HttpListener();
-
-                listener.Prefixes.Add("http://localhost:6969/");
-                listener.Prefixes.Add("http://localhost:6969/css/");
-                listener.Prefixes.Add("http://localhost:6969/js/");
-                listener.Prefixes.Add("http://localhost:6969/fonts/");
-                listener.Start();
-                Console.WriteLine("Listening...");
-                string url = "";
-
-                while (true)
+                try
                 {
-                    HttpListenerContext context = listener.GetContext();
-                    HttpListenerRequest request = context.Request;
-                    HttpListenerResponse response = context.Response;
+                    string searchDir = Environment.CurrentDirectory + "/files/gui";
 
-                    try
+                    this.listener = new HttpListener();
+
+                    this.listener.Prefixes.Add("http://localhost:6969/");
+                    this.listener.Prefixes.Add("http://localhost:6969/css/");
+                    this.listener.Prefixes.Add("http://localhost:6969/js/");
+                    this.listener.Prefixes.Add("http://localhost:6969/fonts/");
+                    this.listener.Start();
+                    Console.WriteLine("Listening...");
+                    string url = "";
+
+                    while (!Server.ShuttingDown)
                     {
-                        url = request.RawUrl;
-                        Console.WriteLine(url);
-                        string file = searchDir + url;
+                        HttpListenerContext context = listener.GetContext();
+                        HttpListenerRequest request = context.Request;
+                        HttpListenerResponse response = context.Response;
 
-                        byte[] buffer;
-
-                        if (request.HttpMethod == "POST")
+                        try
                         {
-                            string postData;
+                            url = request.RawUrl;
+                            Console.WriteLine(url);
+                            string file = searchDir + url;
 
-                            using (StreamReader reader = new StreamReader(request.InputStream, request.ContentEncoding))
+                            byte[] buffer;
+
+                            if (request.HttpMethod == "POST")
                             {
-                                postData = reader.ReadToEnd();
+                                string postData;
+
+                                using (StreamReader reader = new StreamReader(request.InputStream, request.ContentEncoding))
+                                {
+                                    postData = reader.ReadToEnd();
+                                }
+
+                                string[] keyvalue = postData.Split('&');
+
+                                foreach (string kv in keyvalue)
+                                {
+                                    string[] setting = kv.Split('=');
+                                    string safe = HttpUtility.UrlDecode(setting[1]);
+
+                                    ServerSettings.SetSetting(setting[0], null, (safe == "on" ? "true" : (safe == "off" ? "false" : safe)));
+                                }
+                                //force write to file
+                                ServerSettings.Save();
                             }
 
-                            string[] keyvalue = postData.Split('&');
+                            string filename = url.Split('/').Last().TrimStart('/').ToLower().Replace(".", "_").Replace("-", "_");
+                            byte[] streamData = MCForge.HtmlData.HtmlData.GetResource(filename);
 
-                            foreach(string kv in keyvalue)
+                            if (url == "/settings.html")
                             {
-                                string[] setting = kv.Split('=');
-                                string safe = HttpUtility.UrlDecode(setting[1]);
-
-                                ServerSettings.SetSetting(setting[0], null, (safe == "on" ? "true" : (safe == "off" ? "false" : safe))); 
+                                string data = Encoding.UTF8.GetString(streamData);
+                                data = this.parseSettings(data);
+                                buffer = System.Text.Encoding.UTF8.GetBytes(data);
                             }
-                            //force write to file
-                            ServerSettings.Save();
+                            else
+                                buffer = streamData;
+
+
+                            FileInfo fi = new FileInfo(file);
+
+                            response.ContentLength64 = buffer.Length;
+                            response.AddHeader("Content-type", this.mimeTypes[fi.Extension]);
+                            System.IO.Stream output = response.OutputStream;
+                            output.Write(buffer, 0, buffer.Length);
+                            output.Close();
                         }
-
-                        string filename = url.Split('/').Last().TrimStart('/').ToLower().Replace(".", "_").Replace("-", "_");
-                        byte[] streamData = MCForge.HtmlData.HtmlData.GetResource(filename);
-
-                        if(url == "/settings.html")
+                        catch (Exception e)
                         {
-                            string data = Encoding.UTF8.GetString(streamData);
-                            data = this.parseSettings(data);
-                            buffer = System.Text.Encoding.UTF8.GetBytes(data);
+                            Console.WriteLine(e.Message);
+                            Console.WriteLine("FILE" + request.RawUrl);
                         }
-                        else
-                            buffer = streamData;
-                        
-
-                        FileInfo fi = new FileInfo(file);
-
-                        response.ContentLength64 = buffer.Length;
-                        response.AddHeader("Content-type", this.mimeTypes[fi.Extension]);
-                        System.IO.Stream output = response.OutputStream;
-                        output.Write(buffer, 0, buffer.Length);
-                        output.Close();
                     }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine(e.Message);
-                        Console.WriteLine("FILE" + request.RawUrl);
-                    }
+
+                    listener.Stop();
                 }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                }
+            }));
 
-                listener.Stop();
-            }
-            catch(Exception e)
-            {
-                Console.WriteLine(e.Message);
-            }
+            trd.Start();
         }
 
+
+        public void Stop()
+        {
+            this.listener.Stop();
+            this.trd.Abort();
+        }
 
         public string parseSettings(string file)
         {

@@ -45,8 +45,8 @@ namespace CTF
 
         public void OnLoad(string[] args)
         {
-            Plugin.AddReference(this);
-            StartGame(1, 0);
+            //Plugin.AddReference(this);
+            //StartGame(1, 0);
         }
 
         public void OnUnload()
@@ -169,9 +169,9 @@ namespace CTF
                 player1.overallDied = 0;
                 player1.killingPeople = false;
                 player1.amountKilled = 0;
-                //player1.minePlacement.x = 0; player1.minePlacement.z = 0; player1.minePlacement.y = 0;
+                player1.minePlacement.x = 0; player1.minePlacement.z = 0; player1.minePlacement.y = 0;
                 player1.minesPlaced = 0;
-                //player1.trapPlacement.x = 0; player1.trapPlacement.z = 0; player1.trapPlacement.y = 0;
+                player1.trapPlacement.x = 0; player1.trapPlacement.z = 0; player1.trapPlacement.y = 0;
                 player1.trapsPlaced = 0;
                 player1.deathTimerOn = false;
                 player1.hasBeenTrapped = false;

@@ -31,11 +31,11 @@ namespace CTF
         public int amountKilled = 0;
         public int overallKilled = 0;
         public int overallDied = 0;
-        public Vector3S minePlacement;
+        public Vector3S minePlacement = null;
         public int minesPlaced = 0;
-        public Vector3S trapPlacement;
+        public Vector3S trapPlacement = null;
         public int trapsPlaced = 0;
-        public Vector3S tntPlacement;
+        public Vector3S tntPlacement = null;
         public int tntPlaced = 0;
         //public static System.Timers.Timer thetimer3;
         public System.Timers.Timer deathTimer;

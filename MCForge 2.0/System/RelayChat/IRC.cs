@@ -34,6 +34,7 @@ namespace MCForge.Core.RelayChat
     /// </summary>
     public class IRC
     {
+        private Thread trd;
         string nickname = "";
         string server = "";
         string password = "";
@@ -61,7 +62,7 @@ namespace MCForge.Core.RelayChat
 
         public void Start(string server, int port, string nick, string channel, string password = null, string opchannel = null)
         {
-            Thread trd = new Thread(new ThreadStart(delegate
+            this.trd = new Thread(new ThreadStart(delegate
             {
                 this.server = server;
                 this.port = port;
@@ -95,7 +96,7 @@ namespace MCForge.Core.RelayChat
 
                 cp = new ConsolePlayer(cio);
 
-                while (botOn)
+                while (botOn && !Server.ShuttingDown)
                 {
                     try
                     {
@@ -207,14 +208,21 @@ namespace MCForge.Core.RelayChat
                     }
                     catch (Exception e) { Logger.LogError(e); }
                 }
-                // Clean up
-                connected = false;
-                swrite.Close();
-                sread.Close();
-                irc.Close();
+
+                this.Stop();
             }));
 
-            trd.Start();
+            this.trd.Start();
+        }
+
+        public void Stop()
+        {
+            this.botOn = false;
+            this.connected = false;
+            this.swrite.Close();
+            this.sread.Close();
+            this.irc.Close(); 
+            this.trd.Abort();
         }
 
         public void AddCommand(string cmd, IRCCommand func)

@@ -19,6 +19,8 @@
 /Blocks/obj/
 /Test/bin/
 /Test/obj/
+/HtmlData/obj/
+/HtmlData/bin/
 
 *.suo
 *.vsp
