@@ -12,7 +12,6 @@ L:\Personal\Documents\Visual Studio 2013\Projects\MCForge7\HtmlData\obj\Debug\Ht
 C:\Users\Dhruv\Documents\GitHub\MCForge7-Vanilla\MCForge 2.0\bin\Debug\MCForge.HtmlData.dll.config
 C:\Users\Dhruv\Documents\GitHub\MCForge7-Vanilla\MCForge 2.0\bin\Debug\MCForge.HtmlData.dll
 C:\Users\Dhruv\Documents\GitHub\MCForge7-Vanilla\MCForge 2.0\bin\Debug\MCForge.HtmlData.pdb
-C:\Users\Dhruv\Documents\GitHub\MCForge7-Vanilla\HtmlData\obj\Debug\HtmlData.csprojResolveAssemblyReference.cache
 C:\Users\Dhruv\Documents\GitHub\MCForge7-Vanilla\HtmlData\obj\Debug\MCForge.HtmlData.Properties.Resources.resources
 C:\Users\Dhruv\Documents\GitHub\MCForge7-Vanilla\HtmlData\obj\Debug\HtmlData.csproj.GenerateResource.Cache
 C:\Users\Dhruv\Documents\GitHub\MCForge7-Vanilla\HtmlData\obj\Debug\MCForge.HtmlData.dll

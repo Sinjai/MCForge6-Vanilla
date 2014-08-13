@@ -471,7 +471,8 @@ namespace MCForge.World {
             public const byte pillar = (byte)63;
             public const byte crate = (byte)64;
             public const byte stonebrick = (byte)65;
-
+            public const byte redflag = (byte)66;
+            public const byte blueflag = (byte)67;
             /// <summary>
             /// Unknown Block
             /// </summary>

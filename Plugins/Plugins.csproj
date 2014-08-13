@@ -62,6 +62,12 @@
     <Compile Include="AntiGriefing\Helper.cs" />
     <Compile Include="AntiGriefing\PlayerInfo.cs" />
     <Compile Include="AntiGriefing\PluginAntiGrief.cs" />
+    <Compile Include="CTF\Commands\CmdJoin.cs" />
+    <Compile Include="CTF\CTF.cs" />
+    <Compile Include="CTF\EXPDB.cs" />
+    <Compile Include="CTF\EXPLevel.cs" />
+    <Compile Include="CTF\ExtraPlayerData.cs" />
+    <Compile Include="CTF\ServerCTF.cs" />
     <Compile Include="PluginAutoBlockChange.cs" />
     <Compile Include="PluginMessageBlock.cs" />
     <Compile Include="PluginMessageViewer.cs" />
