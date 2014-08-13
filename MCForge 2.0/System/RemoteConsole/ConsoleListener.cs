@@ -1,10 +1,12 @@
 ﻿using MCForge.Groups;
+using MCForge.Utils;
 using MCForge.Utils.Settings;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Web;
@@ -13,10 +15,14 @@ namespace MCForge.Core.RemoteConsole
 {
     public class ConsoleListener
     {
-        private static ConsoleListener self;
+        public string XID { get; internal set;}
         private Thread trd;
         private HttpListener listener;
         private int port = 6969;
+        private HttpListenerContext context;
+        private HttpListenerRequest request;
+        private HttpListenerResponse response;
+
         private Dictionary<string, string> mimeTypes = new Dictionary<string, string>()
         { 
             {".html",   "text/html"},
@@ -29,12 +35,40 @@ namespace MCForge.Core.RemoteConsole
             {".otf",    "application/x-font-otf"}
         };
 
-        public static ConsoleListener Self { get{ return self; } }
+        /// <summary>
+        /// 
+        /// </summary>
+        public ConsoleListener()
+        {
+            using (var numberGen = new RNGCryptoServiceProvider())
+            {
+                var data = new byte[20];
+                var data2 = new byte[20];
+                numberGen.GetBytes(data);
+                numberGen.GetBytes(data2);
 
+                using(MD5 md5 = new MD5CryptoServiceProvider())
+                {
+                    string str = ServerSettings.Salt2 + Convert.ToBase64String(data) + Convert.ToBase64String(data2) + ServerSettings.Salt;
+                    byte[] buffer = new byte[str.Length * 2];
+                    Encoding.Unicode.GetEncoder().GetBytes(str.ToCharArray(), 0, str.Length, buffer, 0, true);
+                    byte[] result = md5.ComputeHash(buffer);
+
+                    StringBuilder sb = new StringBuilder();
+                    
+                    for (int i = 0; i < result.Length; i++)
+                        sb.Append(result[i].ToString("X2"));
+
+                    this.XID = sb.ToString(); 
+                }
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public void Start()
         {
-            self = this;
-
             this.trd = new Thread(new ThreadStart(delegate
             {
                 try
@@ -53,26 +87,19 @@ namespace MCForge.Core.RemoteConsole
 
                     while (!Server.ShuttingDown)
                     {
-                        HttpListenerContext context = listener.GetContext();
-                        HttpListenerRequest request = context.Request;
-                        HttpListenerResponse response = context.Response;
+                        this.context = this.listener.GetContext();
+                        this.request = this.context.Request;
+                        this.response = this.context.Response;
+                        Dictionary<string, string> post = new Dictionary<string, string> { };
 
                         try
                         {
-                            url = request.RawUrl;
-                            Console.WriteLine(url);
-                            string file = searchDir + url;
-
-                            byte[] buffer;
-
-                            if (request.HttpMethod == "POST")
+                            if (this.request.HttpMethod == "POST")
                             {
                                 string postData;
 
-                                using (StreamReader reader = new StreamReader(request.InputStream, request.ContentEncoding))
-                                {
+                                using (StreamReader reader = new StreamReader(this.request.InputStream, this.request.ContentEncoding))
                                     postData = reader.ReadToEnd();
-                                }
 
                                 string[] keyvalue = postData.Split('&');
 
@@ -81,12 +108,40 @@ namespace MCForge.Core.RemoteConsole
                                     string[] setting = kv.Split('=');
                                     string safe = HttpUtility.UrlDecode(setting[1]);
 
-                                    ServerSettings.SetSetting(setting[0], null, (safe == "on" ? "true" : (safe == "off" ? "false" : safe)));
+                                    if (post.ContainsKey(setting[0]))
+                                        post[setting[0]] = safe;
+                                    else
+                                        post.Add(setting[0], safe);
                                 }
+                            }
+
+                            url = this.request.Url.LocalPath;
+                            Console.WriteLine(url);
+                            string file = searchDir + url;
+
+                            //ignore folders that do nothing
+                            if (this.request.Url.Segments[1] != "css/" &&
+                                this.request.Url.Segments[1] != "js/" && 
+                                this.request.Url.Segments[1] != "fonts/")
+                            {
+                                //WARNING: HACKR INCOMIN
+                                if (this.request.QueryString["XID"] != this.XID || (post.ContainsKey("XID") && post["XID"] != this.XID))
+                                {
+                                    Logger.Log("WARNING: Someone tried to access Remote Console page '" + url +  "' without the correct XID!", LogType.Warning);
+                                    this.SendData("Can't let you do that, Starfox.");
+                                    continue; ;
+                                }
+                            }
+
+                            if(post.Count() > 0)
+                            {
+                                foreach(KeyValuePair<string, string> data in post)
+                                    ServerSettings.SetSetting(data.Key, null, (data.Value == "on" ? "true" : (data.Value == "off" ? "false" : data.Value)));
                                 //force write to file
                                 ServerSettings.Save();
                             }
 
+                            byte[] buffer;
                             string filename = url.Split('/').Last().TrimStart('/').ToLower().Replace(".", "_").Replace("-", "_");
                             byte[] streamData = MCForge.HtmlData.HtmlData.GetResource(filename);
 
@@ -94,19 +149,15 @@ namespace MCForge.Core.RemoteConsole
                             {
                                 string data = Encoding.UTF8.GetString(streamData);
                                 data = this.parseSettings(data);
-                                buffer = System.Text.Encoding.UTF8.GetBytes(data);
+                                buffer = Encoding.UTF8.GetBytes(data);
                             }
                             else
                                 buffer = streamData;
 
-
                             FileInfo fi = new FileInfo(file);
 
-                            response.ContentLength64 = buffer.Length;
-                            response.AddHeader("Content-type", this.mimeTypes[fi.Extension]);
-                            System.IO.Stream output = response.OutputStream;
-                            output.Write(buffer, 0, buffer.Length);
-                            output.Close();
+                            this.SendData(buffer, this.mimeTypes[fi.Extension]);
+
                         }
                         catch (Exception e)
                         {
@@ -126,13 +177,45 @@ namespace MCForge.Core.RemoteConsole
             trd.Start();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="mime"></param>
+        public void SendData(string data, string mime = "text/plain")
+        {
+            this.SendData(Encoding.UTF8.GetBytes(data), mime);
+        }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="buffer"></param>
+        /// <param name="mime"></param>
+        public void SendData(byte[] buffer, string mime)
+        {
+            Stream output = this.response.OutputStream;
+
+            this.response.ContentLength64 = buffer.Length;
+            this.response.AddHeader("Content-type", mime);
+            output.Write(buffer, 0, buffer.Length);
+            output.Close();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public void Stop()
         {
             this.listener.Stop();
             this.trd.Abort();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="file"></param>
+        /// <returns></returns>
         public string parseSettings(string file)
         {
             List<SettingNode> ex = ServerSettings.All().Where(e => e.Key != null).ToList();
@@ -162,7 +245,7 @@ namespace MCForge.Core.RemoteConsole
             json += "]";
 
             file = file.Replace("{{{GROUP_JSON}}}", json);
-
+            file = file.Replace("{{{XID}}}", this.XID);
             return file;
         }
     }
