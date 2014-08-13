@@ -20,9 +20,6 @@ using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using MCForge.Utils.Settings;
-using MCForge.Utils.Settings;
-using MCForge.Utils.Settings;
-using MCForge.Utils.Settings;
 
 namespace MCForge.Utils.Settings {
     /// <summary>
@@ -100,7 +97,8 @@ namespace MCForge.Utils.Settings {
                     new SettingNode("StopFlyMessage", "You're not flying anymore","can be empty"),
                     new SettingNode("FlyGlassSize", "5, 2", "The size of the glass panel. The first value describes width and length. The second value describes the height (default: 2)."),
                     new SettingNode("Fly+", "true", "'true' allows players to use '/fly +' which displays an aditional block at the players position"),
-                    new SettingNode("FlyWaterSize", "5, 5, 5", "The size of the water cuboid to swim in the air. Use one number to set all dimension to the same size or use three numbers for different sizes. If it is set to false '/fly water' will be disabled")
+                    new SettingNode("FlyWaterSize", "5, 5, 5", "The size of the water cuboid to swim in the air. Use one number to set all dimension to the same size or use three numbers for different sizes. If it is set to false '/fly water' will be disabled"),
+                    new SettingNode("ZombieSurvival", "false", "Is Zombie Survival mode on?")
                }, false);
 
         internal static string Salt { get; set; }
