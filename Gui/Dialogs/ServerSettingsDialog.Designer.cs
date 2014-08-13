@@ -28,7 +28,6 @@
             // 
             // webBrowser1
             // 
-            this.webBrowser1.AllowNavigation = false;
             this.webBrowser1.AllowWebBrowserDrop = false;
             this.webBrowser1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.webBrowser1.IsWebBrowserContextMenuEnabled = false;
