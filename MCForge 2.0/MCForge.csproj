@@ -218,7 +218,9 @@
     <Compile Include="Utils\Vector3S.cs" />
     <Compile Include="World\BlockQueue.cs" />
     <Compile Include="World\Blocks\BlockChange.cs" />
+    <Compile Include="World\Blocks\Custom\blueFlag.cs" />
     <Compile Include="World\Blocks\Custom\Griefer_stone.cs" />
+    <Compile Include="World\Blocks\Custom\redFlag.cs" />
     <Compile Include="World\Blocks\DefaultBlocks\Black.cs" />
     <Compile Include="World\Blocks\DefaultBlocks\Blue.cs" />
     <Compile Include="World\Blocks\DefaultBlocks\BlueViolet.cs" />
