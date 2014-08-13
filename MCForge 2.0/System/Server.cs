@@ -211,7 +211,15 @@ namespace MCForge.Core {
         /// <summary>
         /// The IRC client for the server
         /// </summary>
-        public static IRC IRC { get; set; }
+        public static ServerChat IRC { get; set; }
+        /// <summary>
+        /// The IRC GC client for the server
+        /// </summary>
+        public static GlobalChat GC { get; set; }
+        /// <summary>
+        /// The Remote Console
+        /// </summary>
+        public static ConsoleListener RC { get; set; }
         /// <summary>
         /// The default color
         /// </summary>
@@ -328,36 +336,39 @@ namespace MCForge.Core {
             if (!ServerSettings.GetSettingBoolean("VerifyNames"))
                 Logger.Log("[Important]: The server is running with verify names off! This could lead to bad things! Please turn on verify names if you dont know the risk and dont want these bad things to happen!", LogType.Critical);
             
-            ServerChat irc = new ServerChat();
-            try
+            if (ServerSettings.GetSettingBoolean("IRC-Enabled"))
             {
-                irc.Connect();
-            }
-            catch (Exception e)
-            {
-                Logger.LogError(e);
-            }
-
-            if (ServerSettings.GetSettingBoolean("GC-Enabled"))
-            {
-                GlobalChat gc = new GlobalChat();
                 try
                 {
-                    gc.Connect();
+                    IRC = new ServerChat();
+                    IRC.Connect();
+                }
+                catch (Exception e)
+                {
+                    Logger.LogError(e);
+                }
+            }
+            
+            if (ServerSettings.GetSettingBoolean("GC-Enabled"))
+            {
+                GC = new GlobalChat();
+                try
+                {
+                    GC.Connect();
                 }
                 catch(Exception e)
                 {
                     Logger.LogError(e);
                 }
             }
-
+            
             try
             {
-                ConsoleListener rc = new ConsoleListener();
-                rc.Start();
+                RC = new ConsoleListener();
+                RC.Start();
             }
             catch (Exception e) { }
-
+            
             PlayerConnectionTimeoutChecker = new Thread(() => {
                 int sleep = ServerSettings.GetSettingInt("AutoTimeout");
                 if (sleep < 0) sleep = 30;
@@ -617,6 +628,15 @@ namespace MCForge.Core {
             if (listener != null)
                 listener.Stop();
             HeartThread.Abort();
+
+            if (RC != null)
+                RC.Stop();
+
+            if (GC != null)
+                GC.Stop();
+
+            if (IRC != null)
+                IRC.Stop();
 
             Logger.DeInit();
             Database.DeInit();
