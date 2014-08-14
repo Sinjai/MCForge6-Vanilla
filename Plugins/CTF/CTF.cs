@@ -41,7 +41,7 @@ namespace CTF
         public string Name { get { return "Capture the Flag"; } }
         public string Author { get { return "Hetal"; } }
         public int Version { get { return 1; } }
-        public string CUD { get { return "com.lvlorge.ctf"; } }
+        public string CUD { get { return "com.mcforge.ctf"; } }
 
         public void OnLoad(string[] args)
         {
@@ -65,9 +65,9 @@ namespace CTF
         public bool initialChangeLevel = false;
         public int blueTeamCaptures = 0;
         public int redTeamCaptures = 0;
-        public string currentLevelName = "";
-        public List<ExtraPlayerData> red = new List<ExtraPlayerData>();
-        public List<ExtraPlayerData> blu = new List<ExtraPlayerData>();
+        public string currentLevelName = "main";
+        public List<Player> red = new List<Player>();
+        public List<Player> blu = new List<Player>();
         public Vector3S blueSpawn;
         public Vector3S redSpawn;
         public Vector3S blueFlag;
@@ -109,6 +109,7 @@ namespace CTF
 
         private void MainLoop()
         {
+            bool tried = false;
             if (ServerCTF.ctfGameStatus == 0) return;
             bool cutVariable = true;
 
@@ -125,7 +126,7 @@ namespace CTF
                 amountOfRounds = amountOfRounds + 1;
 
                 if (gameStatus == 0) { cutVariable = false; return; }
-                else if (gameStatus == 1) { MainGame(); ChangeLevel(); }
+                else if (gameStatus == 1) { if (tried == false) { tried = true; ChangeLevel(); MainGame(); } }
                 else if (gameStatus == 2) { MainGame(); ChangeLevel(); cutVariable = false; ServerCTF.ctfGameStatus = 0; return; }
                 else if (gameStatus == 3)
                 {
@@ -157,25 +158,30 @@ namespace CTF
             catch { goto unload_loop; }
             if (ServerCTF.ctfGameStatus == 0) return;
             if (!ServerCTF.CTFModeOn) { return; }
-            Server.Players.ForEach(delegate(Player player)
+            Server.Players.ForEach(delegate(Player player1)
             {
-                ExtraPlayerData player1 = new ExtraPlayerData();
                 //RESET ALL THE VARIABLES!
-                player1.pteam = 0;
-                player1.isHoldingFlag = false;
-                player1.PlacedNukeThisRound = false;
-                player1.BoughtOneUpThisRound = false;
-                player1.overallKilled = 0;
-                player1.overallDied = 0;
-                player1.killingPeople = false;
-                player1.amountKilled = 0;
-                player1.minePlacement.x = 0; player1.minePlacement.z = 0; player1.minePlacement.y = 0;
-                player1.minesPlaced = 0;
-                player1.trapPlacement.x = 0; player1.trapPlacement.z = 0; player1.trapPlacement.y = 0;
-                player1.trapsPlaced = 0;
-                player1.deathTimerOn = false;
-                player1.hasBeenTrapped = false;
-                player1.ironman = false;
+                player1.ExtraData.ChangeOrCreate("team", 0);
+                player1.ExtraData.ChangeOrCreate("isholdingflag", false);
+                player1.ExtraData.ChangeOrCreate("overallkilled", 0);
+                player1.ExtraData.ChangeOrCreate("overalldied", 0);
+                player1.ExtraData.ChangeOrCreate("killingpeople", false);
+                player1.ExtraData.ChangeOrCreate("killingpeople", false);
+                player1.ExtraData.ChangeOrCreate("amountkilled", 0);
+                player1.ExtraData.ChangeOrCreate("mineplacementx", 0);
+                player1.ExtraData.ChangeOrCreate("mineplacementz", 0);
+                player1.ExtraData.ChangeOrCreate("mineplacementy", 0);
+                player1.ExtraData.ChangeOrCreate("minesplaced", 0);
+                player1.ExtraData.ChangeOrCreate("trapplacementx", 0);
+                player1.ExtraData.ChangeOrCreate("trapplacementz", 0);
+                player1.ExtraData.ChangeOrCreate("trapplacementy", 0);
+                player1.ExtraData.ChangeOrCreate("trapsplaced", 0);
+                player1.ExtraData.ChangeOrCreate("dealthtimeron", false);
+                player1.ExtraData.ChangeOrCreate("hasbeentrapped", false);
+                player1.ExtraData.ChangeOrCreate("tntplacementx", 0);
+                player1.ExtraData.ChangeOrCreate("tntplacementz", 0);
+                player1.ExtraData.ChangeOrCreate("tntplacementy", 0);
+                player1.ExtraData.ChangeOrCreate("tntplaced", 0);
                 ServerCTF.killed.Clear();
                 ServerCTF.blueFlagDropped = false;
                 ServerCTF.redFlagDropped = false;
@@ -215,51 +221,51 @@ namespace CTF
 
             while (ServerCTF.ctfRound)
             {
-                red.ForEach(delegate(ExtraPlayerData player1)
+                red.ForEach(delegate(Player player1)
                 {
-                    blu.ForEach(delegate(ExtraPlayerData player2)
+                    blu.ForEach(delegate(Player player2)
                     {
-                        if (player2.player.Pos.x / 32 == player1.player.Pos.x / 32 || player2.player.Pos.x / 32 == player1.player.Pos.x / 32 + 1 || player2.player.Pos.x / 32 == player1.player.Pos.x / 32 - 1)
+                        if (player2.Pos.x / 32 == player1.Pos.x / 32 || player2.Pos.x / 32 == player1.Pos.x / 32 + 1 || player2.Pos.x / 32 == player1.Pos.x / 32 - 1)
                         {
-                            if (player2.player.Pos.z / 32 == player1.player.Pos.z / 32 || player2.player.Pos.z / 32 == player1.player.Pos.z / 32 - 1 || player2.player.Pos.z / 32 == player1.player.Pos.z / 32 + 1)
+                            if (player2.Pos.z / 32 == player1.Pos.z / 32 || player2.Pos.z / 32 == player1.Pos.z / 32 - 1 || player2.Pos.z / 32 == player1.Pos.z / 32 + 1)
                             {
-                                if (player2.player.Pos.y / 32 == player1.player.Pos.y / 32 || player2.player.Pos.y / 32 == player1.player.Pos.y / 32 + 1 || player2.player.Pos.y / 32 == player1.player.Pos.y / 32 - 1)
+                                if (player2.Pos.y / 32 == player1.Pos.y / 32 || player2.Pos.y / 32 == player1.Pos.y / 32 + 1 || player2.Pos.y / 32 == player1.Pos.y / 32 - 1)
                                 {
-                                    if (!player2.referee && !player1.referee && player1 != player2 && player1.player.Level.Name == currentLevelName && player2.player.Level.Name == currentLevelName)
+                                    if (player1 != player2 && player1.Level.Name == currentLevelName && player2.Level.Name == currentLevelName)
                                     {
                                         bool one = false;
                                         bool two = false;
-                                        if (player1.makeaura || player2.makeaura)
+                                       /* if (player1.makeaura || player2.makeaura)
                                         {
-                                            if (player2.player.Pos.x / 32 == player1.player.Pos.x / 32 || player2.player.Pos.x / 32 == player1.player.Pos.x / 32 + 1 || player2.player.Pos.x / 32 == player1.player.Pos.x / 32 - 1)
-                                                if (player2.player.Pos.z / 32 == player1.player.Pos.z / 32 || player2.player.Pos.z / 32 == player1.player.Pos.z / 32 - 1 || player2.player.Pos.z / 32 == player1.player.Pos.z / 32 + 1)
-                                                    if (player2.player.Pos.y / 32 == player1.player.Pos.y / 32 || player2.player.Pos.y / 32 == player1.player.Pos.y / 32 + 1 || player2.player.Pos.y / 32 == player1.player.Pos.y / 32 - 1)
-                                                        if (!player2.referee && !player1.referee && player1 != player2 && player1.player.Level.Name == currentLevelName && player2.player.Level.Name == currentLevelName && !player1.untouchable && !player2.untouchable)
+                                            if (player2.Pos.x / 32 == player1.Pos.x / 32 || player2.Pos.x / 32 == player1.Pos.x / 32 + 1 || player2.Pos.x / 32 == player1.Pos.x / 32 - 1)
+                                                if (player2.Pos.z / 32 == player1.Pos.z / 32 || player2.Pos.z / 32 == player1.Pos.z / 32 - 1 || player2.Pos.z / 32 == player1.Pos.z / 32 + 1)
+                                                    if (player2.Pos.y / 32 == player1.Pos.y / 32 || player2.Pos.y / 32 == player1.Pos.y / 32 + 1 || player2.Pos.y / 32 == player1.Pos.y / 32 - 1)
+                                                        if (player1 != player2 && player1.Level.Name == currentLevelName && player2.Level.Name == currentLevelName)
                                                         {
                                                             one = OnSide(player1, getTeam(player1));
                                                             two = OnSide(player2, getTeam(player2));
                                                             if (one == two) { return; }
-                                                            if (one && !player2.deathTimerOn && !player2.untouchable)
+                                                            if (one && !(bool)player2.ExtraData["deathtimeron"])
                                                             {
-                                                                killedPlayer(player1, (ushort)(player1.player.Pos.x / 32), (ushort)(player1.player.Pos.z / 32), (ushort)(player1.player.Pos.y / 32), false, "tag");
+                                                                killedPlayer(player1, (ushort)(player1.Pos.x / 32), (ushort)(player1.Pos.z / 32), (ushort)(player1.Pos.y / 32), false, "tag");
                                                             }
-                                                            else if (two && !player1.deathTimerOn && !player1.untouchable)
+                                                            else if (two && !(bool)player1.ExtraData["deathtimeron"])
                                                             {
-                                                                killedPlayer(player2, (ushort)(player2.player.Pos.x / 32), (ushort)(player2.player.Pos.z / 32), (ushort)(player2.player.Pos.y / 32), false, "tag");
+                                                                killedPlayer(player2, (ushort)(player2.Pos.x / 32), (ushort)(player2.Pos.z / 32), (ushort)(player2.Pos.y / 32), false, "tag");
                                                             }
                                                             return;
                                                         }
-                                        }
+                                        } */
                                         one = OnSide(player1, getTeam(player1));
                                         two = OnSide(player2, getTeam(player2));
                                         if (one == two) { return; }
-                                        if (one && !player2.deathTimerOn && !player2.untouchable)
+                                        if (one && !(bool)player2.ExtraData["deathtimeron"])
                                         {
-                                            killedPlayer(player1, (ushort)(player1.player.Pos.x / 32), (ushort)(player1.player.Pos.z / 32), (ushort)(player1.player.Pos.y / 32), false, "tag");
+                                            killedPlayer(player1, (ushort)(player1.Pos.x / 32), (ushort)(player1.Pos.z / 32), (ushort)(player1.Pos.y / 32), false, "tag");
                                         }
-                                        else if (two && !player1.deathTimerOn && !player1.untouchable)
+                                        else if (two && !(bool)player1.ExtraData["deathtimeron"])
                                         {
-                                            killedPlayer(player2, (ushort)(player2.player.Pos.x / 32), (ushort)(player2.player.Pos.z / 32), (ushort)(player2.player.Pos.y / 32), false, "tag");
+                                            killedPlayer(player2, (ushort)(player2.Pos.x / 32), (ushort)(player2.Pos.z / 32), (ushort)(player2.Pos.y / 32), false, "tag");
                                         }
                                     }
                                 }
@@ -267,10 +273,9 @@ namespace CTF
                         }
                     });
                 });
-                Server.Players.ForEach(delegate(Player player)
+                Server.Players.ForEach(delegate(Player player1)
                 {
-                    ExtraPlayerData player1 = new ExtraPlayerData();
-                    if (player1.isHoldingFlag && player1.pteam != 0)
+                    if ((bool)player1.ExtraData["isholdingflag"] && (int)player1.ExtraData["team"] != 0)
                     {
                         if (getTeam(player1) == "blue")
                         {
@@ -310,27 +315,26 @@ namespace CTF
             Server.IRC.SendMessage(Colors.gray + " - " + Colors.blue + "Blue kills: " + Server.DefaultColor + bluDeaths + Colors.red + " Red kills: " + Server.DefaultColor + redDeaths + Colors.gray + " - ");
             Player.UniversalChat(Colors.gray + " - " + Colors.blue + "Blue: " + Server.DefaultColor + blueTeamCaptures + Colors.red + " Red: " + Server.DefaultColor + redTeamCaptures + Colors.gray + " - ");
             Player.UniversalChat(Colors.gray + " - " + Colors.blue + "Blue kills: " + Server.DefaultColor + bluDeaths + Colors.red + " Red kills: " + Server.DefaultColor + redDeaths + Colors.gray + " - ");
-            ExtraPlayerData player1 = new ExtraPlayerData();
             var lengths = from element in Server.Players
-                          orderby (player1.overallDied - player1.overallKilled)
+                          orderby ((int)element.ExtraData["overalldied"] - (int)element.ExtraData["overallkilled"])
                           select element;
 
             int loop = 0;
 
-            foreach (ExtraPlayerData z in lengths)
+            foreach (Player z in lengths)
             {
                 loop++;
                 if (loop >= 6)
                     break;
                 else if (loop == 1)
                 {
-                    Player.UniversalChat(Colors.gray + " - " + Server.DefaultColor + "Most Valued Player: " + z.player.Username + " - " + z.overallKilled + ":" + z.overallDied + Colors.gray + " - ");
-                    Server.IRC.SendMessage(Colors.gray + " - " + Server.DefaultColor + "Most Valued Player: " + z.player.Username + " - " + z.overallKilled + ":" + z.overallDied + Colors.gray + " - ");
+                    Player.UniversalChat(Colors.gray + " - " + Server.DefaultColor + "Most Valued Player: " + z.Username + " - " + z.ExtraData["overallkilled"] + ":" + z.ExtraData["overalldied"] + Colors.gray + " - ");
+                    Server.IRC.SendMessage(Colors.gray + " - " + Server.DefaultColor + "Most Valued Player: " + z.Username + " - " + z.ExtraData["overallkilled"] + ":" + z.ExtraData["overalldied"] + Colors.gray + " - ");
                 }
                 else
                 {
-                    Player.UniversalChat(Colors.gray + " - " + Server.DefaultColor + "#" + loop + ": " + z.player.Username + " - " + z.overallKilled + ":" + z.overallDied + Colors.gray + " - ");
-                    Server.IRC.SendMessage(Colors.gray + " - " + Server.DefaultColor + "#" + loop + ": " + z.player.Username + " - " + z.overallKilled + ":" + z.overallDied + Colors.gray + " - ");
+                    Player.UniversalChat(Colors.gray + " - " + Server.DefaultColor + "#" + loop + ": " + z.Username + " - " + z.ExtraData["overallkilled"] + ":" + z.ExtraData["overalldied"] + Colors.gray + " - ");
+                    Server.IRC.SendMessage(Colors.gray + " - " + Server.DefaultColor + "#" + loop + ": " + z.Username + " - " + z.ExtraData["overallkilled"] + ":" + z.ExtraData["overalldied"] + Colors.gray + " - ");
                 }
             }
         lol:
@@ -341,9 +345,8 @@ namespace CTF
             {
                 if (player.Level.Name == currentLevelName)
                 {
-                    ExtraPlayerData player2 = new ExtraPlayerData();
-                    player2.pteam = 0;
-                    player2.isHoldingFlag = false;
+                    player.ExtraData["team"] = 0;
+                    player.ExtraData["isholdingflag"] = false;
 
                     red.Clear();
                     blu.Clear();
@@ -366,7 +369,7 @@ namespace CTF
             return ServerCTF.ctfRound;
         }
 
-        public void tempFlagBlock(ExtraPlayerData player, string Color)
+        public void tempFlagBlock(Player player, string Color)
         {
             Level levell = Level.FindLevel(currentLevelName);
             if (levell == null) return;
@@ -374,9 +377,9 @@ namespace CTF
             if (getTeam(player) == "blue" && Color == "blue")
             {
                 //DRAW ON PLAYER HEAD
-                x = (ushort)(player.player.Pos.x / 32);
-                y = (ushort)(player.player.Pos.z / 32 + 4);
-                z = (ushort)(player.player.Pos.y / 32);
+                x = (ushort)(player.Pos.x / 32);
+                y = (ushort)(player.Pos.z / 32 + 4);
+                z = (ushort)(player.Pos.y / 32);
 
                 if (blueFlagblock.x == x && blueFlagblock.y == y && blueFlagblock.z == z) { return; }
                 int loop = 0;
@@ -404,9 +407,9 @@ namespace CTF
             else if (getTeam(player) == "red" && Color == "red")
             {
                 //DRAW ON PLAYER HEAD
-                x = (ushort)(player.player.Pos.x / 32);
-                y = (ushort)(player.player.Pos.z / 32 + 4);
-                z = (ushort)(player.player.Pos.y / 32);
+                x = (ushort)(player.Pos.x / 32);
+                y = (ushort)(player.Pos.z / 32 + 4);
+                z = (ushort)(player.Pos.y / 32);
 
                 if (redFlagblock.x == x && redFlagblock.y == y && redFlagblock.z == z) { return; }
 
@@ -615,8 +618,7 @@ namespace CTF
                 }
                 Server.Players.ForEach(delegate(Player winners)
                 {
-                    ExtraPlayerData player1 = new ExtraPlayerData();
-                    player1.voted = false;
+                    winners.ExtraData.ChangeOrCreate("voted", false);
                 });
             }
             catch { }
@@ -629,40 +631,34 @@ namespace CTF
             amountOfMilliseconds = amountOfMilliseconds - 10;
         }
 
-        public bool IsInCTFGameLevel(ExtraPlayerData p)
+        public bool IsInCTFGameLevel(Player p)
         {
-            return p.player.Level.Name == currentLevelName;
+            return p.Level.Name == currentLevelName;
         }
 
-        public ExtraPlayerData killedPlayer(ExtraPlayerData p, ushort x, ushort y, ushort z, bool tnt, string type)
+        public Player killedPlayer(Player p, ushort x, ushort y, ushort z, bool tnt, string type)
         {
             bool killed = false;
-            ExtraPlayerData pp = null;
+            Player pp = null;
             int Money = 5;
             int points = 15;
-            p.killingPeople = true;
+            p.ExtraData["killingpeople"] = true;
 
             if (!GameInProgess()) return null;
             if (getTeam(p) == null) return null;
 
-            foreach (ExtraPlayerData ppp in Server.Players)
+            foreach (Player ppp in Server.Players)
             {
                 bool cutoff = false;
-                if (tnt)
-                {
-                    if (ppp.iceshield)
-                        cutoff = true;
-                }
-                if (ppp.player.Pos.x / 32 == x && !cutoff && !ppp.invinciblee)
-                    if ((ppp.player.Pos.z / 32 == y) || ((ppp.player.Pos.z / 32) - 1 == y) || ((ppp.player.Pos.z / 32) + 1 == y))
-                        if (ppp.player.Pos.y / 32 == z)
+                if (ppp.Pos.x / 32 == x && !cutoff)
+                    if ((ppp.Pos.z / 32 == y) || ((ppp.Pos.z / 32) - 1 == y) || ((ppp.Pos.z / 32) + 1 == y))
+                        if (ppp.Pos.y / 32 == z)
                         {
-                            if (!ServerCTF.killed.Contains(ppp) && !ppp.deathTimerOn && !p.referee && !ppp.referee && !InSpawn(ppp, ppp.player.Pos) && ppp != p && (getTeam(p) != getTeam(ppp)))
+                            if (!ServerCTF.killed.Contains(ppp) && !(bool)ppp.ExtraData["deathtimeron"] && !InSpawn(ppp, ppp.Pos) && ppp != p && (getTeam(p) != getTeam(ppp)))
                             {
-                                if (ppp.oneup && !ppp.isHoldingFlag)
+                                if (!(bool)ppp.ExtraData["isholdingflag"])
                                 {
-                                    ppp.oneup = false;
-                                    ppp.deathTimerOn = true;
+                                    ppp.ExtraData["deathtimeron"] = true;
                                     ppp.deathTimer = new System.Timers.Timer(3500);
                                     ppp.deathTimer.Elapsed += new ElapsedEventHandler(ppp.resetDeathTimer);
                                     ppp.deathTimer.Enabled = true;
@@ -672,8 +668,8 @@ namespace CTF
                                     if (!firstblood)
                                     {
                                         firstblood = true;
-                                        Server.IRC.SendMessage(Colors.gray + " - " + p.player.Color + p.player.Username + Colors.gray + " got " + Colors.red + "\"firsty bloody\"! " + Colors.gray + " - ");
-                                        Player.UniversalChat(Colors.gray + " - " + p.player.Color + p.player.Username + Colors.gray + " got " + Colors.red + "\"firsty bloody\"! " + Colors.gray + " - ");
+                                        Server.IRC.SendMessage(Colors.gray + " - " + p.Color + p.Username + Colors.gray + " got " + Colors.red + "\"firsty bloody\"! " + Colors.gray + " - ");
+                                        Player.UniversalChat(Colors.gray + " - " + p.Color + p.Username + Colors.gray + " got " + Colors.red + "\"firsty bloody\"! " + Colors.gray + " - ");
                                         Money += 20;
                                         points += 20;
                                     }
@@ -683,36 +679,36 @@ namespace CTF
                                         switch (type)
                                         {
                                             case "pistol":
-                                                Server.IRC.SendMessage(Colors.gray + " - " + ppp.player.Color + ppp.player.Username + Server.DefaultColor + " was killed by " + p.player.Color + p.player.Username + Colors.gray + "'s amazing pistol shot! - ");
-                                                Player.UniversalChat(Colors.gray + " - " + ppp.player.Color + ppp.player.Username + Server.DefaultColor + " was killed by " + p.player.Color + p.player.Username + Colors.gray + "'s amazing pistol shot! - ");
+                                                Server.IRC.SendMessage(Colors.gray + " - " + ppp.Color + ppp.Username + Server.DefaultColor + " was killed by " + p.Color + p.Username + Colors.gray + "'s amazing pistol shot! - ");
+                                                Player.UniversalChat(Colors.gray + " - " + ppp.Color + ppp.Username + Server.DefaultColor + " was killed by " + p.Color + p.Username + Colors.gray + "'s amazing pistol shot! - ");
                                                 break;
                                             case "lazer":
-                                                Server.IRC.SendMessage(Colors.gray + " - " + ppp.player.Color + ppp.player.Username + Server.DefaultColor + " was lazered by " + p.player.Color + p.player.Username + Colors.gray + " - ");
-                                                Player.UniversalChat(Colors.gray + " - " + ppp.player.Color + ppp.player.Username + Server.DefaultColor + " was lazered by " + p.player.Color + p.player.Username + Colors.gray + " - ");
+                                                Server.IRC.SendMessage(Colors.gray + " - " + ppp.Color + ppp.Username + Server.DefaultColor + " was lazered by " + p.Color + p.Username + Colors.gray + " - ");
+                                                Player.UniversalChat(Colors.gray + " - " + ppp.Color + ppp.Username + Server.DefaultColor + " was lazered by " + p.Color + p.Username + Colors.gray + " - ");
                                                 break;
                                             case "mine":
-                                                Player.UniversalChat(Colors.gray + " - " + ppp.player.Color + ppp.player.Username + Server.DefaultColor + " didn't look where they were walking - ");
-                                                Server.IRC.SendMessage(Colors.gray + " - " + ppp.player.Color + ppp.player.Username + Server.DefaultColor + " didn't look where they were walking - ");
+                                                Player.UniversalChat(Colors.gray + " - " + ppp.Color + ppp.Username + Server.DefaultColor + " didn't look where they were walking - ");
+                                                Server.IRC.SendMessage(Colors.gray + " - " + ppp.Color + ppp.Username + Server.DefaultColor + " didn't look where they were walking - ");
                                                 break;
                                             case "lightning":
-                                                Server.IRC.SendMessage(Colors.gray + " - " + ppp.player.Color + ppp.player.Username + Server.DefaultColor + " got struck down by Zeus (aka " + p.player.Color + p.player.Username + Colors.gray + ") - ");
-                                                Player.UniversalChat(Colors.gray + " - " + ppp.player.Color + ppp.player.Username + Server.DefaultColor + " got struck down by Zeus (aka " + p.player.Color + p.player.Username + Colors.gray + ") - ");
+                                                Server.IRC.SendMessage(Colors.gray + " - " + ppp.Color + ppp.Username + Server.DefaultColor + " got struck down by Zeus (aka " + p.Color + p.Username + Colors.gray + ") - ");
+                                                Player.UniversalChat(Colors.gray + " - " + ppp.Color + ppp.Username + Server.DefaultColor + " got struck down by Zeus (aka " + p.Color + p.Username + Colors.gray + ") - ");
                                                 break;
                                             case "gun":
-                                                Server.IRC.SendMessage(Colors.gray + " - " + ppp.player.Color + ppp.player.Username + Server.DefaultColor + " got shot with a rocket fired by " + p.player.Color + p.player.Username + Colors.gray + " - ");
-                                                Player.UniversalChat(Colors.gray + " - " + ppp.player.Color + ppp.player.Username + Server.DefaultColor + " got shot with a rocket fired by " + p.player.Color + p.player.Username + Colors.gray + " - ");
+                                                Server.IRC.SendMessage(Colors.gray + " - " + ppp.Color + ppp.Username + Server.DefaultColor + " got shot with a rocket fired by " + p.Color + p.Username + Colors.gray + " - ");
+                                                Player.UniversalChat(Colors.gray + " - " + ppp.Color + ppp.Username + Server.DefaultColor + " got shot with a rocket fired by " + p.Color + p.Username + Colors.gray + " - ");
                                                 break;
                                             case "tnt":
-                                                Server.IRC.SendMessage(Colors.gray + " - " + ppp.player.Color + ppp.player.Username + Server.DefaultColor + " was exploded into bits by " + p.player.Color + p.player.Username + Colors.gray + " - ");
-                                                Player.UniversalChat(Colors.gray + " - " + ppp.player.Color + ppp.player.Username + Server.DefaultColor + " was exploded into bits by " + p.player.Color + p.player.Username + Colors.gray + " - ");
+                                                Server.IRC.SendMessage(Colors.gray + " - " + ppp.Color + ppp.Username + Server.DefaultColor + " was exploded into bits by " + p.Color + p.Username + Colors.gray + " - ");
+                                                Player.UniversalChat(Colors.gray + " - " + ppp.Color + ppp.Username + Server.DefaultColor + " was exploded into bits by " + p.Color + p.Username + Colors.gray + " - ");
                                                 break;
                                             case "tag":
-                                                Server.IRC.SendMessage(Colors.gray + " - " + p.player.Color + p.player.Username + Server.DefaultColor + " tagged " + ppp.player.Color + ppp.player.Username + Colors.gray + " - ");
-                                                Player.UniversalChat(Colors.gray + " - " + p.player.Color + p.player.Username + Server.DefaultColor + " tagged " + ppp.player.Color + ppp.player.Username + Colors.gray + " - ");
+                                                Server.IRC.SendMessage(Colors.gray + " - " + p.Color + p.Username + Server.DefaultColor + " tagged " + ppp.Color + ppp.Username + Colors.gray + " - ");
+                                                Player.UniversalChat(Colors.gray + " - " + p.Color + p.Username + Server.DefaultColor + " tagged " + ppp.Color + ppp.Username + Colors.gray + " - ");
                                                 break;
                                             default:
-                                                Server.IRC.SendMessage(Colors.gray + " - " + ppp.player.Color + ppp.player.Username + Server.DefaultColor + " was killed by " + p.player.Color + p.player.Username + Colors.gray + " - ");
-                                                Player.UniversalChat(Colors.gray + " - " + ppp.player.Color + ppp.player.Username + Server.DefaultColor + " was killed by " + p.player.Color + p.player.Username + Colors.gray + " - ");
+                                                Server.IRC.SendMessage(Colors.gray + " - " + ppp.Color + ppp.Username + Server.DefaultColor + " was killed by " + p.Color + p.Username + Colors.gray + " - ");
+                                                Player.UniversalChat(Colors.gray + " - " + ppp.Color + ppp.Username + Server.DefaultColor + " was killed by " + p.Color + p.Username + Colors.gray + " - ");
                                                 break;
                                         }
                                     }
@@ -721,44 +717,44 @@ namespace CTF
                                         switch (type)
                                         {
                                             case "pistol":
-                                                Server.IRC.SendMessage(Colors.gray + " - " + ppp.player.Color + ppp.player.Username + Server.DefaultColor + " was killed by " + p.player.Color + p.player.Username + Colors.gray + "'s amazing pistol shot! - ");
-                                                p.player.SendMessage( Colors.gray + " - " + ppp.player.Color + ppp.player.Username + Server.DefaultColor + " was killed by " + p.player.Color + p.player.Username + Colors.gray + "'s amazing pistol shot! - ");
-                                                ppp.player.SendMessage( Colors.gray + " - " + ppp.player.Color + ppp.player.Username + Server.DefaultColor + " was killed by " + p.player.Color + p.player.Username + Colors.gray + "'s amazing pistol shot! - ");
+                                                Server.IRC.SendMessage(Colors.gray + " - " + ppp.Color + ppp.Username + Server.DefaultColor + " was killed by " + p.Color + p.Username + Colors.gray + "'s amazing pistol shot! - ");
+                                                p.SendMessage( Colors.gray + " - " + ppp.Color + ppp.Username + Server.DefaultColor + " was killed by " + p.Color + p.Username + Colors.gray + "'s amazing pistol shot! - ");
+                                                ppp.SendMessage( Colors.gray + " - " + ppp.Color + ppp.Username + Server.DefaultColor + " was killed by " + p.Color + p.Username + Colors.gray + "'s amazing pistol shot! - ");
                                                 break;
                                             case "lazer":
-                                                Server.IRC.SendMessage(Colors.gray + " - " + ppp.player.Color + ppp.player.Username + Server.DefaultColor + " was lazered by " + p.player.Color + p.player.Username + Colors.gray + " - ");
-                                                p.player.SendMessage( Colors.gray + " - " + ppp.player.Color + ppp.player.Username + Server.DefaultColor + " was lazered by " + p.player.Color + p.player.Username + Colors.gray + " - ");
-                                                ppp.player.SendMessage( Colors.gray + " - " + ppp.player.Color + ppp.player.Username + Server.DefaultColor + " was lazered by " + p.player.Color + p.player.Username + Colors.gray + " - ");
+                                                Server.IRC.SendMessage(Colors.gray + " - " + ppp.Color + ppp.Username + Server.DefaultColor + " was lazered by " + p.Color + p.Username + Colors.gray + " - ");
+                                                p.SendMessage( Colors.gray + " - " + ppp.Color + ppp.Username + Server.DefaultColor + " was lazered by " + p.Color + p.Username + Colors.gray + " - ");
+                                                ppp.SendMessage( Colors.gray + " - " + ppp.Color + ppp.Username + Server.DefaultColor + " was lazered by " + p.Color + p.Username + Colors.gray + " - ");
                                                 break;
                                             case "mine":
-                                                Server.IRC.SendMessage(Colors.gray + " - " + ppp.player.Color + ppp.player.Username + Server.DefaultColor + " didn't look where they were walking - ");
-                                                p.player.SendMessage( Colors.gray + " - " + ppp.player.Color + ppp.player.Username + Server.DefaultColor + " didn't look where they were walking - ");
-                                                ppp.player.SendMessage( Colors.gray + " - " + ppp.player.Color + ppp.player.Username + Server.DefaultColor + " didn't look where they were walking - ");
+                                                Server.IRC.SendMessage(Colors.gray + " - " + ppp.Color + ppp.Username + Server.DefaultColor + " didn't look where they were walking - ");
+                                                p.SendMessage( Colors.gray + " - " + ppp.Color + ppp.Username + Server.DefaultColor + " didn't look where they were walking - ");
+                                                ppp.SendMessage( Colors.gray + " - " + ppp.Color + ppp.Username + Server.DefaultColor + " didn't look where they were walking - ");
                                                 break;
                                             case "lightning":
-                                                Server.IRC.SendMessage(Colors.gray + " - " + ppp.player.Color + ppp.player.Username + Server.DefaultColor + " got struck down by Zeus (aka " + p.player.Color + p.player.Username + Colors.gray + ") - ");
-                                                p.player.SendMessage( Colors.gray + " - " + ppp.player.Color + ppp.player.Username + Server.DefaultColor + " got struck down by Zeus (aka " + p.player.Color + p.player.Username + Colors.gray + ") - ");
-                                                ppp.player.SendMessage( Colors.gray + " - " + ppp.player.Color + ppp.player.Username + Server.DefaultColor + " got struck down by Zeus (aka " + p.player.Color + p.player.Username + Colors.gray + ") - ");
+                                                Server.IRC.SendMessage(Colors.gray + " - " + ppp.Color + ppp.Username + Server.DefaultColor + " got struck down by Zeus (aka " + p.Color + p.Username + Colors.gray + ") - ");
+                                                p.SendMessage( Colors.gray + " - " + ppp.Color + ppp.Username + Server.DefaultColor + " got struck down by Zeus (aka " + p.Color + p.Username + Colors.gray + ") - ");
+                                                ppp.SendMessage( Colors.gray + " - " + ppp.Color + ppp.Username + Server.DefaultColor + " got struck down by Zeus (aka " + p.Color + p.Username + Colors.gray + ") - ");
                                                 break;
                                             case "gun":
-                                                Server.IRC.SendMessage(Colors.gray + " - " + ppp.player.Color + ppp.player.Username + Server.DefaultColor + " got shot with a rocket fired by " + p.player.Color + p.player.Username + Colors.gray + " - ");
-                                                p.player.SendMessage( Colors.gray + " - " + ppp.player.Color + ppp.player.Username + Server.DefaultColor + " got shot with a rocket fired by " + p.player.Color + p.player.Username + Colors.gray + " - ");
-                                                ppp.player.SendMessage( Colors.gray + " - " + ppp.player.Color + ppp.player.Username + Server.DefaultColor + " got shot with a rocket fired by " + p.player.Color + p.player.Username + Colors.gray + " - ");
+                                                Server.IRC.SendMessage(Colors.gray + " - " + ppp.Color + ppp.Username + Server.DefaultColor + " got shot with a rocket fired by " + p.Color + p.Username + Colors.gray + " - ");
+                                                p.SendMessage( Colors.gray + " - " + ppp.Color + ppp.Username + Server.DefaultColor + " got shot with a rocket fired by " + p.Color + p.Username + Colors.gray + " - ");
+                                                ppp.SendMessage( Colors.gray + " - " + ppp.Color + ppp.Username + Server.DefaultColor + " got shot with a rocket fired by " + p.Color + p.Username + Colors.gray + " - ");
                                                 break;
                                             case "tnt":
-                                                Server.IRC.SendMessage(Colors.gray + " - " + ppp.player.Color + ppp.player.Username + Server.DefaultColor + " was exploded into bits by " + p.player.Color + p.player.Username + Colors.gray + " - ");
-                                                p.player.SendMessage( Colors.gray + " - " + ppp.player.Color + ppp.player.Username + Server.DefaultColor + " was exploded into bits by " + p.player.Color + p.player.Username + Colors.gray + " - ");
-                                                ppp.player.SendMessage( Colors.gray + " - " + ppp.player.Color + ppp.player.Username + Server.DefaultColor + " was exploded into bits by " + p.player.Color + p.player.Username + Colors.gray + " - ");
+                                                Server.IRC.SendMessage(Colors.gray + " - " + ppp.Color + ppp.Username + Server.DefaultColor + " was exploded into bits by " + p.Color + p.Username + Colors.gray + " - ");
+                                                p.SendMessage( Colors.gray + " - " + ppp.Color + ppp.Username + Server.DefaultColor + " was exploded into bits by " + p.Color + p.Username + Colors.gray + " - ");
+                                                ppp.SendMessage( Colors.gray + " - " + ppp.Color + ppp.Username + Server.DefaultColor + " was exploded into bits by " + p.Color + p.Username + Colors.gray + " - ");
                                                 break;
                                             case "tag":
-                                                Server.IRC.SendMessage(Colors.gray + " - " + p.player.Color + p.player.Username + Server.DefaultColor + " tagged " + ppp.player.Color + ppp.player.Username + Colors.gray + " - ");
-                                                p.player.SendMessage( Colors.gray + " - " + p.player.Color + p.player.Username + Server.DefaultColor + " tagged " + ppp.player.Color + ppp.player.Username + Colors.gray + " - ");
-                                                ppp.player.SendMessage( Colors.gray + " - " + p.player.Color + p.player.Username + Server.DefaultColor + " tagged " + ppp.player.Color + ppp.player.Username + Colors.gray + " - ");
+                                                Server.IRC.SendMessage(Colors.gray + " - " + p.Color + p.Username + Server.DefaultColor + " tagged " + ppp.Color + ppp.Username + Colors.gray + " - ");
+                                                p.SendMessage( Colors.gray + " - " + p.Color + p.Username + Server.DefaultColor + " tagged " + ppp.Color + ppp.Username + Colors.gray + " - ");
+                                                ppp.SendMessage( Colors.gray + " - " + p.Color + p.Username + Server.DefaultColor + " tagged " + ppp.Color + ppp.Username + Colors.gray + " - ");
                                                 break;
                                             default:
-                                                Server.IRC.SendMessage(Colors.gray + " - " + ppp.player.Color + ppp.player.Username + Server.DefaultColor + " was killed by " + p.player.Color + p.player.Username + Colors.gray + " - ");
-                                                p.player.SendMessage( Colors.gray + " - " + ppp.player.Color + ppp.player.Username + Server.DefaultColor + " was killed by " + p.player.Color + p.player.Username + Colors.gray + " - ");
-                                                ppp.player.SendMessage( Colors.gray + " - " + ppp.player.Color + ppp.player.Username + Server.DefaultColor + " was killed by " + p.player.Color + p.player.Username + Colors.gray + " - ");
+                                                Server.IRC.SendMessage(Colors.gray + " - " + ppp.Color + ppp.Username + Server.DefaultColor + " was killed by " + p.Color + p.Username + Colors.gray + " - ");
+                                                p.SendMessage( Colors.gray + " - " + ppp.Color + ppp.Username + Server.DefaultColor + " was killed by " + p.Color + p.Username + Colors.gray + " - ");
+                                                ppp.SendMessage( Colors.gray + " - " + ppp.Color + ppp.Username + Server.DefaultColor + " was killed by " + p.Color + p.Username + Colors.gray + " - ");
                                                 break;
                                         }
                                     }
@@ -766,45 +762,40 @@ namespace CTF
                                         redDeaths += 1;
                                     else if (getTeam(p) == "blue")
                                         bluDeaths += 1;
-                                    ppp.overallDied++;
-                                    if (ppp.ironman)
-                                    {
-                                        if (ppp.player.Money > -150)
-                                            ppp.player.Money = ppp.player.Money - 50;
-                                    }
-                                    ppp.amountKilled = 0;
-                                    ppp.deathTimerOn = true;
+                                    ppp.ExtraData["overalldied"] = (int)ppp.ExtraData["overalldied"] + 1;
+                                    ppp.ExtraData["amountkilled"] = 0;
+                                    ppp.ExtraData.ChangeOrCreate("deathtimeron", true);
                                     ppp.deathTimer = new System.Timers.Timer(7500);
                                     ppp.deathTimer.Elapsed += new ElapsedEventHandler(ppp.resetDeathTimer);
                                     ppp.deathTimer.Enabled = true;
-                                    ppp.hasBeenTrapped = false;
+                                    ppp.ExtraData["hasbeentrapped"] = false;
                                     killed = true;
                                     ServerCTF.killed.Add(ppp);
                                     pp = ppp;
                                     sendToTeamSpawn(ppp);
-                                    p.amountKilled++;
-                                    p.overallKilled++;
-                                    if (p.killingPeople)
+                                    p.ExtraData["amountkilled"] = (int)p.ExtraData["amountkilled"] + 1;
+                                    p.ExtraData["overallkilled"] = (int)p.ExtraData["overallkilled"] + 1;
+                                    if ((bool)p.ExtraData["killingpeople"])
                                     {
-                                        if (p.amountKilled >= 3)
+                                        if ((int)p.ExtraData["amountkilled"] >= 3)
                                         {
-                                            if (p.amountKilled == 3) { Server.IRC.SendMessage(Colors.gray + " - " + p.player.Color + p.player.Username + Server.DefaultColor + " got a triple kill! " + Colors.gray + " - "); Player.UniversalChat(Colors.gray + " - " + p.player.Color + p.player.Username + Server.DefaultColor + " got a triple kill! " + Colors.gray + " - "); points += 1; Money = Money + 1; }
-                                            if (p.amountKilled == 4) { Server.IRC.SendMessage(Colors.gray + " - " + p.player.Color + p.player.Username + Server.DefaultColor + " got a quadra kill! " + Colors.gray + " - "); Player.UniversalChat(Colors.gray + " - " + p.player.Color + p.player.Username + Server.DefaultColor + " got a quadra kill! " + Colors.gray + " - "); points += 1; Money = Money + 1; }
-                                            if (p.amountKilled == 5) { Server.IRC.SendMessage(Colors.gray + " - " + p.player.Color + p.player.Username + Server.DefaultColor + " got a penta kill! " + Colors.gray + " - "); Player.UniversalChat(Colors.gray + " - " + p.player.Color + p.player.Username + Server.DefaultColor + " got a penta kill! " + Colors.gray + " - "); points += 2; Money = Money + 2; }
-                                            if (p.amountKilled == 6) { Server.IRC.SendMessage(Colors.gray + " - " + p.player.Color + p.player.Username + Server.DefaultColor + " is crazy! Sextuple kill!" + Colors.gray + " - "); Player.UniversalChat(Colors.gray + " - " + p.player.Color + p.player.Username + Server.DefaultColor + " is crazy! Sextuple kill!" + Colors.gray + " - "); points += 2; Money = Money + 2; }
-                                            if (p.amountKilled == 7) { Server.IRC.SendMessage(Colors.gray + " - " + p.player.Color + p.player.Username + Server.DefaultColor + " is insane! Seputuple kill!" + Colors.gray + " - "); Player.UniversalChat(Colors.gray + " - " + p.player.Color + p.player.Username + Server.DefaultColor + " is insane! Seputuple kill!" + Colors.gray + " - "); points += 3; Money = Money + 3; }
-                                            if (p.amountKilled == 8) { Server.IRC.SendMessage(Colors.gray + " - " + p.player.Color + p.player.Username + Server.DefaultColor + " is amazing! Octuple kill!" + Colors.gray + " - "); Player.UniversalChat(Colors.gray + " - " + p.player.Color + p.player.Username + Server.DefaultColor + " is amazing! Octuple kill!" + Colors.gray + " - "); points += 3; Money = Money + 3; }
-                                            if (p.amountKilled == 9) { Server.IRC.SendMessage(Colors.gray + " - " + p.player.Color + p.player.Username + Server.DefaultColor + " is bonkers! Nonuple kill!" + Colors.gray + " - "); Player.UniversalChat(Colors.gray + " - " + p.player.Color + p.player.Username + Server.DefaultColor + " is bonkers! Nonuple kill!" + Colors.gray + " - "); points += 3; Money = Money + 3; }
-                                            if (p.amountKilled == 10) { Server.IRC.SendMessage(Colors.gray + " - " + p.player.Color + p.player.Username + Server.DefaultColor + " is nutty! Decuple kill!" + Colors.gray + " - "); Player.UniversalChat(Colors.gray + " - " + p.player.Color + p.player.Username + Server.DefaultColor + " is nutty! Decuple kill!" + Colors.gray + " - "); points += 5; Money = Money + 5; }
-                                            if (p.amountKilled == 11) { Money = Money + 5; }
-                                            if (p.amountKilled == 12) { Server.IRC.SendMessage(Colors.gray + " - " + p.player.Color + p.player.Username + Server.DefaultColor + " IS LEGENDARY! DUODECUPLE KILL! " + Colors.gray + " - "); Player.UniversalChat(Colors.gray + " - " + p.player.Color + p.player.Username + Server.DefaultColor + " IS LEGENDARY! DUODECUPLE KILL! " + Colors.gray + " - "); points += 7; Money = Money + 7; }
-                                            if (p.amountKilled == 13) { Money = Money + 8; }
-                                            if (p.amountKilled == 14) { Money = Money + 9; }
-                                            if (p.amountKilled == 15) { Server.IRC.SendMessage(Colors.gray + " - " + p.player.Color + p.player.Username + Server.DefaultColor + " IS KILLING EVERYONE! 15-TUPLE KILL! " + Colors.gray + " - "); Player.UniversalChat(Colors.gray + " - " + p.player.Color + p.player.Username + Server.DefaultColor + " IS KILLING EVERYONE! 15-TUPLE KILL! " + Colors.gray + " - "); points += 10; Money = Money + 10; }
-                                            if (p.amountKilled == 16) { Server.IRC.SendMessage(Colors.gray + " - " + p.player.Color + p.player.Username + Server.DefaultColor + " IS MAGIC! GEN-TUPLE KILL! " + Colors.gray + " - "); Player.UniversalChat(Colors.gray + " - " + p.player.Color + p.player.Username + Server.DefaultColor + " IS MAGIC! GEN-TUPLE KILL! " + Colors.gray + " - "); points += 12; Money = Money + 12; }
-                                            if (p.amountKilled > 16 && p.amountKilled < 100) { Money = Money + 12; }
-                                            if (p.amountKilled == 100) { Player.UniversalChat(Colors.gray + " - " + p.player.Color + p.player.Username + Server.DefaultColor + " OWNS CTF! 100+ KILL STREAK! " + Colors.gray + " - "); Money = Money + 50; }
-                                            if (p.amountKilled > 100) { Money = Money + 50; points += 50; }
+                                            if ((int)p.ExtraData["amountkilled"] == 3) { Server.IRC.SendMessage(Colors.gray + " - " + p.Color + p.Username + Server.DefaultColor + " got a triple kill! " + Colors.gray + " - "); Player.UniversalChat(Colors.gray + " - " + p.Color + p.Username + Server.DefaultColor + " got a triple kill! " + Colors.gray + " - "); points += 1; Money = Money + 1; }
+                                            if ((int)p.ExtraData["amountkilled"] == 4) { Server.IRC.SendMessage(Colors.gray + " - " + p.Color + p.Username + Server.DefaultColor + " got a quadra kill! " + Colors.gray + " - "); Player.UniversalChat(Colors.gray + " - " + p.Color + p.Username + Server.DefaultColor + " got a quadra kill! " + Colors.gray + " - "); points += 1; Money = Money + 1; }
+                                            if ((int)p.ExtraData["amountkilled"] == 5) { Server.IRC.SendMessage(Colors.gray + " - " + p.Color + p.Username + Server.DefaultColor + " got a penta kill! " + Colors.gray + " - "); Player.UniversalChat(Colors.gray + " - " + p.Color + p.Username + Server.DefaultColor + " got a penta kill! " + Colors.gray + " - "); points += 2; Money = Money + 2; }
+                                            if ((int)p.ExtraData["amountkilled"] == 6) { Server.IRC.SendMessage(Colors.gray + " - " + p.Color + p.Username + Server.DefaultColor + " is crazy! Sextuple kill!" + Colors.gray + " - "); Player.UniversalChat(Colors.gray + " - " + p.Color + p.Username + Server.DefaultColor + " is crazy! Sextuple kill!" + Colors.gray + " - "); points += 2; Money = Money + 2; }
+                                            if ((int)p.ExtraData["amountkilled"] == 7) { Server.IRC.SendMessage(Colors.gray + " - " + p.Color + p.Username + Server.DefaultColor + " is insane! Seputuple kill!" + Colors.gray + " - "); Player.UniversalChat(Colors.gray + " - " + p.Color + p.Username + Server.DefaultColor + " is insane! Seputuple kill!" + Colors.gray + " - "); points += 3; Money = Money + 3; }
+                                            if ((int)p.ExtraData["amountkilled"] == 8) { Server.IRC.SendMessage(Colors.gray + " - " + p.Color + p.Username + Server.DefaultColor + " is amazing! Octuple kill!" + Colors.gray + " - "); Player.UniversalChat(Colors.gray + " - " + p.Color + p.Username + Server.DefaultColor + " is amazing! Octuple kill!" + Colors.gray + " - "); points += 3; Money = Money + 3; }
+                                            if ((int)p.ExtraData["amountkilled"] == 9) { Server.IRC.SendMessage(Colors.gray + " - " + p.Color + p.Username + Server.DefaultColor + " is bonkers! Nonuple kill!" + Colors.gray + " - "); Player.UniversalChat(Colors.gray + " - " + p.Color + p.Username + Server.DefaultColor + " is bonkers! Nonuple kill!" + Colors.gray + " - "); points += 3; Money = Money + 3; }
+                                            if ((int)p.ExtraData["amountkilled"] == 10) { Server.IRC.SendMessage(Colors.gray + " - " + p.Color + p.Username + Server.DefaultColor + " is nutty! Decuple kill!" + Colors.gray + " - "); Player.UniversalChat(Colors.gray + " - " + p.Color + p.Username + Server.DefaultColor + " is nutty! Decuple kill!" + Colors.gray + " - "); points += 5; Money = Money + 5; }
+                                            if ((int)p.ExtraData["amountkilled"] == 11) { Money = Money + 5; }
+                                            if ((int)p.ExtraData["amountkilled"] == 12) { Server.IRC.SendMessage(Colors.gray + " - " + p.Color + p.Username + Server.DefaultColor + " IS LEGENDARY! DUODECUPLE KILL! " + Colors.gray + " - "); Player.UniversalChat(Colors.gray + " - " + p.Color + p.Username + Server.DefaultColor + " IS LEGENDARY! DUODECUPLE KILL! " + Colors.gray + " - "); points += 7; Money = Money + 7; }
+                                            if ((int)p.ExtraData["amountkilled"] == 13) { Money = Money + 8; }
+                                            if ((int)p.ExtraData["amountkilled"] == 14) { Money = Money + 9; }
+                                            if ((int)p.ExtraData["amountkilled"] == 15) { Server.IRC.SendMessage(Colors.gray + " - " + p.Color + p.Username + Server.DefaultColor + " IS KILLING EVERYONE! 15-TUPLE KILL! " + Colors.gray + " - "); Player.UniversalChat(Colors.gray + " - " + p.Color + p.Username + Server.DefaultColor + " IS KILLING EVERYONE! 15-TUPLE KILL! " + Colors.gray + " - "); points += 10; Money = Money + 10; }
+                                            if ((int)p.ExtraData["amountkilled"] == 16) { Server.IRC.SendMessage(Colors.gray + " - " + p.Color + p.Username + Server.DefaultColor + " IS MAGIC! GEN-TUPLE KILL! " + Colors.gray + " - "); Player.UniversalChat(Colors.gray + " - " + p.Color + p.Username + Server.DefaultColor + " IS MAGIC! GEN-TUPLE KILL! " + Colors.gray + " - "); points += 12; Money = Money + 12; }
+                                            if ((int)p.ExtraData["amountkilled"] > 16 && (int)p.ExtraData["amountkilled"] < 100) { Money = Money + 12; }
+                                            if ((int)p.ExtraData["amountkilled"] == 100) { Player.UniversalChat(Colors.gray + " - " + p.Color + p.Username + Server.DefaultColor + " OWNS CTF! 100+ KILL STREAK! " + Colors.gray + " - "); Money = Money + 50; }
+                                            if ((int)p.ExtraData["amountkilled"] > 100) { Money = Money + 50; points += 50; }
                                             // TODO: Add events to when a player kills a player with a high kill streak
                                         }
                                         addMoney(p, Money, points);
@@ -814,51 +805,50 @@ namespace CTF
                             else { }
                         }
             }
-            p.killingPeople = false;
+            p.ExtraData["killingpeople"] = false;
             ServerCTF.killed.Clear();
             if (killed) return pp;
             else return null;
         }
 
-        public string getTeam(ExtraPlayerData p)
+        public string getTeam(Player p)
         {
             if (!GameInProgess()) return null;
-            if (p.pteam == 2)
+            if ((int)p.ExtraData["team"] == 2)
                 return "red";
-            else if (p.pteam == 1)
+            else if ((int)p.ExtraData["team"] == 1)
                 return "blue";
             else
                 return null;
         }
 
-        public void joinTeam(ExtraPlayerData p1, string Name)
+        public void joinTeam(Player p, string Name)
         {
-            ExtraPlayerData p = new ExtraPlayerData();
             if (!GameInProgess()) return;
-            if (p.pteam != 0) return;
+            if ((int)p.ExtraData["team"] != 0) return;
             if (Name == "blue")
             {
-                Server.IRC.SendMessage(Colors.gray + " - " + p.player.Color + p.player.ExtraData["Title"] + p.player.Username + Server.DefaultColor + " joined the " + Colors.blue + "blue " + Server.DefaultColor + "team!" + Colors.gray + " - ");
-                Player.UniversalChat(Colors.gray + " - " + p.player.Color + p.player.ExtraData["Title"] + p.player.Username + Server.DefaultColor + " joined the " + Colors.blue + "blue " + Server.DefaultColor + "team!" + Colors.gray + " - ");
-                p.pteam = 1;
-                p.player.Color = Colors.blue;
-                Command.All["goto"].Use(p.player, currentLevelName.Select(c => c.ToString()).ToArray());
+                Server.IRC.SendMessage(Colors.gray + " - " + p.Color + p.ExtraData["Title"] + p.Username + Server.DefaultColor + " joined the " + Colors.blue + "blue " + Server.DefaultColor + "team!" + Colors.gray + " - ");
+                Player.UniversalChat(Colors.gray + " - " + p.Color + p.ExtraData["Title"] + p.Username + Server.DefaultColor + " joined the " + Colors.blue + "blue " + Server.DefaultColor + "team!" + Colors.gray + " - ");
+                p.ExtraData["team"] = 1;
+                p.Color = Colors.blue;
+                Command.All["goto"].Use(p, currentLevelName.Select(c => c.ToString()).ToArray());
                 blu.Add(p);
                 sendToTeamSpawn(p);
             }
             else
             {
-                Server.IRC.SendMessage(Colors.gray + " - " + p.player.Color + p.player.ExtraData["Title"] + p.player.Username + Server.DefaultColor + " joined the " + Colors.red + "red " + Server.DefaultColor + "team!" + Colors.gray + " - ");
-                Player.UniversalChat(Colors.gray + " - " + p.player.Color + p.player.ExtraData["Title"] + p.player.Username + Server.DefaultColor + " joined the " + Colors.red + "red " + Server.DefaultColor + "team!" + Colors.gray + " - ");
-                p.pteam = 2;
-                p.player.Color = Colors.red;
-                Command.All["goto"].Use(p.player, currentLevelName.Select(c => c.ToString()).ToArray());
+                Server.IRC.SendMessage(Colors.gray + " - " + p.Color + p.ExtraData["Title"] + p.Username + Server.DefaultColor + " joined the " + Colors.red + "red " + Server.DefaultColor + "team!" + Colors.gray + " - ");
+                Player.UniversalChat(Colors.gray + " - " + p.Color + p.ExtraData["Title"] + p.Username + Server.DefaultColor + " joined the " + Colors.red + "red " + Server.DefaultColor + "team!" + Colors.gray + " - ");
+                p.ExtraData["team"] = 2;
+                p.Color = Colors.red;
+                Command.All["goto"].Use(p, currentLevelName.Select(c => c.ToString()).ToArray());
                 red.Add(p);
                 sendToTeamSpawn(p);
             }
         }
 
-        public void resetFlags(ExtraPlayerData p)
+        public void resetFlags(Player p)
         {
             if (!GameInProgess()) return;
             if (getTeam(p) == null) return;
@@ -866,9 +856,9 @@ namespace CTF
             if (level == null) return;
             level.BlockChange((ushort)((int)redFlag.x), (ushort)((int)redFlag.z), (ushort)((int)redFlag.y), Block.BlockList.redflag);
             level.BlockChange((ushort)((int)blueFlag.x), (ushort)((int)blueFlag.z), (ushort)((int)blueFlag.y), Block.BlockList.blueflag);
-            foreach (ExtraPlayerData ppp in Server.Players)
+            foreach (Player ppp in Server.Players)
             {
-                ppp.isHoldingFlag = false;
+                ppp.ExtraData["isholdingflag"] = false;
             }
             ServerCTF.blueFlagDropped = false;
             ServerCTF.redFlagDropped = false;
@@ -881,11 +871,11 @@ namespace CTF
             removeTempFlagBlocks();
         }
 
-        public void resetFlag(ExtraPlayerData p)
+        public void resetFlag(Player p)
         {
             if (!GameInProgess()) return;
             if (getTeam(p) == null) return;
-            if (p.pteam != 0)
+            if ((int)p.ExtraData["team"] != 0)
             {
                 Level level = Level.FindLevel(currentLevelName);
                 if (level == null) return;
@@ -921,37 +911,37 @@ namespace CTF
             else if (str == "red") { Server.IRC.SendMessage(Colors.gray + " - " + Server.DefaultColor + "The red flag has been returned! " + Colors.gray + " - "); Player.UniversalChat(Colors.gray + " - " + Server.DefaultColor + "The red flag has been returned! " + Colors.gray + " - "); ServerCTF.redFlagTimer.Enabled = false; redDroppedFlag.x = 0; redDroppedFlag.z = 0; redDroppedFlag.y = 0; }
         }
 
-        public void PlayerDC(ExtraPlayerData p)
+        public void PlayerDC(Player p)
         {
             ushort x, y, z; int xx, yy, zz;
-            x = (ushort)((int)p.player.Pos.x / 32);
-            y = (ushort)((int)p.player.Pos.z / 32 - 1);
-            z = (ushort)((int)p.player.Pos.y / 32);
-            xx = p.player.Pos.x;
-            yy = p.player.Pos.z;
-            zz = p.player.Pos.y;
+            x = (ushort)((int)p.Pos.x / 32);
+            y = (ushort)((int)p.Pos.z / 32 - 1);
+            z = (ushort)((int)p.Pos.y / 32);
+            xx = p.Pos.x;
+            yy = p.Pos.z;
+            zz = p.Pos.y;
             dropFlag(p, x, y, z, xx, yy, zz);
-            if (red.Contains(p)) { red.Remove(p); p.pteam = 0; }
-            if (blu.Contains(p)) { blu.Remove(p); p.pteam = 0; }
+            if (red.Contains(p)) { red.Remove(p); p.ExtraData["team"] = 0; }
+            if (blu.Contains(p)) { blu.Remove(p); p.ExtraData["team"] = 0; }
         }
 
-        public void sendToTeamSpawn(ExtraPlayerData p)
+        public void sendToTeamSpawn(Player p)
         {
             if (!GameInProgess()) return;
             ushort x, y, z; int xx, yy, zz;
-            x = (ushort)((int)p.player.Pos.x / 32);
-            y = (ushort)((int)p.player.Pos.z / 32 - 1);
-            z = (ushort)((int)p.player.Pos.y / 32);
-            xx = p.player.Pos.x;
-            yy = p.player.Pos.z;
-            zz = p.player.Pos.y;
-            if (p.pteam == 2)
+            x = (ushort)((int)p.Pos.x / 32);
+            y = (ushort)((int)p.Pos.z / 32 - 1);
+            z = (ushort)((int)p.Pos.y / 32);
+            xx = p.Pos.x;
+            yy = p.Pos.z;
+            zz = p.Pos.y;
+            if ((int)p.ExtraData["team"] == 2)
             {
-                p.player.SendToPos(redSpawn, p.player.Rot);
+                p.SendToPos(redSpawn, p.Rot);
             }
             else
             {
-                p.player.SendToPos(blueSpawn, p.player.Rot);
+                p.SendToPos(blueSpawn, p.Rot);
             }
             Thread dropThread = new Thread(new ThreadStart(delegate
             {
@@ -961,7 +951,7 @@ namespace CTF
             dropThread.Start();
         }
 
-        public void captureFlag(ExtraPlayerData p)
+        public void captureFlag(Player p)
         {
             if (!GameInProgess()) return;
             if (getTeam(p) == null) return;
@@ -969,10 +959,10 @@ namespace CTF
             {
                 ServerCTF.blueFlagTimer.Enabled = false;
                 blueTeamCaptures++;
-                Server.IRC.SendMessage(Colors.gray + " - " + p.player.Color + p.player.ExtraData["Title"] + p.player.Username + Server.DefaultColor + " captured the " + Colors.red + "red " + Server.DefaultColor + "flag!" + Colors.gray + " - ");
-                Player.UniversalChat(Colors.gray + " - " + p.player.Color + p.player.ExtraData["Title"] + p.player.Username + Server.DefaultColor + " captured the " + Colors.red + "red " + Server.DefaultColor + "flag!" + Colors.gray + " - ");
+                Server.IRC.SendMessage(Colors.gray + " - " + p.Color + p.ExtraData["Title"] + p.Username + Server.DefaultColor + " captured the " + Colors.red + "red " + Server.DefaultColor + "flag!" + Colors.gray + " - ");
+                Player.UniversalChat(Colors.gray + " - " + p.Color + p.ExtraData["Title"] + p.Username + Server.DefaultColor + " captured the " + Colors.red + "red " + Server.DefaultColor + "flag!" + Colors.gray + " - ");
                 addMoney(p, 50, 50);
-                blu.ForEach(delegate(ExtraPlayerData player1)
+                blu.ForEach(delegate(Player player1)
                 {
                     if (player1 != p)
                     {
@@ -989,10 +979,10 @@ namespace CTF
             {
                 ServerCTF.redFlagTimer.Enabled = false;
                 redTeamCaptures++;
-                Server.IRC.SendMessage(Colors.gray + " - " + p.player.Color + p.player.ExtraData["Title"] + p.player.Username + Server.DefaultColor + " captured the " + Colors.blue + "blue " + Server.DefaultColor + "flag!" + Colors.gray + " - ");
-                Player.UniversalChat(Colors.gray + " - " + p.player.Color + p.player.ExtraData["Title"] + p.player.Username + Server.DefaultColor + " captured the " + Colors.blue + "blue " + Server.DefaultColor + "flag!" + Colors.gray + " - ");
+                Server.IRC.SendMessage(Colors.gray + " - " + p.Color + p.ExtraData["Title"] + p.Username + Server.DefaultColor + " captured the " + Colors.blue + "blue " + Server.DefaultColor + "flag!" + Colors.gray + " - ");
+                Player.UniversalChat(Colors.gray + " - " + p.Color + p.ExtraData["Title"] + p.Username + Server.DefaultColor + " captured the " + Colors.blue + "blue " + Server.DefaultColor + "flag!" + Colors.gray + " - ");
                 addMoney(p, 50, 50);
-                red.ForEach(delegate(ExtraPlayerData player1)
+                red.ForEach(delegate(Player player1)
                 {
                     if (player1 != p)
                     {
@@ -1008,13 +998,13 @@ namespace CTF
             ServerCTF.vulnerable = 1;
         }
 
-        public void dropFlag(ExtraPlayerData p, ushort x, ushort y, ushort z, int xx, int yy, int zz)
+        public void dropFlag(Player p, ushort x, ushort y, ushort z, int xx, int yy, int zz)
         {
             if (!GameInProgess()) return;
             if (getTeam(p) == null) return;
             Level level = Level.FindLevel(currentLevelName);
             if (level == null) return;
-            if (p.isHoldingFlag)
+            if ((bool)p.ExtraData["isholdingflag"])
             {
                 if (getTeam(p) == "red" && ServerCTF.blueFlagHeld) level.BlockChange(x, y, z, Block.BlockList.blueflag);
                 if (getTeam(p) == "blue" && ServerCTF.redFlagHeld) level.BlockChange(x, y, z, Block.BlockList.redflag);
@@ -1022,44 +1012,44 @@ namespace CTF
                 else if (getTeam(p) == "blue") ServerCTF.redFlagDropped = true;
                 if (getTeam(p) == "red") { ServerCTF.blueFlagHeld = false; removeTempFlagBlock("red"); ServerCTF.blueFlagTimer.Enabled = true; blueDroppedFlag.x = (short)xx; blueDroppedFlag.z = (short)yy; blueDroppedFlag.y = (short)zz; }
                 else if (getTeam(p) == "blue") { ServerCTF.redFlagHeld = false; removeTempFlagBlock("blue"); ServerCTF.redFlagTimer.Enabled = true; redDroppedFlag.x = (short)xx; redDroppedFlag.z = (short)yy; redDroppedFlag.y = (short)zz; }
-                p.isHoldingFlag = false;
-                Server.IRC.SendMessage(Colors.gray + " - " + Colors.blue + p.player.Username + Server.DefaultColor + " dropped the flag!" + Colors.gray + " - ");
-                Player.UniversalChat(Colors.gray + " - " + Colors.blue + p.player.Username + Server.DefaultColor + " dropped the flag!" + Colors.gray + " - ");
+                p.ExtraData["isholdingflag"] = false;
+                Server.IRC.SendMessage(Colors.gray + " - " + Colors.blue + p.Username + Server.DefaultColor + " dropped the flag!" + Colors.gray + " - ");
+                Player.UniversalChat(Colors.gray + " - " + Colors.blue + p.Username + Server.DefaultColor + " dropped the flag!" + Colors.gray + " - ");
             }
         }
 
-        public void returnFlag(ExtraPlayerData p)
+        public void returnFlag(Player p)
         {
             if (!GameInProgess()) return;
             if (getTeam(p) == null) return;
             resetFlag(p);
-            if (getTeam(p) == "red" && !ServerCTF.blueFlagHeld) { Server.IRC.SendMessage(Colors.gray + " - " + p.player.Color + p.player.ExtraData["Title"] + p.player.Username + Server.DefaultColor + " returned the " + Colors.red + "red " + Server.DefaultColor + "flag!" + Colors.gray + " - "); Player.UniversalChat(Colors.gray + " - " + p.player.Color + p.player.ExtraData["Title"] + p.player.Username + Server.DefaultColor + " returned the " + Colors.red + "red " + Server.DefaultColor + "flag!" + Colors.gray + " - "); }
-            if (getTeam(p) == "blue" && !ServerCTF.redFlagHeld) { Server.IRC.SendMessage(Colors.gray + " - " + p.player.Color + p.player.ExtraData["Title"] + p.player.Username + Server.DefaultColor + " returned the " + Colors.blue + "blue " + Server.DefaultColor + "flag!" + Colors.gray + " - "); Player.UniversalChat(Colors.gray + " - " + p.player.Color + p.player.ExtraData["Title"] + p.player.Username + Server.DefaultColor + " returned the " + Colors.blue + "blue " + Server.DefaultColor + "flag!" + Colors.gray + " - "); }
+            if (getTeam(p) == "red" && !ServerCTF.blueFlagHeld) { Server.IRC.SendMessage(Colors.gray + " - " + p.Color + p.ExtraData["Title"] + p.Username + Server.DefaultColor + " returned the " + Colors.red + "red " + Server.DefaultColor + "flag!" + Colors.gray + " - "); Player.UniversalChat(Colors.gray + " - " + p.Color + p.ExtraData["Title"] + p.Username + Server.DefaultColor + " returned the " + Colors.red + "red " + Server.DefaultColor + "flag!" + Colors.gray + " - "); }
+            if (getTeam(p) == "blue" && !ServerCTF.redFlagHeld) { Server.IRC.SendMessage(Colors.gray + " - " + p.Color + p.ExtraData["Title"] + p.Username + Server.DefaultColor + " returned the " + Colors.blue + "blue " + Server.DefaultColor + "flag!" + Colors.gray + " - "); Player.UniversalChat(Colors.gray + " - " + p.Color + p.ExtraData["Title"] + p.Username + Server.DefaultColor + " returned the " + Colors.blue + "blue " + Server.DefaultColor + "flag!" + Colors.gray + " - "); }
         }
 
-        public bool pickupFlag(ExtraPlayerData p)
+        public bool pickupFlag(Player p)
         {
             if (!GameInProgess()) return true;
             if (getTeam(p) == null) return true;
-            if (p.deathTimerOn) return true;
+            if ((bool)p.ExtraData["deathtimeron"]) return true;
             if (getTeam(p) == "blue" && !ServerCTF.redFlagHeld)
             {
-                p.isHoldingFlag = true;
+                p.ExtraData["isholdingflag"] = true;
                 ServerCTF.redFlagHeld = true;
                 ServerCTF.redFlagDropped = false;
                 ServerCTF.redFlagTimer.Enabled = false;
-                Server.IRC.SendMessage(Colors.gray + " - " + p.player.Color + p.player.ExtraData["Title"] + p.player.Username + Server.DefaultColor + " grabbed the " + Colors.red + "red " + Server.DefaultColor + "flag!" + Colors.gray + " - ");
-                Player.UniversalChat(Colors.gray + " - " + p.player.Color + p.player.ExtraData["Title"] + p.player.Username + Server.DefaultColor + " grabbed the " + Colors.red + "red " + Server.DefaultColor + "flag!" + Colors.gray + " - ");
+                Server.IRC.SendMessage(Colors.gray + " - " + p.Color + p.ExtraData["Title"] + p.Username + Server.DefaultColor + " grabbed the " + Colors.red + "red " + Server.DefaultColor + "flag!" + Colors.gray + " - ");
+                Player.UniversalChat(Colors.gray + " - " + p.Color + p.ExtraData["Title"] + p.Username + Server.DefaultColor + " grabbed the " + Colors.red + "red " + Server.DefaultColor + "flag!" + Colors.gray + " - ");
                 return false;
             }
             else if (getTeam(p) == "red" && !ServerCTF.blueFlagHeld)
             {
-                p.isHoldingFlag = true;
+                p.ExtraData["isholdingflag"] = true;
                 ServerCTF.blueFlagHeld = true;
                 ServerCTF.blueFlagDropped = false;
                 ServerCTF.blueFlagTimer.Enabled = false;
-                Server.IRC.SendMessage(Colors.gray + " - " + p.player.Color + p.player.ExtraData["Title"] + p.player.Username + Server.DefaultColor + " grabbed the " + Colors.blue + "blue " + Server.DefaultColor + "flag!" + Colors.gray + " - ");
-                Player.UniversalChat(Colors.gray + " - " + p.player.Color + p.player.ExtraData["Title"] + p.player.Username + Server.DefaultColor + " grabbed the " + Colors.blue + "blue " + Server.DefaultColor + "flag!" + Colors.gray + " - ");
+                Server.IRC.SendMessage(Colors.gray + " - " + p.Color + p.ExtraData["Title"] + p.Username + Server.DefaultColor + " grabbed the " + Colors.blue + "blue " + Server.DefaultColor + "flag!" + Colors.gray + " - ");
+                Player.UniversalChat(Colors.gray + " - " + p.Color + p.ExtraData["Title"] + p.Username + Server.DefaultColor + " grabbed the " + Colors.blue + "blue " + Server.DefaultColor + "flag!" + Colors.gray + " - ");
                 return false;
             }
             else
@@ -1068,40 +1058,39 @@ namespace CTF
             }
         }
 
-        public void disarm(ExtraPlayerData p, string strng)
+        public void disarm(Player p, string strng)
         {
             if (strng == "mine")
             {
-                p.minePlacement.x = 0; p.minePlacement.z = 0; p.minePlacement.y = 0;
-                p.minesPlaced = 0;
-                p.player.SendMessage(Colors.gray + " - " + Server.DefaultColor + "Your mine has been disarmed!" + Colors.gray + " - ");
+                p.ExtraData.ChangeOrCreate("mineplacementx", 0); p.ExtraData.ChangeOrCreate("mineplacementz", 0); p.ExtraData.ChangeOrCreate("mineplacementy", 0);
+                p.ExtraData.ChangeOrCreate("minesplaced", 0);
+                p.SendMessage(Colors.gray + " - " + Server.DefaultColor + "Your mine has been disarmed!" + Colors.gray + " - ");
             }
             else if (strng == "trap")
             {
-                if (p.trapsPlaced == 0) return;
-                Server.Players.ForEach(delegate(Player player)
+                if ((int)p.ExtraData["trapsplaced"] == 0) return;
+                Server.Players.ForEach(delegate(Player player1)
                 {
-                    ExtraPlayerData player1 = new ExtraPlayerData();
-                    player1.hasBeenTrapped = false;
+                    player1.ExtraData["hasbeentrapped"] = false;
                 });
-                p.trapPlacement.x = 0; p.trapPlacement.z = 0; p.trapPlacement.y = 0;
-                p.trapsPlaced = 0;
-                p.player.SendMessage(Colors.gray + " - " + Server.DefaultColor + "Your trap has been disarmed!" + Colors.gray + " - ");
+                p.ExtraData["trapplacementx"] = 0; p.ExtraData["trapplacementz"] = 0; p.ExtraData["trapplacementy"] = 0;
+                p.ExtraData["trapsplaced"] = 0;
+                p.SendMessage(Colors.gray + " - " + Server.DefaultColor + "Your trap has been disarmed!" + Colors.gray + " - ");
             }
             if (strng == "tnt")
             {
-                p.tntPlacement.x = 0; p.tntPlacement.z = 0; p.tntPlacement.y = 0;
-                p.tntPlaced = 0;
-                p.player.SendMessage(Colors.gray + " - " + Server.DefaultColor + "Your tnt has been disarmed!" + Colors.gray + " - ");
+                p.ExtraData.ChangeOrCreate("tntplacementx", 0); p.ExtraData.ChangeOrCreate("tntplacementz", 0); p.ExtraData.ChangeOrCreate("tntplacementy", 0);
+                p.ExtraData["tntplaced"] = 0;
+                p.SendMessage(Colors.gray + " - " + Server.DefaultColor + "Your tnt has been disarmed!" + Colors.gray + " - ");
             }
             else
                 return;
         }
 
-        public bool grabFlag(ExtraPlayerData p, string Color, ushort x, ushort y, ushort z)
+        public bool grabFlag(Player p, string Color, ushort x, ushort y, ushort z)
         {
             bool returne = false;
-            if (red.Count < 1 || blu.Count < 1) { p.player.SendMessage("There must be at least 2 players on both teams to grab a flag!"); return true; }
+            if (red.Count < 1 || blu.Count < 1) { p.SendMessage("There must be at least 2 players on both teams to grab a flag!"); return true; }
             if (getTeam(p) == Color)
             {
                 if (getTeam(p) == "blue" && ServerCTF.blueFlagDropped && !ServerCTF.blueFlagHeld)
@@ -1110,7 +1099,7 @@ namespace CTF
                     returnFlag(p);
                 else
                 {
-                    if (p.isHoldingFlag)
+                    if ((bool)p.ExtraData["isholdingflag"])
                     {
                         captureFlag(p);
                     }
@@ -1132,14 +1121,14 @@ namespace CTF
         }
 
 
-        public void addMoney(ExtraPlayerData p, int amount, int points)
+        public void addMoney(Player p, int amount, int points)
         {
-            p.player.SendMessage( Colors.gray + " - " + Server.DefaultColor + "You gained " + amount + " " + Server.Moneys + " and " + points + " EXP!" + Colors.gray + " - ");
-            p.player.Money = p.player.Money + amount;
-            p.points += points;
+            p.SendMessage( Colors.gray + " - " + Server.DefaultColor + "You gained " + amount + " " + Server.Moneys + " and " + points + " EXP!" + Colors.gray + " - ");
+            p.Money = p.Money + amount;
+            p.ExtraData["points"] = (int)p.ExtraData["points"] + points;
         }
 
-        bool OnSide(ExtraPlayerData p, string Name)
+        bool OnSide(Player p, string Name)
         {
             Vector3S b = null;
             if (Name == "red")
@@ -1150,15 +1139,15 @@ namespace CTF
             {
                 b.x = blueSpawn.x;
             }
-            if (b.x < halfway && p.player.Pos.x / 32 < halfway)
+            if (b.x < halfway && p.Pos.x / 32 < halfway)
                 return true;
-            else if (b.x > halfway && p.player.Pos.x / 32 > halfway)
+            else if (b.x > halfway && p.Pos.x / 32 > halfway)
                 return true;
             else
                 return false;
         }
 
-        public bool InSpawn(ExtraPlayerData p, Vector3S Pos)
+        public bool InSpawn(Player p, Vector3S Pos)
         {
             if (getTeam(p) == "blue")
             {
@@ -1186,11 +1175,10 @@ namespace CTF
             {
                 try
                 {
-                    ExtraPlayerData player1 = new ExtraPlayerData();
-                    EXPLevel nextLevel = EXPLevel.Find(player1.explevel.levelID + 1);
-                    if (nextLevel != null && player1.points >= nextLevel.requiredEXP)
+                    EXPLevel nextLevel = EXPLevel.Find(EXPLevel.Find((int)pl.ExtraData["explevel"]).levelID + 1);
+                    if (nextLevel != null && (int)pl.ExtraData["points"] >= nextLevel.requiredEXP)
                     {
-                        player1.explevel = nextLevel;
+                        pl.ExtraData["explevel"] = nextLevel;
                         pl.Money += nextLevel.reward;
                         Player.UniversalChat(pl.Color + pl.Username + Server.DefaultColor + " has leveled up to level &a" + nextLevel.levelID + "!");
                         pl.SendMessage("You have just leveled up to level &a" + nextLevel.levelID + "!");

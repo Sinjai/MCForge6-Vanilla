@@ -14,7 +14,7 @@ namespace CTF
         public static bool ctfRound = false;
         public static int ctfGameStatus = 0; //0 = not started, 1 = always on, 2 = one time, 3 = certain amount of rounds, 4 = stop game next round
         public static bool CTFOnlyServer = false;
-        public static List<ExtraPlayerData> killed = new List<ExtraPlayerData>();
+        public static List<Player> killed = new List<Player>();
         public static string currentLevel = "";
         public static bool blueFlagDropped = false;
         public static bool redFlagDropped = false;
