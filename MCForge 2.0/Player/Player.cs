@@ -18,6 +18,7 @@ using System.Data;
 using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Text.RegularExpressions;
+using System.Timers;
 using System.Threading;
 using MCForge.API.Events;
 using MCForge.Core;
@@ -317,6 +318,15 @@ namespace MCForge.Entity {
 
         public Player() {
 
+        }
+
+        public System.Timers.Timer deathTimer;
+        public void resetDeathTimer(object sender, ElapsedEventArgs e)
+        {
+            this.ExtraData.ChangeOrCreate("deathtimeron", false);
+            deathTimer.Dispose();
+            deathTimer.Enabled = false;
+            deathTimer.Stop();
         }
 
         #region Special Chat Handlers

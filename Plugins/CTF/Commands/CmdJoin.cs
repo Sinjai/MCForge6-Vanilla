@@ -18,7 +18,6 @@ namespace CTF
         public byte Permission { get { return 80; } }
         public void Use(Player p, string[] message)
         {
-            ExtraPlayerData extra = new ExtraPlayerData();
             if (ServerCTF.CTFModeOn)
             {
                 if (p == null) { p.SendMessage("This command can only be used in-game!"); return; }
@@ -30,7 +29,7 @@ namespace CTF
                 if (message[0] == "blue")
                 {
                     if (p.Level.Name == ServerCTF.ctf.currentLevelName) return;
-                    if (extra.pteam == 0)
+                    if ((int)p.ExtraData["team"] == 0)
                     {
                         int a = random.Next(-2, -1);
                         if (diff <= a)
@@ -38,15 +37,15 @@ namespace CTF
                         if (unbalanced)
                         {
                             p.SendMessage(Colors.gray + " - " + Server.DefaultColor + "You have been autobalanced!" + Colors.gray + " - ");
-                            ServerCTF.ctf.joinTeam(extra, "red");
+                            ServerCTF.ctf.joinTeam(p, "red");
                         }
-                        ServerCTF.ctf.joinTeam(extra, "blue");
+                        ServerCTF.ctf.joinTeam(p, "blue");
                     }
                 }
                 else
                 {
                     if (p.Level.Name == ServerCTF.ctf.currentLevelName) return;
-                    if (extra.pteam == 0)
+                    if ((int)p.ExtraData["team"] == 0)
                     {
                         int a = random.Next(1, 2);
                         if (diff >= a)
@@ -54,9 +53,9 @@ namespace CTF
                         if (unbalanced)
                         {
                             p.SendMessage(Colors.gray + " - " + Server.DefaultColor + "You have been autobalanced!" + Colors.gray + " - ");
-                            ServerCTF.ctf.joinTeam(extra, "blue");
+                            ServerCTF.ctf.joinTeam(p, "blue");
                         }
-                        ServerCTF.ctf.joinTeam(extra, "red");
+                        ServerCTF.ctf.joinTeam(p, "red");
                     }
                 }
             }

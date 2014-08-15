@@ -759,7 +759,7 @@ namespace ZombiePlugin
                     }
                 }
             }
-            catch (Exception e) { }
+            catch { }
 
             try
             {

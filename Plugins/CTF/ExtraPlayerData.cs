@@ -9,18 +9,13 @@ using MCForge.Utils;
 
 namespace CTF
 {
-    public class ExtraPlayerData
+    public class ExtraPlayerDataOld
     {
         public Player player;
         public bool referee = false;
         public bool voted = false;
         public int points = 0;
         public EXPLevel explevel;
-        public static ExtraPlayerData extraplayerdata = new ExtraPlayerData();
-        public static explicit operator ExtraPlayerData(Player p)
-        {
-            return (ExtraPlayerData)extraplayerdata.player;
-        }
         //CTF
         public int tntSeconds = 0;
         public int lazorSeconds = 0;
@@ -31,11 +26,11 @@ namespace CTF
         public int amountKilled = 0;
         public int overallKilled = 0;
         public int overallDied = 0;
-        public Vector3S minePlacement = null;
+        public Vector3S minePlacement;
         public int minesPlaced = 0;
-        public Vector3S trapPlacement = null;
+        public Vector3S trapPlacement;
         public int trapsPlaced = 0;
-        public Vector3S tntPlacement = null;
+        public Vector3S tntPlacement;
         public int tntPlaced = 0;
         //public static System.Timers.Timer thetimer3;
         public System.Timers.Timer deathTimer;

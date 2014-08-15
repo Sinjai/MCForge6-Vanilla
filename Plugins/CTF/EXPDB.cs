@@ -3,17 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
+using MCForge.Entity;
 using MCForge.Utils;
 
 namespace CTF
 {
     public class EXPDB
     {
-        public static bool Load(ExtraPlayerData p)
+        public static bool Load(Player p)
         {
-            if (File.Exists("players/" + p.player.Username + "DB.txt"))
+            if (File.Exists("players/" + p.Username + "DB.txt"))
             {
-                foreach (string line in File.ReadAllLines("players/" + p.player.Username + "DB.txt"))
+                foreach (string line in File.ReadAllLines("players/" + p.Username + "DB.txt"))
                 {
                     if (!string.IsNullOrEmpty(line) && !line.StartsWith("#"))
                     {
@@ -26,7 +27,7 @@ namespace CTF
                             switch (key.ToLower())
                             {
                                 case "points":
-                                    p.points = int.Parse(value);
+                                    p.ExtraData["points"] = int.Parse(value);
                                     section = key;
                                     break;
                             }
@@ -34,7 +35,7 @@ namespace CTF
                             EXPLevel currLevel = null;
                             foreach (EXPLevel lvl in EXPLevel.levels)
                             {
-                                if (lvl.requiredEXP <= p.points)
+                                if (lvl.requiredEXP <= (int)p.ExtraData["points"])
                                 {
                                     currLevel = lvl;
                                 }
@@ -42,16 +43,16 @@ namespace CTF
 
                             if (currLevel != null)
                             {
-                                p.explevel = currLevel;
+                                p.ExtraData["explevel"] = currLevel;
                             }
                             else
                             {
-                                p.explevel = EXPLevel.levels[0];
+                                p.ExtraData["explevel"] = EXPLevel.levels[0];
                             }
                         }
                         catch (Exception e)
                         {
-                            Logger.Log("Loading " + p.player.Username + "'s EXP database failed at section: " + section);
+                            Logger.Log("Loading " + p.Username + "'s EXP database failed at section: " + section);
                             Logger.LogError(e);
                         }
                     }
@@ -61,17 +62,17 @@ namespace CTF
             }
             else
             {
-                p.points = 0;
-                p.explevel = EXPLevel.levels[0];
+                p.ExtraData.ChangeOrCreate("points", 0);
+                p.ExtraData.ChangeOrCreate("explevel", 0);
                 Save(p);
                 return false;
             }
         }
 
-        public static void Save(ExtraPlayerData p)
+        public static void Save(Player p)
         {
-            StreamWriter sw = new StreamWriter(File.Create("players/" + p.player.Username + "DB.txt"));
-            sw.WriteLine("Points = " + p.points);
+            StreamWriter sw = new StreamWriter(File.Create("players/" + p.Username + "DB.txt"));
+            sw.WriteLine("Points = " + p.ExtraData["points"]);
             sw.Flush();
             sw.Close();
             sw.Dispose();

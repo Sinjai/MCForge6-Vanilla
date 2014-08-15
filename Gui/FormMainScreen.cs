@@ -23,8 +23,6 @@ using MCForge.Core.RelayChat;
 namespace MCForge.Gui.Forms {
     public partial class FormMainScreen : AeroForm, IFormSharer {
 
-        private bool _restarting;
-
         public FormMainScreen() {
             InitializeComponent();
         }
@@ -290,7 +288,6 @@ namespace MCForge.Gui.Forms {
         }
 
         private void restartToolStripMenuItem_Click(object sender, EventArgs e) {
-            _restarting = true;
             Close();
             Server.Restart();
         }
