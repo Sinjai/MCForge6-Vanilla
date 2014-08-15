@@ -16,7 +16,7 @@ namespace MCForge.Gui.Dialogs
         {
             InitializeComponent();
 
-            this.webBrowser1.Url = new Uri("http://localhost:6969/settings.html?xid=" + Server.RC.XID);
+            this.webBrowser1.Url = new Uri(String.Format("{0}/settings.html?xid={1}", Server.RC.URL, Server.RC.XID));
         }
 
         private void button1_Click(object sender, EventArgs e)

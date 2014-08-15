@@ -64,6 +64,7 @@
     <Compile Include="Building\CmdBrush.cs" />
     <Compile Include="Building\CmdClick.cs" />
     <Compile Include="Building\CmdCuboid.cs" />
+    <Compile Include="Building\CmdDoor.cs" />
     <Compile Include="Building\CmdLayer.cs" />
     <Compile Include="Building\CmdLine.cs" />
     <Compile Include="Building\CmdPlace.cs" />

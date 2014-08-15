@@ -5,4 +5,3 @@ C:\Users\Dhruv\Documents\GitHub\MCForge7-Vanilla\HtmlData\obj\Debug\MCForge.Html
 C:\Users\Dhruv\Documents\GitHub\MCForge7-Vanilla\HtmlData\obj\Debug\HtmlData.csproj.GenerateResource.Cache
 C:\Users\Dhruv\Documents\GitHub\MCForge7-Vanilla\HtmlData\obj\Debug\MCForge.HtmlData.dll
 C:\Users\Dhruv\Documents\GitHub\MCForge7-Vanilla\HtmlData\obj\Debug\MCForge.HtmlData.pdb
-C:\Users\Dhruv\Documents\GitHub\MCForge7-Vanilla\HtmlData\obj\Debug\HtmlData.csprojResolveAssemblyReference.cache
