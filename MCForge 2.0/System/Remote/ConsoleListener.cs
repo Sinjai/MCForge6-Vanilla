@@ -11,14 +11,25 @@ using System.Text;
 using System.Threading;
 using System.Web;
 
-namespace MCForge.Core.RemoteConsole
+namespace MCForge.Core.Remote
 {
     public class ConsoleListener
     {
+        public int Port
+        {
+            get { return ServerSettings.GetSettingInt("Remote-Port"); }
+            set { ServerSettings.SetSetting("Remote-Port", value.ToString()); }
+        }
+
+        public string URL
+        {
+            get { return String.Format("http://localhost:{0}", this.Port); }
+        }
+
         public string XID { get; internal set;}
+
         private Thread trd;
         private HttpListener listener;
-        private int port = 6969;
         private HttpListenerContext context;
         private HttpListenerRequest request;
         private HttpListenerResponse response;
@@ -77,10 +88,10 @@ namespace MCForge.Core.RemoteConsole
 
                     this.listener = new HttpListener();
 
-                    this.listener.Prefixes.Add("http://localhost:6969/");
-                    this.listener.Prefixes.Add("http://localhost:6969/css/");
-                    this.listener.Prefixes.Add("http://localhost:6969/js/");
-                    this.listener.Prefixes.Add("http://localhost:6969/fonts/");
+                    this.listener.Prefixes.Add(String.Format("{0}/", this.URL));
+                    this.listener.Prefixes.Add(String.Format("{0}/css/", this.URL));
+                    this.listener.Prefixes.Add(String.Format("{0}/js/", this.URL));
+                    this.listener.Prefixes.Add(String.Format("{0}/fonts/", this.URL));
                     this.listener.Start();
                     Console.WriteLine("Listening...");
                     string url = "";

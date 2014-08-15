@@ -191,7 +191,7 @@
     <Compile Include="System\Heartbeat\CBeat.cs" />
     <Compile Include="System\RelayChat\GlobalChat.cs" />
     <Compile Include="System\RelayChat\ServerChat.cs" />
-    <Compile Include="System\RemoteConsole\ConsoleListener.cs" />
+    <Compile Include="System\Remote\ConsoleListener.cs" />
     <Compile Include="System\Updater.cs" />
     <Compile Include="Utils\BinaryUtils.cs" />
     <Compile Include="Utils\BlockChangeHistory.cs" />

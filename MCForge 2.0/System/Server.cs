@@ -31,7 +31,7 @@ using MCForge.Utils.Settings;
 using MCForge.World;
 using MCForge.World.Physics;
 using MCForge.Core.RelayChat;
-using MCForge.Core.RemoteConsole;
+using MCForge.Core.Remote;
 
 namespace MCForge.Core {
     public static class Server {
