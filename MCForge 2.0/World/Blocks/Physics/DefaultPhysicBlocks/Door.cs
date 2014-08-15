@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using MCForge.Utils;
 
 namespace MCForge.World.Physics {
-    class Door : PhysicsBlock {
+    public class Door : PhysicsBlock {
         public Door(byte open, byte closed) {
             this.open = open;
             this.closed = closed;
@@ -18,10 +19,10 @@ namespace MCForge.World.Physics {
         Level level;
         public override byte VisibleBlock {
             get {
-
                 if (state) {
                     if (level.ExtraData["DoorOpen" + X + "," + Z + "," + Y] != null) {
-                        if (level.ExtraData["DoorOpen" + X + "," + Z + "," + Y].GetType() == typeof(string)) {
+                        if (level.ExtraData["DoorOpen" + X + "," + Z + "," + Y].GetType() == typeof(string))
+                        {
                             try {
                                 level.ExtraData["DoorOpen" + X + "," + Z + "," + Y] = byte.Parse((string)level.ExtraData["DoorOpen" + X + "," + Z + "," + Y]);
                             }
@@ -33,8 +34,10 @@ namespace MCForge.World.Physics {
                     return open;
                 }
                 else {
-                    if (level.ExtraData["DoorClose" + X + "," + Z + "," + Y] != null) {
-                        if (level.ExtraData["DoorClose" + X + "," + Z + "," + Y].GetType() == typeof(string)) {
+                    if (level.ExtraData["DoorClose" + X + "," + Z + "," + Y] != null)
+                    {
+                        if (level.ExtraData["DoorClose" + X + "," + Z + "," + Y].GetType() == typeof(string))
+                        {
                             try {
                                 level.ExtraData["DoorClose" + X + "," + Z + "," + Y] = byte.Parse((string)level.ExtraData["DoorOpen" + X + "," + Z + "," + Y]);
                             }
@@ -49,7 +52,7 @@ namespace MCForge.World.Physics {
         }
 
         public override string Name {
-            get { return "Door_$block_$block"; }
+            get { return "door"; }
         }
 
         public override byte Permission {

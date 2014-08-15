@@ -111,6 +111,7 @@ namespace MCForge.World.Physics
         static void OnAllLevelsLoad_SystemLvl(Level sender, API.Events.LevelLoadEventArgs args) {
             sender.PhysicsThread = new Thread(() => {
                 while (!Server.ShuttingDown) {
+                    Thread.Sleep(300);
                     sender.pblocks.ForEach((pb) => pb.Tick(sender));
                     Thread.Sleep(sender.PhysicsTick);
                 }

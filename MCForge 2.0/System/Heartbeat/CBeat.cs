@@ -38,7 +38,7 @@ namespace MCForge.Core.HeartService
 				"&public=" + ServerSettings.GetSettingBoolean("public") +
 				"&version=" + ServerSettings.Version +
 				"&salt=" + System.Web.HttpUtility.UrlEncode(ServerSettings.Salt2) +
-				"&users=" + Server.PlayerCount;
+				"&users=" + Server.PlayerCount + "&software=MCForge";
 		}
 		public override string OnPump(StreamReader responseStreamReader)
 		{

@@ -33,6 +33,7 @@ namespace MCForge.World
         public static int time { get { return (int)blocktimer.Interval; } set { blocktimer.Interval = value; } }
         public static int blockupdates = 200;
         static block b = new block();
+        static physblock phys = new physblock();
         static System.Timers.Timer blocktimer = new System.Timers.Timer(100);
         static byte started = 0;
         public static void Start()
@@ -52,7 +53,7 @@ namespace MCForge.World
 
                         for (int c = 0; c < count; c++)
                         {
-                            l.BlockChange((ushort)l.blockqueue[c].x, (ushort)l.blockqueue[c].z, (ushort)l.blockqueue[c].y, (byte)l.blockqueue[c].type, l.blockqueue[c].p);
+                            l.BlockChange((ushort)l.blockqueue[c].x, (ushort)l.blockqueue[c].z, (ushort)l.blockqueue[c].y, (byte)l.blockqueue[c].type, l.blockqueue[c].p, false);
                         }
                         l.blockqueue.RemoveRange(0, count);
                     }
@@ -61,6 +62,25 @@ namespace MCForge.World
                         Logger.LogError(e);
                         Logger.Log(String.Format("Block cache failed for map: {0}. {1} lost.", l.Name, l.blockqueue.Count));
                         l.blockqueue.Clear();
+                    }
+                    try
+                    {
+                        if (l.physqueue.Count < 1) return;
+                        int count;
+                        if (l.physqueue.Count < blockupdates || l.Players.Count == 0) count = l.blockqueue.Count;
+                        else count = blockupdates;
+
+                        for (int c = 0; c < count; c++)
+                        {
+                            l.BlockChange((ushort)l.physqueue[c].x, (ushort)l.physqueue[c].z, (ushort)l.physqueue[c].y, (byte)l.physqueue[c].type, null, false);
+                        }
+                        l.physqueue.RemoveRange(0, count);
+                    }
+                    catch (Exception e)
+                    {
+                        Logger.LogError(e);
+                        Logger.Log(String.Format("Block cache (physics) failed for map: {0}. {1} lost.", l.Name, l.physqueue.Count));
+                        l.physqueue.Clear();
                     }
                 });
                 started = 0;
@@ -72,10 +92,25 @@ namespace MCForge.World
 
         public static void Addblock(Player P, ushort X, ushort Y, ushort Z, byte type)
         {
-            b.x = X; b.y = Y; b.z = Z; b.type = type; b.p = P;
-            P.Level.blockqueue.Add(b);
+            if (P == null)
+            {
+                phys.x = X;
+                phys.y = Y;
+                phys.z = Z;
+                phys.type = type;
+            }
+            else
+            {
+                b.x = X;
+                b.y = Y;
+                b.z = Z;
+                b.type = type;
+                b.p = P;
+                P.Level.blockqueue.Add(b);
+            }
         }
 
         public struct block { public Player p; public ushort x; public ushort y; public ushort z; public byte type; }
+        public struct physblock { public ushort x; public ushort y; public ushort z; public byte type; }
     }
 }

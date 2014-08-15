@@ -367,7 +367,7 @@ namespace MCForge.Core {
                 RC = new ConsoleListener();
                 RC.Start();
             }
-            catch (Exception e) { }
+            catch { }
             
             PlayerConnectionTimeoutChecker = new Thread(() => {
                 int sleep = ServerSettings.GetSettingInt("AutoTimeout");

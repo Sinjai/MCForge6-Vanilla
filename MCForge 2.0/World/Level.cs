@@ -50,6 +50,8 @@ namespace MCForge.World {
 
         public List<BlockQueue.block> blockqueue = new List<BlockQueue.block>();
 
+        public List<BlockQueue.physblock> physqueue = new List<BlockQueue.physblock>();
+
         /// <summary>
         /// Gets the unloaded levels.
         /// </summary>
@@ -421,7 +423,12 @@ namespace MCForge.World {
         /// <param name="y">Location of y</param>
         /// <param name="block">Block to set</param>
         /// <param name="p">A player who doesn't need the update.</param>
-        public void BlockChange(ushort x, ushort z, ushort y, byte block, Player p = null) {
+        /// <param name="blockqueue">Should this blockchange be queued by BlockQueue?</param>
+        public void BlockChange(ushort x, ushort z, ushort y, byte block, Player p = null, bool blockqueue = true) {
+            if(blockqueue)
+            {
+                BlockQueue.Addblock(p, x, y, z, block);
+            }
             if (!IsInBounds(x, z, y) || y == Size.y) {
                 Logger.Log("Blockchange((ushort) " + x + ", (ushort)" + z + ", (ushort) " + y + ", (byte) " + block + ", (Player) " + p + ") is outside of level");
                 return;

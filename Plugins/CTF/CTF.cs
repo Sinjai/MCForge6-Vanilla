@@ -65,7 +65,7 @@ namespace CTF
         public bool initialChangeLevel = false;
         public int blueTeamCaptures = 0;
         public int redTeamCaptures = 0;
-        public string currentLevelName = "main";
+        public string currentLevelName = "";
         public List<Player> red = new List<Player>();
         public List<Player> blu = new List<Player>();
         public Vector3S blueSpawn;
@@ -202,6 +202,7 @@ namespace CTF
         {
             Level level = Level.FindLevel(currentLevelName);
             if (level == null) return;
+            Logger.Log(redFlag.x.ToString());
             level.BlockChange((ushort)redFlag.x, (ushort)redFlag.z, (ushort)redFlag.y, Block.BlockList.redflag);
             level.BlockChange((ushort)blueFlag.x, (ushort)blueFlag.z, (ushort)blueFlag.y, Block.BlockList.blueflag);
             ServerCTF.ctfRound = true;
