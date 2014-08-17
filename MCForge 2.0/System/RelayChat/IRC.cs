@@ -44,7 +44,7 @@ namespace MCForge.Core.RelayChat
         StreamWriter swrite;
         StreamReader sread;
         NetworkStream sstream;
-        TcpClient irc;
+        TcpClient irc = default(TcpClient);
         bool debug = false;
         public bool botOn = false;
         public bool connected = false;
@@ -76,7 +76,6 @@ namespace MCForge.Core.RelayChat
                 botOn = true;
                 try
                 {
-                    // Connect
                     irc = new TcpClient(server, port);
                     sstream = irc.GetStream();
                     sread = new StreamReader(sstream);

@@ -102,7 +102,7 @@ namespace MCForge.Core.RelayChat
         }
 
         /// <summary>
-        /// 
+        /// Such summaries
         /// </summary>
         public void Connect()
         {
@@ -120,7 +120,7 @@ namespace MCForge.Core.RelayChat
         }
 
         /// <summary>
-        /// 
+        /// Very wow
         /// </summary>
         /// <param name="p"></param>
         /// <param name="message"></param>
@@ -136,7 +136,7 @@ namespace MCForge.Core.RelayChat
         }
 
         /// <summary>
-        /// 
+        /// Nice summaries
         /// </summary>
         /// <param name="p"></param>
         /// <param name="message"></param>

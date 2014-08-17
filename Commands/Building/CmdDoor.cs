@@ -41,7 +41,7 @@ namespace MCForge.Commands
                 doory = door;
             }
             if (args.Length == 0) { Help(p); return; }
-            if (!p.ExtraData.ContainsKey("Mode"))
+            if (!p.ExtraData.ContainsKey("Door"))
             {
                 p.ExtraData.Add("Door", false);
             }
@@ -112,14 +112,24 @@ namespace MCForge.Commands
         private void OnPlayerBlockChangeOnNormal(Player sender, BlockChangeEventArgs args)
         {
             bool tried = false;
+            doory.SetPos(args.X, args.Y, args.Z);
+            var b = sender.ExtraData["BlockDoor"] as PhysicsBlock;
+
+            // DISCOVERED THE 'B' IS A STANDARD BLOCK AND WE'RE TRYING TO PARSE IT AS A PHYSICS BLOCK
+            // I'LL FIX THIS ASAP
+            
+            if (b == null) return;
             if(!tried)
-            { doory.Tick(sender.Level); }
-            var b = (Block)sender.ExtraData["BlockDoor"];
-            if (args.Action == ActionType.Delete) return;
-            args.Holding = b;
-            var physicsBlock = b as PhysicsBlock;
-            if (physicsBlock == null) return;
-            sender.Level.pblocks.Add(physicsBlock);
+            {
+                if (args.Action == ActionType.Delete)
+                    sender.Level.pblocks.Add(b);
+            }
+           // var b = (Block)sender.ExtraData["BlockDoor"];
+           // if (args.Action == ActionType.Delete) return;
+           // args.Holding = b;
+           // var physicsBlock = b as PhysicsBlock;
+           // if (physicsBlock == null) return;
+           //sender.Level.pblocks.Add(physicsBlock);
         }
 
         public void Help(Player p)
