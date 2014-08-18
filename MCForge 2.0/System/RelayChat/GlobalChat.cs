@@ -1,19 +1,30 @@
-﻿using MCForge.Entity;
+﻿/*
+    Copyright 2014 UclCommander
+    Dual-licensed under the Educational Community License, Version 2.0 and
+    the GNU General Public License, Version 3 (the "Licenses"); you may
+    not use this file except in compliance with the Licenses. You may
+    obtain a copy of the Licenses at
+    http://www.opensource.org/licenses/ecl2.php
+    http://www.gnu.org/licenses/gpl-3.0.html
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the Licenses are distributed on an "AS IS"
+    BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+    or implied. See the Licenses for the specific language governing
+    permissions and limitations under the Licenses.
+*/
+using MCForge.Core.RelayChat.Core;
+using MCForge.Entity;
 using MCForge.Utils;
 using MCForge.Utils.Settings;
 using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Net;
-using System.Text;
 
 namespace MCForge.Core.RelayChat
 {
-    public class GlobalChat : IRC
+    public class GlobalChat
     {
-        private static GlobalChat gc;
-
+        private Connection connection;
         private string gcServer = "irc.geekshed.net";
         private int gcPort = 6667;
         private string gcNick = "";
@@ -25,45 +36,47 @@ namespace MCForge.Core.RelayChat
         /// </summary>
         public GlobalChat()
         {
+            this.connection = new Connection();
             ServerSettings.OnSettingChanged += ServerSettings_OnSettingChanged;
-            gc = this;
 
             string gcban = "";
 
             try
             {
-                using (WebClient c = new WebClient()) // .dev is local testing domain, this will change once the php code is pushed live
+                using (WebClient c = new WebClient())
                     gcban = c.DownloadString("http://mcforge.org/gcban/get"); 
             }
             catch (Exception e) { Logger.LogError(e); }
 
             this.bans = gcban.Split(',');
 
-            this.AddCommand("^GETINFO", new IRCCommand(delegate(string[] cmd) 
+            //Register all the commands
+            //------------------------------------------------------------------------------------------
+            this.connection.RegisterCommand("GETINFO", new Connection.IRCCommand(delegate(string[] cmd) 
             {
                 if (cmd.Length == 0)
                     return;
 
                 if(cmd[1] == this.gcNick) 
                 {
-                    this.SendMessage("^NAME: " + ServerSettings.GetSetting("servername"));
-                    this.SendMessage("^MOTD: " + ServerSettings.GetSetting("motd"));
-                    this.SendMessage("^VERSION: MCForge 7"); // TODO: GET THIS FROM THE SERVER
-                    this.SendMessage("^URL: " + Server.URL);
-                    this.SendMessage("^PLAYERS: " + Server.PlayerCount + "/" + ServerSettings.GetSetting("maxplayers"));
+                    this.connection.SendMessage("^NAME: " + ServerSettings.GetSetting("servername"));
+                    this.connection.SendMessage("^MOTD: " + ServerSettings.GetSetting("motd"));
+                    this.connection.SendMessage("^VERSION: MCForge 7"); // TODO: GET THIS FROM THE SERVER
+                    this.connection.SendMessage("^URL: " + Server.URL);
+                    this.connection.SendMessage("^PLAYERS: " + Server.PlayerCount + "/" + ServerSettings.GetSetting("maxplayers"));
                 }
             }));
-
-            this.AddCommand("^PLAYERS", new IRCCommand(delegate(string[] cmd) 
+            //------------------------------------------------------------------------------------------
+            this.connection.RegisterCommand("PLAYERS", new Connection.IRCCommand(delegate(string[] cmd) 
             {
                 if (cmd.Length == 0)
                     return;
 
                 if(cmd[1] == this.gcNick)
-                    this.SendMessage("^PLAYERS: " + String.Join(",", Server.Players.Select(p => p.Username).ToArray()));
+                    this.connection.SendMessage("^PLAYERS: " + String.Join(",", Server.Players.Select(p => p.Username).ToArray()));
             }));
-
-            this.AddCommand("^IPGET", new IRCCommand(delegate(string[] cmd)
+            //------------------------------------------------------------------------------------------
+            this.connection.RegisterCommand("IPGET", new Connection.IRCCommand(delegate(string[] cmd)
             {
                 if (cmd.Length == 0)
                     return;
@@ -73,23 +86,28 @@ namespace MCForge.Core.RelayChat
                 if (p == null)
                     return;
 
-                this.SendMessage("^IP FOR " + cmd[1] + ": " + p.Ip);
+                this.connection.SendMessage("^IP FOR " + cmd[1] + ": " + p.Ip);
             }));
-
+            //------------------------------------------------------------------------------------------
             //hardy har harr Aviators reference
             //http://music.soundoftheaviators.com/track/ghosts-in-the-code
             //for robodash/dan... maybe, no idea
-            this.AddCommand("^AMIAMANORANAUTOMATION", new IRCCommand(delegate(string[] cmd)
+            this.connection.RegisterCommand("AMIAMANORANAUTOMATION", new Connection.IRCCommand(delegate(string[] cmd)
             {
                 if (cmd.Length == 0)
                     return;
 
                 if (cmd[1] == this.gcNick)
-                    this.SendMessage("^IAMANAUTOMATION");
+                    this.connection.SendMessage("^IAMANAUTOMATION");
             }));
-
+            //------------------------------------------------------------------------------------------
             //YES, I DID THIS. SHUT UP. I DON'T WANT TO HEAR IT. NOBODY CARES.
-            this.AddCommand("^", new IRCCommand(delegate(string[] cmd) {}));
+            this.connection.RegisterCommand("^", new Connection.IRCCommand(delegate(string[] cmd) { }));
+        }
+
+        public void Stop()
+        {
+            this.connection.Stop();
         }
 
         void ServerSettings_OnSettingChanged(object sender, SettingsChangedEventArgs e)
@@ -97,7 +115,7 @@ namespace MCForge.Core.RelayChat
             if (e.Key == "gc-nick")
             {
                 this.gcNick = e.NewValue;
-                base.SetNick(e.NewValue);
+                this.connection.SetNick(e.NewValue);
             }
         }
 
@@ -115,8 +133,9 @@ namespace MCForge.Core.RelayChat
             else
                 this.gcNick = ServerSettings.GetSetting("GC-Nick");
 
-            this.type = "GC";
-            this.Start(this.gcServer, this.gcPort, this.gcNick, this.gcChannel);
+            this.connection.Type = "GC";
+            this.connection.Setup(this.gcServer, this.gcPort, this.gcNick, this.gcChannel);
+            this.connection.Run();
         }
 
         /// <summary>
@@ -124,15 +143,15 @@ namespace MCForge.Core.RelayChat
         /// </summary>
         /// <param name="p"></param>
         /// <param name="message"></param>
-        public static void SendMessage(Player p, string message)
+        public void SendMessage(Player p, string message)
         {
-            if(gc.bans.Contains(p.Username))
+            if (this.bans.Contains(p.Username))
             {
                 p.SendMessage("You have been GBBanned. Post an appeal @ MCForge.org");
                 return;
             }
 
-            gc.SendMessage(String.Format("[{0}] {1}", p.Username, message));
+            this.connection.SendMessage(String.Format("[{0}] {1}", p.Username, message));
         }
 
         /// <summary>
@@ -140,9 +159,9 @@ namespace MCForge.Core.RelayChat
         /// </summary>
         /// <param name="p"></param>
         /// <param name="message"></param>
-        public static void SendConsoleMessage(string message)
+        public void SendConsoleMessage(string message)
         {
-            gc.SendMessage(String.Format("[Console] {0}", message));
+            this.connection.SendMessage(String.Format("[Console] {0}", message));
         }
     }
 }

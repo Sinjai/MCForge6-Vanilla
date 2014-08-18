@@ -797,8 +797,7 @@ namespace MCForge.Entity
                 Logger.Log("<OpChat> <" + Username + "> " + incomingText);
                 try
                 {
-                    if (Server.IRC.opChannel != "#" || Server.IRC.opChannel != "")
-                        Server.IRC.SendUserMessage("<OpChat> <" + Username + "> " + incomingText, Server.IRC.opChannel);
+                    Server.IRC.SendOperatorMessage("<OpChat> <" + Username + "> " + incomingText);
                 }
                 catch { }
                 return;
@@ -881,7 +880,7 @@ namespace MCForge.Entity
                 if (incomingText == "")
                     return;
                 
-                GlobalChat.SendMessage(this, incomingText);
+                Server.GC.SendMessage(this, incomingText);
                 Player.UniversalChat(String.Format("[GC] {0}: {1}", this.Username, incomingText));
                 Logger.Log("<GC> <" + Username + "> " + incomingText);
                 return;

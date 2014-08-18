@@ -189,7 +189,10 @@
     <Compile Include="System\Backup.cs" />
     <Compile Include="System\Economy.cs" />
     <Compile Include="System\Heartbeat\CBeat.cs" />
+    <Compile Include="System\RelayChat\Core\Connection.cs" />
+    <Compile Include="System\RelayChat\Core\User.cs" />
     <Compile Include="System\RelayChat\GlobalChat.cs" />
+    <Compile Include="System\RelayChat\Core\IrcHelper.cs" />
     <Compile Include="System\RelayChat\ServerChat.cs" />
     <Compile Include="System\Remote\ConsoleListener.cs" />
     <Compile Include="System\Updater.cs" />
@@ -199,7 +202,6 @@
     <Compile Include="System\Heartbeat\Heart.cs" />
     <Compile Include="System\Heartbeat\Heartbeat.cs" />
     <Compile Include="System\Heartbeat\MBeat.cs" />
-    <Compile Include="System\RelayChat\IRC.cs" />
     <Compile Include="System\Logger.cs" />
     <Compile Include="System\Settings\ExtraSettings.cs" />
     <Compile Include="System\Settings\GroupSettings.cs" />

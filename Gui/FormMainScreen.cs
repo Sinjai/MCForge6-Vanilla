@@ -127,11 +127,12 @@ namespace MCForge.Gui.Forms {
                 }
                 else if (cmbChatType.Text == "GlobalChat")
                 {
-                    GlobalChat.SendConsoleMessage(txtMessage.Text);
+                    Server.GC.SendConsoleMessage(txtMessage.Text);
                     Logger.Log("<GC> &0[&2Console&0]: " + txtMessage.Text);
                     txtMessage.Text = "";
                 }
                 else {
+                    Server.IRC.SendConsoleMessage(txtMessage.Text);
                     Player.UniversalChat("&a[&fConsole&a]:&f " + txtMessage.Text);
                     Logger.Log("&0[&2Console&0]: " + txtMessage.Text);
                     txtMessage.InHintState = true;

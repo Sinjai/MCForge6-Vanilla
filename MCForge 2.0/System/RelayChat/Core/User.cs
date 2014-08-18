@@ -13,22 +13,31 @@
     permissions and limitations under the Licenses.
 */
 
-using MCForge.HtmlData.Properties;
-using System.Text;
-
-namespace MCForge.HtmlData
+namespace MCForge.Core.RelayChat.Core
 {
-    public static class HtmlData
+    public class User
     {
+        private Connection conn;
 
-        public static byte[] GetResource(string name)
+        public string Nick { get; private set; }
+        public string Name { get; private set; }
+        public string Host { get; private set; }
+
+        public User(string nick = null, string user = null, string host = null, Connection conn = null)
         {
-            object obj = Resources.ResourceManager.GetObject(name);
+            this.Nick = nick;
+            this.Name = user;
+            this.Host = host;
 
-            if (obj.GetType() == typeof(string))
-                return Encoding.UTF8.GetBytes((string)obj);
+            this.conn = conn;
+        }
 
-            return ((byte[])(obj));
+        public void SendMessage(string message)
+        {
+           /* if (conn != null)
+                this.conn.SendNotice(this.nick, message);
+            else
+                Console.WriteLine("Unable to send notice - connection var null");*/
         }
     }
 }

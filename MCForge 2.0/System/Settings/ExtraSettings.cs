@@ -234,8 +234,8 @@ namespace MCForge.Utils.Settings {
                     writer.WriteLine(v.Description == null && v.Key == null
                         ? v.Value
                         : v.Description == null
-                            ? string.Format("{0}={1}" + (v != Values.Last() ? Environment.NewLine : ""), v.Key, v.Value)
-                            : string.Format("#{0}" + Environment.NewLine + "{1}={2}", v.Description, v.Key, v.Value));
+                            ? string.Format("{0}={1}" + (v != Values.Last() ? Environment.NewLine : ""), v.Key, v.Value.Trim())
+                            : string.Format("#{0}" + Environment.NewLine + "{1}={2}", v.Description, v.Key, v.Value.Trim()));
 
                 }
             }

@@ -452,7 +452,7 @@ namespace ZombiePlugin
                     return;
                 }
                 Player.UniversalChat(l);
-                Server.IRC.SendUserMessage(l, Server.IRC.channel);
+                Server.IRC.SendMessage(l);
                 args.Cancel();
                 return;
             }

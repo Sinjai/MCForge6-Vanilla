@@ -2,7 +2,7 @@
 using MCForge.Entity;
 using MCForge.Interface.Command;
 using MCForge.Utils;
-using MCForge.Core.RelayChat;
+using MCForge.Core;
 
 namespace MCForge.Commands.Misc
 {
@@ -21,7 +21,7 @@ namespace MCForge.Commands.Misc
             {
                 string msg = String.Join(" ", args);
 
-                GlobalChat.SendMessage(p, msg);
+                Server.GC.SendMessage(p, msg);
                 Player.UniversalChat(String.Format("[GC] {0}: {1}", p.Username, msg));
                 return;
             }
