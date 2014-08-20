@@ -307,8 +307,11 @@ namespace MCForge.Gui.Forms {
         }
 
         private void newsToolStripMenuItem_Click(object sender, EventArgs e) {
-            using ( var news = new NewsDialog() )
-                news.ShowDialog();
+            try
+            {
+                Process.Start("http://mcforge.org/forums/viewforum.php?f=3");
+            }
+            catch { }
         }
 
         private void changelogToolStripMenuItem_Click(object sender, EventArgs e) {
@@ -350,6 +353,53 @@ namespace MCForge.Gui.Forms {
             }
 
             public void WriteLine(string line, string replyChannel) {}
+        }
+
+        private void kickAllToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            foreach (Player p in Server.Players.ToArray())
+                p.Kick("Console kicking ALL players");
+        }
+
+        private void kickNonopsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            foreach (Player p in Server.Players.Where(p => !p.IsAdmin).ToArray())
+                p.Kick("Console kicking ALL players");
+        }
+
+        private void pluginsManagerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //TODO
+        }
+
+        private void unloadAllToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            foreach (Level l in Level.Levels.ToArray())
+                l.Unload(true);
+        }
+
+        private void reloadEmptyToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            foreach (Level l in Level.Levels.Where(l => l.Players.Count() == 0).ToArray())
+            {
+                l.Unload(true);
+                Level.LoadLevel(l.Name);
+            }
+        }
+
+        private void reloadAllToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            foreach (Level l in Level.Levels.ToArray())
+            {
+                l.Unload(true);
+                Level.LoadLevel(l.Name);
+            }
+        }
+
+        private void unloadEmptyToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            foreach (Level l in Level.Levels.Where(l => l.Players.Count() == 0).ToArray())
+                l.Unload(true);
         }
     }
 }
