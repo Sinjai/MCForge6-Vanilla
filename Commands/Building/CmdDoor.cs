@@ -111,6 +111,7 @@ namespace MCForge.Commands
 
         private void OnPlayerBlockChangeOnNormal(Player sender, BlockChangeEventArgs args)
         {
+            doory.Tick(sender.Level);
             bool tried = false;
             doory.SetPos(args.X, args.Y, args.Z);
             var b = sender.ExtraData["BlockDoor"] as PhysicsBlock;

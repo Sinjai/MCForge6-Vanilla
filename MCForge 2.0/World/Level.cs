@@ -47,9 +47,17 @@ namespace MCForge.World {
         /// List of levels on the server (loaded)
         /// </summary>
         public static List<Level> Levels { get; set; }
-
+        /// <summary>
+        /// Used by the map generator
+        /// </summary>
+        public short[,] Shadows;
+        /// <summary>
+        /// For queueing BlockChanges
+        /// </summary>
         public List<BlockQueue.block> blockqueue = new List<BlockQueue.block>();
-
+        /// <summary>
+        /// For queueing Physics BlockChanges
+        /// </summary>
         public List<BlockQueue.physblock> physqueue = new List<BlockQueue.physblock>();
 
         /// <summary>
@@ -132,6 +140,16 @@ namespace MCForge.World {
         /// </summary>
         public byte[] SpawnRot { get; set; }
 
+        /// <summary> Converts given coordinates to a block array index. </summary>
+        /// <param name="x"> X coordinate (width). </param>
+        /// <param name="z"> Z coordinate (length, Notch's Z). </param>
+        /// <param name="y"> Y coordinate (height, Notch's Y). </param>
+        /// <returns> Index of the block in Map.Blocks array. </returns>
+        public int Index(int x, int y, int z)
+        {
+            return (z * Size.Length + y) * Size.Width + x;
+        }
+
         /// <summary>
         /// This holds the map data for the entire map
         /// </summary>
@@ -178,11 +196,11 @@ namespace MCForge.World {
             };
             switch (type) {
                 case LevelTypes.Flat:
-                    var gen = new Generator.LevelGenerator(newlevel);
+                    MapGenerator.GenerateFlatgrass(size.x, size.z, size.y);
+                    //var gen = new Generator.LevelGenerator(newlevel);
                     for (int i = newlevel.Size.y / 2; i >= 0; i--)
-                        gen.FillPlaneXZ(i, Block.BlockList.DIRT);
-                    gen.FillPlaneXZ(newlevel.Size.y / 2, Block.BlockList.GRASS);
-                    gen.SetPosition(new Vector3S((short)(newlevel.Size.x / 2 + 1), (short)(newlevel.Size.z / 2 + 1), (short)(newlevel.Size.y / 2 + 2)), new Vector2S());
+                        newlevel.FillPlaneXZ(i, Block.BlockList.DIRT);
+                    newlevel.FillPlaneXZ(newlevel.Size.y / 2, Block.BlockList.GRASS);
                     break;
                 case LevelTypes.Pixel:
                     newlevel.CreatePixelArtLevel();
@@ -190,11 +208,44 @@ namespace MCForge.World {
                 case LevelTypes.Hell:
                     Generator.LevelGenerator mGen = new Generator.LevelGenerator(newlevel, Generator.GeneratorTemplate.Hell(newlevel));
                     mGen.Generate();
-                    mGen.SetPosition();
                     break;
             }
             OnAllLevelsLoad.Call(newlevel, new LevelLoadEventArgs(true));
             return newlevel;
+        }
+
+        public int SearchColumn(int x, int z, Block id)
+        {
+            return SearchColumn(x, z, id, Size.Height - 1);
+        }
+        /// <summary> Checks whether the given coordinate (in block units) is within the bounds of the map. </summary>
+        /// <param name="x"> X coordinate (width). </param>
+        /// <param name="z"> Z coordinate (length, Notch's Z). </param>
+        /// <param name="y"> Y coordinate (height, Notch's Y). </param>
+        public bool InBounds(int x, int y, int z)
+        {
+            return x < Size.Width && y < Size.Length && z < Size.Height && x >= 0 && y >= 0 && z >= 0;
+        }
+
+
+        /// <summary> Checks whether the given coordinate (in block units) is within the bounds of the map. </summary>
+        /// <param name="vec"> Coordinate vector (X,Z,Y). </param>
+        public bool InBounds(Vector3I vec)
+        {
+            return vec.X < Size.Width && vec.Y < Size.Length && vec.Z < Size.Height && vec.X >= 0 && vec.Y >= 0 && vec.Z >= 0;
+        }
+
+
+        public int SearchColumn(int x, int z, Block id, int zStart)
+        {
+            for (int y = zStart; y > 0; y--)
+            {
+                if (GetBlock(x, z, y) == id)
+                {
+                    return y;
+                }
+            }
+            return -1; // -1 means 'not found'
         }
 
         private void CreateFlatLevel() {
@@ -221,6 +272,98 @@ namespace MCForge.World {
             SpawnPos = new Vector3S((short)(Size.x / 2), (short)(Size.z / 2), (short)(Size.y));
             SpawnRot = new byte[2] { 0, 0 };
         }
+
+        #region Helper methods
+
+        /// <summary>
+        /// Fills the X layer.
+        /// </summary>
+        /// <param name="y">The y.</param>
+        /// <param name="z">The z.</param>
+        /// <param name="block">The block.</param>
+        public void FillX(int y, int z, Block block)
+        {
+            for (int x = 0; x < Size.x; x++)
+                SetBlock(x, z, y, block);
+        }
+
+        /// <summary>
+        /// Fills the Y layer.
+        /// </summary>
+        /// <param name="x">The x.</param>
+        /// <param name="z">The z.</param>
+        /// <param name="block">The block.</param>
+        public void FillY(int x, int z, Block block)
+        {
+            for (int y = 0; y < Size.y; y++)
+                SetBlock(x, z, y, block);
+        }
+
+
+
+        /// <summary>
+        /// Fills the Z layer.
+        /// </summary>
+        /// <param name="x">The x.</param>
+        /// <param name="y">The y.</param>
+        /// <param name="block">The block.</param>
+        public void FillZ(int x, int y, Block block)
+        {
+            for (int z = 0; z < Size.z; z++)
+                SetBlock(x, z, y, block);
+        }
+
+
+        /// <summary>
+        /// Fills the plane XY.
+        /// </summary>
+        /// <param name="z">The z.</param>
+        /// <param name="block">The block.</param>
+        public void FillPlaneXY(int z, Block block)
+        {
+            for (int x = 0; x < Size.x; x++)
+                for (int y = 0; y < Size.y; y++)
+                    SetBlock(x, z, y, block);
+        }
+
+
+        /// <summary>
+        /// Fills the plane XZ.
+        /// </summary>
+        /// <param name="y">The y.</param>
+        /// <param name="block">The block.</param>
+        public void FillPlaneXZ(int y, Block block)
+        {
+            for (int x = 0; x < Size.x; x++)
+                for (int z = 0; z < Size.z; z++)
+                    SetBlock(x, z, y, block);
+        }
+
+        /// <summary>
+        /// Fills the plane ZY.
+        /// </summary>
+        /// <param name="x">The x.</param>
+        /// <param name="block">The block.</param>
+        public void FillPlaneZY(int x, Block block)
+        {
+            for (int z = 0; z < Size.z; z++)
+                for (int y = 0; y < Size.y; y++)
+                    SetBlock(x, z, y, block);
+        }
+        /// <summary>
+        /// Returns if the specified location is on the border of the map
+        /// </summary>
+        /// <param name="x">Location of the block on the x axis</param>
+        /// <param name="z">Location of the block on the z axis</param>
+        /// <param name="y">Location of the block on the y axis</param>
+        /// <returns>Returns if the specified location is on the border of the map</returns>
+        public bool IsOnEdges(int x, int y, int z)
+        {
+            return (x == 0 || x == Size.x - 1 ||
+                    z == 0 || z == Size.z - 1 ||
+                    y == 0 || y == Size.y);
+        }
+        #endregion
 
         /// <summary>
         /// Load a level. <remarks>Calls OnLevelLoadEvent.</remarks>
@@ -424,7 +567,7 @@ namespace MCForge.World {
         /// <param name="block">Block to set</param>
         /// <param name="p">A player who doesn't need the update.</param>
         /// <param name="blockqueue">Should this blockchange be queued by BlockQueue?</param>
-        public void BlockChange(ushort x, ushort z, ushort y, byte block, Player p = null, bool blockqueue = true) {
+        public void BlockChange(ushort x, ushort z, ushort y, byte block, Player p = null, bool blockqueue = false) {
             if(blockqueue)
             {
                 BlockQueue.Addblock(p, x, y, z, block);
