@@ -196,8 +196,8 @@ namespace MCForge.World {
             };
             switch (type) {
                 case LevelTypes.Flat:
-                    MapGenerator.GenerateFlatgrass(size.x, size.z, size.y);
-                    //var gen = new Generator.LevelGenerator(newlevel);
+                    
+                    var gen = new Generator.LevelGenerator(newlevel);
                     for (int i = newlevel.Size.y / 2; i >= 0; i--)
                         newlevel.FillPlaneXZ(i, Block.BlockList.DIRT);
                     newlevel.FillPlaneXZ(newlevel.Size.y / 2, Block.BlockList.GRASS);

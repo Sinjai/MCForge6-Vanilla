@@ -347,8 +347,6 @@
     <Compile Include="World\Drawing\IBrush.cs" />
     <Compile Include="World\Drawing\RandomBrush.cs" />
     <Compile Include="World\Drawing\SphereBrush.cs" />
-    <Compile Include="World\Extension.cs" />
-    <Compile Include="World\Forester.cs" />
     <Compile Include="World\Generator\GeneratorArgs.cs" />
     <Compile Include="World\Generator\GeneratorTemplate.cs" />
     <Compile Include="World\Generator\LevelGenerator.cs" />
@@ -362,10 +360,6 @@
     <Compile Include="Core\Settings\ServerSettings.cs" />
     <Compile Include="World\Loading and Saving\IMap.cs" />
     <Compile Include="World\Loading and Saving\MCForgeOldMap.cs" />
-    <Compile Include="World\MapGenerator.cs" />
-    <Compile Include="World\MapGeneratorArgs.cs" />
-    <Compile Include="World\MapGeneratorTheme.cs" />
-    <Compile Include="World\NewNoise.cs" />
     <Compile Include="World\WorldComponents.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
