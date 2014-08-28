@@ -1032,11 +1032,11 @@ namespace MCForge.Entity
                     //We then add them to our blocks array so we can send them to the player
                     if(!extension)
                     {
-                        block = Block.ConvertCPE(Level.Data[pos]);
+                        block = Block.ConvertCPE(Level.Map.BlockData[pos]);
                     }
                     else
                     {
-                        block = Level.Data[pos];
+                        block = Level.Map.BlockData[pos];
                     }
                     //TODO ADD CHECKING
                     blocks[pos] = block;

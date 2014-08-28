@@ -12,6 +12,7 @@ BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
 or implied. See the Licenses for the specific language governing
 permissions and limitations under the Licenses.
 */
+using ClassicWorld_NET;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -63,8 +64,8 @@ namespace MCForge.Core {
         public static void BackupLevel(string p, string suffix = "") {
             CheckDirs();
 
-            if (File.Exists(FileUtils.LevelsPath + p + ".lvl")) {
-                File.Copy(FileUtils.LevelsPath + p + ".lvl", FileUtils.BackupsPath + DateFormat + "-backup/" + DateTime.Now.ToString("hh-mm-ss-") + p + ".lvl"+ suffix);
+            if (File.Exists(FileUtils.LevelsPath + p + ".cw")) {
+                File.Copy(FileUtils.LevelsPath + p + ".cw", FileUtils.BackupsPath + DateFormat + "-backup/" + DateTime.Now.ToString("hh-mm-ss-") + p + ".cw"+ suffix);
             }
         }
 

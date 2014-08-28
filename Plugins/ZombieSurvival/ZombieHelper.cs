@@ -232,7 +232,7 @@ namespace ZombiePlugin
             {
                 ArrayList al = new ArrayList();
                 DirectoryInfo di = new DirectoryInfo("levels/");
-                FileInfo[] fi = di.GetFiles("*.lvl");
+                FileInfo[] fi = di.GetFiles("*.cw");
                 foreach (FileInfo fil in fi)
                 {
                     if (!IgnoreLevel.Contains(fil.Name.Split('.')[0].ToLower()))

@@ -69,7 +69,7 @@ namespace MCForge.Commands {
             foreach (var trashCan in Level.UnloadedLevels)
                 if (trashCan.ToLower() == args[0].ToLower()){
                     Backup.BackupLevel(trashCan, "-deleted");
-                    File.Delete(FileUtils.LevelsPath + trashCan + ".lvl");
+                    File.Delete(FileUtils.LevelsPath + trashCan + ".cw");
                 }
 
             Player.UniversalChat("Level \"" + args[0] + "\" was deleted");

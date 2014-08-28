@@ -13,6 +13,7 @@ or implied. See the Licenses for the specific language governing
 permissions and limitations under the Licenses.
 */
 //Troll
+using ClassicWorld_NET;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -302,9 +303,9 @@ namespace MCForge.Core {
 
             Groups.PlayerGroup.Load();
             VerifyGroup = Groups.PlayerGroup.Find(ServerSettings.GetSetting("VerifyGroup"));
-
             Mainlevel = Level.LoadLevel(ServerSettings.GetSetting("Main-Level"));
-            if (Mainlevel == null) {
+            if (Mainlevel == null)
+            {
                 Mainlevel = Level.CreateLevel(new Vector3S(256, 128, 64), Level.LevelTypes.Flat);
                 ServerSettings.SetSetting("Main-Level", null, "main");
             }

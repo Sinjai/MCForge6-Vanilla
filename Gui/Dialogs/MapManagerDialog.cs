@@ -124,7 +124,7 @@ namespace MCForge.Gui.Dialogs {
                 if ( MessageBox.Show("Are you sure you want to delete this level?", "Are you sure?", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes ) {
                     string levelName = dtaLoaded.Rows[e.RowIndex].Cells[0].Value.ToString();
                     Level.FindLevel(levelName).Unload(true);
-                    File.Delete(FileUtils.LevelsPath + levelName + ".lvl");
+                    File.Delete(FileUtils.LevelsPath + levelName + ".cw");
                 }
                 break;
 

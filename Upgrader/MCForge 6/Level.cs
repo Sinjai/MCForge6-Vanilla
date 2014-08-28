@@ -146,7 +146,7 @@ namespace MCForge.World {
             //    return null;
             string name = levelName.Split('\\')[1].Split('.')[0];
             Console.WriteLine("Converting " + name);
-            //string Name = "levels\\" + levelName + ".lvl";
+            //string Name = "levels\\" + levelName + ".cw";
             Level finalLevel = new Level(new Vector3S(32, 32, 32));
             finalLevel.Name = levelName;
             try {
@@ -199,7 +199,7 @@ namespace MCForge.World {
         /// </summary>
         /// <remarks>The resulting files are not compatible with the official Minecraft software.</remarks>
         public bool SaveToBinary() {
-            string Name = "levels\\" + this.Name + ".lvl";
+            string Name = "levels\\" + this.Name + ".cw";
             if (!Directory.Exists("levels")) Directory.CreateDirectory("levels");
             var Binary = new BinaryWriter(File.Open(Name, FileMode.Create));
 

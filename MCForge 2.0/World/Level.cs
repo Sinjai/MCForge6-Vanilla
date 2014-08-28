@@ -12,6 +12,7 @@ BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
 or implied. See the Licenses for the specific language governing
 permissions and limitations under the Licenses.
 */
+using ClassicWorld_NET;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,7 +38,7 @@ namespace MCForge.World {
     /// This class is used for loading/saving/handling/manipulation of server levels.
     /// </summary>
     public class Level {
-
+        public ClassicWorld Map;
         internal const long MAGIC_NUMBER = 28542713840690029;
         //As a note, the coordinates are right, it is xzy, its based on the users view, not the map itself.
         //WIDTH = X, LENGTH = Z, DEPTH = Y
@@ -47,10 +48,6 @@ namespace MCForge.World {
         /// List of levels on the server (loaded)
         /// </summary>
         public static List<Level> Levels { get; set; }
-        /// <summary>
-        /// Used by the map generator
-        /// </summary>
-        public short[,] Shadows;
         /// <summary>
         /// For queueing BlockChanges
         /// </summary>
@@ -65,10 +62,10 @@ namespace MCForge.World {
         /// </summary>
         public static List<string> UnloadedLevels {
             get {
-                string[] temp = Directory.GetFiles(FileUtils.LevelsPath, "*lvl");
+                string[] temp = Directory.GetFiles(FileUtils.LevelsPath, "*cw");
 
                 for (int i = 0; i < temp.Length; i++) {
-                    temp[i] = temp[i].Replace(".lvl", "");
+                    temp[i] = temp[i].Replace(".cw", "");
                     temp[i] = temp[i].Replace(FileUtils.LevelsPath, "");
                 }
 
@@ -370,15 +367,20 @@ namespace MCForge.World {
         /// </summary>
         /// <returns>The loaded level</returns>
         //TODO: Load all the types of levels (old mcforge, new mcforge, fcraft, minecpp, etc...)
-        public static Level LoadLevel(string levelName) {
+        public static Level LoadLevel(string levelName)
+        {
             if (FindLevel(levelName) != null)
                 return null;
 
-            string Name = "levels/" + levelName + ".lvl";
+            string Name = "levels/" + levelName + ".cw";
             Level finalLevel = new Level(new Vector3S(32, 32, 32));
             finalLevel.Name = levelName;
-            try {
-                BinaryReader Binary = null;
+            try
+            {
+                finalLevel.Map = new ClassicWorld(Name);
+                finalLevel.Map.Load();
+
+                /*BinaryReader Binary = null;
                 try {
                     Binary = new BinaryReader(File.Open(Name, FileMode.Open));
                 }
@@ -426,8 +428,8 @@ namespace MCForge.World {
                         	finalLevel._TotalBlocks = Binary.ReadInt32();
                         	int ByteLength = Binary.ReadInt32();
                         	byte[] b = Decompress(Binary.ReadBytes(ByteLength));
-                        	finalLevel.Data = new byte[finalLevel._TotalBlocks];
-                        	finalLevel.Data = b;
+                        	finalLevel.Map.BlockData = new byte[finalLevel._TotalBlocks];
+                        	finalLevel.Map.BlockData = b;
                         	try {
                         		string EOF = Binary.ReadString();
                         		if (EOF != "EOF") {
@@ -441,9 +443,9 @@ namespace MCForge.World {
                         #endregion
                     }
                 }
-                Binary.Dispose();
-                finalLevel.HandleMetaData();
-                Level.OnAllLevelsLoad.Call(finalLevel, new LevelLoadEventArgs(true));
+                Binary.Dispose();*/
+                //finalLevel.;
+                //Level.OnAllLevelsLoad.Call(finalLevel, new LevelLoadEventArgs(true));
                 Logger.Log("[Level] " + levelName + " was loaded");
                 return finalLevel;
             }
@@ -469,41 +471,18 @@ namespace MCForge.World {
         /// </summary>
         /// <remarks>The resulting files are not compatible with the official Minecraft software.</remarks>
         public bool SaveToBinary() {
-            string Name = "levels/" + this.Name + ".lvl";
+            string Name = "levels/" + this.Name + ".cw";
             if (!Directory.Exists("levels")) Directory.CreateDirectory("levels");
-            var Binary = new BinaryWriter(File.Open(Name, FileMode.Create));
-
-            try {
-                Binary.Write(0x6567726f66636d); //Magic Number to make sure it is a compatible file.
-                Binary.Write(Version); //The level saving version
-                Binary.Write(Size.x + "@" + Size.y + "@" + Size.z);
-                Binary.Write(SpawnPos.x + "!" + SpawnPos.y + "!" + SpawnPos.z); //Unused
-                Binary.Write(SpawnRot[0] + "~" + SpawnRot[1]); //Unused
-                Binary.Write(ExtraData.Count);
-                lock (ExtraData) {
-                    foreach (KeyValuePair<object, object> pair in ExtraData) {
-                        if (pair.Key != null && pair.Value != null) {
-                            Binary.Write(pair.Key.ToString());
-                            if (pair.Value.GetType() == typeof(List<string>)) {
-                                List<string> tmp = (List<string>)pair.Value;
-                                Binary.Write(StringUtils.ToHexString(tmp));
-                            }
-                            else
-                                Binary.Write(pair.Value.ToString());
-                        }
-                    }
-                }
-                Binary.Write(_TotalBlocks);
-                Binary.Write(Compress(Data).Length);
-                Binary.Write(Compress(Data));
-                Binary.Write("EOF"); //EOF makes sure the entire file saved.
+            try
+            {
+                Map.Save(Name);
+                return true;
             }
-            finally {
-                Binary.Flush();
-                Binary.Close();
-                Binary.Dispose();
+            catch(Exception e)
+            {
+                Logger.LogError(e);
+                return false;
             }
-            return true;
         }
 
         /// <summary>
@@ -512,7 +491,7 @@ namespace MCForge.World {
         /// </summary>
         public static void LoadAllLevels() {
             FileUtils.CreateDirIfNotExist("levels");
-            string[] files = Directory.GetFiles("levels/", "*.lvl");
+            string[] files = Directory.GetFiles("levels/", "*.cw");
             foreach (string file in files) {
                 Level lvl = LoadLevel(file.Substring(7, file.Length - 11));
 
@@ -927,8 +906,8 @@ namespace MCForge.World {
         /// <remarks></remarks>
         public void Rename(string newName)
         {
-            File.Move(String.Format("levels/{0}.lvl", Name),
-                      String.Format("levels/{0}.lvl", newName));
+            File.Move(String.Format("levels/{0}.cw", Name),
+                      String.Format("levels/{0}.cw", newName));
             Unload(true);
             LoadLevel(newName);
             //is this needed?

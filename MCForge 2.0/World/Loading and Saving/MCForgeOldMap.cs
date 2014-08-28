@@ -65,7 +65,7 @@ namespace MCForge.World.Loading_and_Saving {
 
                     byte[] blocks = new byte[finalLevel.Size.x * finalLevel.Size.z * finalLevel.Size.y];
                     gs.Read(blocks, 0, blocks.Length);
-                    finalLevel.Data = new byte[finalLevel.TotalBlocks];
+                    finalLevel.Map.BlockData = new byte[finalLevel.TotalBlocks];
                     for (int x = 0; x < finalLevel.Size.x; x++)
                         for (int y = 0; y < finalLevel.Size.y; y++)
                             for (int z = 0; z < finalLevel.Size.z; z++)

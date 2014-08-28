@@ -30,18 +30,18 @@ namespace Plugins {
             get { return ""; }
         }
         public void OnLoad(string[] args) {
-            CmdMessageBlock mb = new CmdMessageBlock();
-            mb.Initialize();
-            Level[] lvls = Level.Levels.ToArray();
-            Level.OnAllLevelsLoad.Normal += OnAllLevelsLoad_Normal;
-            Level.OnAllLevelsUnload.Normal += OnAllLevelsUnload_Normal;
-            for (int i = 0; i < lvls.Length; i++)
-                OnAllLevelsLoad_Normal(lvls[i], null);
-            Player.OnAllPlayersBigMove.Normal += OnAllPlayersBigMove_Normal;
-            Player.OnAllPlayersBlockChange.Normal += OnAllPlayersBlockChange_Normal;
-            protectBlockType = mb.ProtectBlockType;
-            removeCommandOnAir = mb.RemoveCommandOnAir;
-            removeMessageOnAir = mb.RemoveMessageOnAir;
+           // CmdMessageBlock mb = new CmdMessageBlock();
+            //mb.Initialize();
+            //Level[] lvls = Level.Levels.ToArray();
+            //Level.OnAllLevelsLoad.Normal += OnAllLevelsLoad_Normal;
+           // Level.OnAllLevelsUnload.Normal += OnAllLevelsUnload_Normal;
+            //for (int i = 0; i < lvls.Length; i++)
+              //  OnAllLevelsLoad_Normal(lvls[i], null);
+          //  Player.OnAllPlayersBigMove.Normal += OnAllPlayersBigMove_Normal;
+            //Player.OnAllPlayersBlockChange.Normal += OnAllPlayersBlockChange_Normal;
+            //protectBlockType = mb.ProtectBlockType;
+            //removeCommandOnAir = mb.RemoveCommandOnAir;
+            //removeMessageOnAir = mb.RemoveMessageOnAir;
         }
         bool protectBlockType = true;
         bool removeCommandOnAir = true;
