@@ -57,7 +57,7 @@ namespace MCForge.World.Generator {
 
             //Create a standard mountain level
             GenArgs = new GeneratorArgs() {
-                MaxLevelGenerationHeight = level.Size.y / 2,
+                MaxLevelGenerationHeight = level.CWMap.Size.y / 2,
                 MinLevelGenerationHeight = 0,
                 TopLayer = Block.BlockList.GLASS,
                 BottomLayer = Block.BlockList.DIRT,
@@ -81,16 +81,16 @@ namespace MCForge.World.Generator {
             this.GenArgs = args;
 
             if ( args.MaxLevelGenerationHeight < 0 )
-                args.MaxLevelGenerationHeight = level.Size.y * Math.Abs(args.MaxLevelGenerationHeight);
+                args.MaxLevelGenerationHeight = level.CWMap.Size.y * Math.Abs(args.MaxLevelGenerationHeight);
 
             if ( args.MinLevelGenerationHeight < 0 )
-                args.MinLevelGenerationHeight = level.Size.y * Math.Abs(args.MinLevelGenerationHeight);
+                args.MinLevelGenerationHeight = level.CWMap.Size.y * Math.Abs(args.MinLevelGenerationHeight);
 
             if ( args.MinDepth < 0 )
-                args.MinDepth = level.Size.y * Math.Abs(args.MinDepth);
+                args.MinDepth = level.CWMap.Size.y * Math.Abs(args.MinDepth);
 
             if ( args.LiquidLine < 0 )
-                args.LiquidLine = Level.Size.y * Math.Abs(args.LiquidLine);
+                args.LiquidLine = Level.CWMap.Size.y * Math.Abs(args.LiquidLine);
 
             random = new Random((int)args.Seed);
         }
@@ -119,11 +119,11 @@ namespace MCForge.World.Generator {
             };
 
             NoiseGenerator.InitNoiseFunctions();
-            map = new float[Level.Size.x, Level.Size.z];
-            overlay = new float[Level.Size.x, Level.Size.z];
+            map = new float[Level.CWMap.Size.x, Level.CWMap.Size.z];
+            overlay = new float[Level.CWMap.Size.x, Level.CWMap.Size.z];
 
             if ( GenArgs.PlantMushrooms || GenArgs.PlantFlowers || GenArgs.PlantSaplings )
-                plants = new float[Level.Size.x, Level.Size.z];
+                plants = new float[Level.CWMap.Size.x, Level.CWMap.Size.z];
 
 
             if ( OnProgressArgs != null )
@@ -172,7 +172,7 @@ namespace MCForge.World.Generator {
         /// <param name="z">The z.</param>
         /// <param name="block">The block.</param>
         public void FillX(int y, int z, Block block) {
-            for ( int x = 0; x < Level.Size.x; x++ )
+            for ( int x = 0; x < Level.CWMap.Size.x; x++ )
                 Level.SetBlock(x, z, y, block);
         }
 
@@ -183,7 +183,7 @@ namespace MCForge.World.Generator {
         /// <param name="z">The z.</param>
         /// <param name="block">The block.</param>
         public void FillY(int x, int z, Block block) {
-            for ( int y = 0; y < Level.Size.y; y++ )
+            for ( int y = 0; y < Level.CWMap.Size.y; y++ )
                 Level.SetBlock(x, z, y, block);
         }
 
@@ -196,7 +196,7 @@ namespace MCForge.World.Generator {
         /// <param name="y">The y.</param>
         /// <param name="block">The block.</param>
         public void FillZ(int x, int y, Block block) {
-            for ( int z = 0; z < Level.Size.z; z++ )
+            for ( int z = 0; z < Level.CWMap.Size.z; z++ )
                 Level.SetBlock(x, z, y, block);
         }
 
@@ -207,8 +207,8 @@ namespace MCForge.World.Generator {
         /// <param name="z">The z.</param>
         /// <param name="block">The block.</param>
         public void FillPlaneXY(int z, Block block) {
-            for ( int x = 0; x < Level.Size.x; x++ )
-                for ( int y = 0; y < Level.Size.y; y++ )
+            for ( int x = 0; x < Level.CWMap.Size.x; x++ )
+                for ( int y = 0; y < Level.CWMap.Size.y; y++ )
                     Level.SetBlock(x, z, y, block);
         }
 
@@ -219,8 +219,8 @@ namespace MCForge.World.Generator {
         /// <param name="y">The y.</param>
         /// <param name="block">The block.</param>
         public void FillPlaneXZ(int y, Block block) {
-            for ( int x = 0; x < Level.Size.x; x++ )
-                for ( int z = 0; z < Level.Size.z; z++ )
+            for ( int x = 0; x < Level.CWMap.Size.x; x++ )
+                for ( int z = 0; z < Level.CWMap.Size.z; z++ )
                     Level.SetBlock(x, z, y, block);
         }
 
@@ -230,8 +230,8 @@ namespace MCForge.World.Generator {
         /// <param name="x">The x.</param>
         /// <param name="block">The block.</param>
         public void FillPlaneZY(int x, Block block) {
-            for ( int z = 0; z < Level.Size.z; z++ )
-                for ( int y = 0; y < Level.Size.y; y++ )
+            for ( int z = 0; z < Level.CWMap.Size.z; z++ )
+                for ( int y = 0; y < Level.CWMap.Size.y; y++ )
                     Level.SetBlock(x, z, y, block);
         }
         /// <summary>
@@ -242,17 +242,17 @@ namespace MCForge.World.Generator {
         /// <param name="y">Location of the block on the y axis</param>
         /// <returns>Returns if the specified location is on the border of the map</returns>
         public bool IsOnEdges(int x, int y, int z) {
-            return ( x == 0 || x == Level.Size.x - 1 ||
-                    z == 0 || z == Level.Size.z - 1 ||
-                    y == 0 || y == Level.Size.y );
+            return ( x == 0 || x == Level.CWMap.Size.x - 1 ||
+                    z == 0 || z == Level.CWMap.Size.z - 1 ||
+                    y == 0 || y == Level.CWMap.Size.y );
         }
 
         /// <summary>
         /// Generates a blocky non smooth version of a terrain. To be smoothed later in other methods
         /// </summary>
         public void GenerateNoise() {
-            for ( int z = 0; z < Level.Size.z; z++ )
-                for ( int x = 0; x < Level.Size.x; x++ )
+            for ( int z = 0; z < Level.CWMap.Size.z; z++ )
+                for ( int x = 0; x < Level.CWMap.Size.x; x++ )
                     overlay[x, z] = NoiseGenerator.Compute(x, z, x, GenArgs.UseNewNoise);
         }
 
@@ -260,8 +260,8 @@ namespace MCForge.World.Generator {
         /// Applies the filter.
         /// </summary>
         public void ApplyFilter() {
-            for ( int z = 0; z < Level.Size.z; z++ )
-                for ( int x = 0; x < Level.Size.x; x++ ) {
+            for ( int z = 0; z < Level.CWMap.Size.z; z++ )
+                for ( int x = 0; x < Level.CWMap.Size.x; x++ ) {
                     map[x, z] = NoiseUtils.GetAverage9(map, x, z);
                 }
         }
@@ -271,9 +271,9 @@ namespace MCForge.World.Generator {
             if ( plants == null )
                 throw new NullReferenceException("Plants map is null");
 
-            for ( ushort x = 0; x < Level.Size.x; x++ )
-                for ( ushort y = 0; y < Level.Size.y; y++ )
-                    for ( ushort z = 0; z < Level.Size.z; z++ ) {
+            for ( ushort x = 0; x < Level.CWMap.Size.x; x++ )
+                for ( ushort y = 0; y < Level.CWMap.Size.y; y++ )
+                    for ( ushort z = 0; z < Level.CWMap.Size.z; z++ ) {
 
                         if ( plants[x, z] != y )
                             continue;
@@ -310,14 +310,14 @@ namespace MCForge.World.Generator {
         public void SetBlocks() {
             for ( int i = 0; i < overlay.Length - 1; i++ ) {
 
-                int x = i % ( Level.Size.x );
-                int z = i / ( Level.Size.x );
+                int x = i % ( Level.CWMap.Size.x );
+                int z = i / ( Level.CWMap.Size.x );
                 int y = (int)NoiseUtils.Range(overlay[x, z],
-                                             (int)GenArgs.MinLevelGenerationHeight - NoiseUtils.NegateEdge(x, z, Level.Size.x, Level.Size.z),
-                                             (int)GenArgs.MaxLevelGenerationHeight - NoiseUtils.NegateEdge(x, z, Level.Size.x, Level.Size.z));
+                                             (int)GenArgs.MinLevelGenerationHeight - NoiseUtils.NegateEdge(x, z, Level.CWMap.Size.x, Level.CWMap.Size.z),
+                                             (int)GenArgs.MaxLevelGenerationHeight - NoiseUtils.NegateEdge(x, z, Level.CWMap.Size.x, Level.CWMap.Size.z));
 
 
-                if ( x >= Level.Size.x || y >= Level.Size.y || z >= Level.Size.z )
+                if ( x >= Level.CWMap.Size.x || y >= Level.CWMap.Size.y || z >= Level.CWMap.Size.z )
                     continue;
 
 
@@ -349,10 +349,10 @@ namespace MCForge.World.Generator {
                 minHeight = (int)GenArgs.MinLevelGenerationHeight,
                 currHeight = minHeight;
 
-            int halfX = Level.Size.x / 2,
-               halfY = Level.Size.y / 2,
-               halfZ = Level.Size.z / 2,
-               count = Level.Size.x + Level.Size.z;
+            int halfX = Level.CWMap.Size.x / 2,
+               halfY = Level.CWMap.Size.y / 2,
+               halfZ = Level.CWMap.Size.z / 2,
+               count = Level.CWMap.Size.x + Level.CWMap.Size.z;
 
             float displace = .02f,
                   gap = maxHeight;
@@ -366,8 +366,8 @@ namespace MCForge.World.Generator {
                       root = (float)( halfX * halfX + halfZ * halfZ ),
                       sk = (float)( Ran.NextDouble() * 2 * root - root );
 
-                for ( int z = 0; z < Level.Size.z; z++ )
-                    for ( int x = 0; x < Level.Size.x; x++ ) {
+                for ( int z = 0; z < Level.CWMap.Size.z; z++ )
+                    for ( int x = 0; x < Level.CWMap.Size.x; x++ ) {
 
                         if ( ( z - halfZ ) * cRand + ( x - halfX ) * sRand + sk > 0 )
                             map[x, z] += displace;
@@ -425,8 +425,8 @@ namespace MCForge.World.Generator {
         /// <param name="manualPosition">The position.</param>
         /// <param name="angleRot">The angle rotation.</param>
         public void SetPosition(Vector3S manualPosition, Vector2S angleRot) {
-            Level.SpawnPos = manualPosition;
-            Level.SpawnRot = new[] { (byte)angleRot.x, (byte)angleRot.z };
+            Level.CWMap.SpawnPos = manualPosition;
+            Level.CWMap.SpawnRotation = angleRot;
         }
         #endregion
 

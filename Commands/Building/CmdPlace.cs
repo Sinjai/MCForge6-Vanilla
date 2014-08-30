@@ -82,9 +82,9 @@ namespace MCForge.Commands
                 p.SendMessage("You're not allowed to build this block!");
                 return;
             }
-            if (y >= p.Level.Size.y)
+            if (y >= p.Level.CWMap.Size.y)
             {
-                y = (ushort)(p.Level.Size.y - 1);
+                y = (ushort)(p.Level.CWMap.Size.y - 1);
             }
             BlockQueue.Addblock(p, x, y, z, b);
             p.SendMessage("An " + ((Block)b).Name + " block was placed at (" + x + ", " + z + ", " + y + ").");

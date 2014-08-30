@@ -230,9 +230,9 @@ namespace ZombiePlugin
                             Player.UniversalChat("[Zombie Survival]: " + Colors.red + "Game mode defaulting to Normal");
                             Gamemode = 0;
                         }
-                        short x = (short)((0.5 + ZombieLevel.SpawnPos.x) * 32);
-                        short y = (short)((1 + ZombieLevel.SpawnPos.y) * 32);
-                        short z = (short)((0.5 + ZombieLevel.SpawnPos.z) * 32);
+                        short x = (short)((0.5 + ZombieLevel.CWMap.SpawnPos.x) * 32);
+                        short y = (short)((1 + ZombieLevel.CWMap.SpawnPos.y) * 32);
+                        short z = (short)((0.5 + ZombieLevel.CWMap.SpawnPos.z) * 32);
                         Bot ZombieBot = new Bot("UndeaadBot", new Vector3S(x, z, y), new byte[] { 0, 0 }, ZombieLevel, false, false, false);
                         ZombieBot.Player.DisplayName = "";
                         ZombieBot.Player.IsHeadFlipped = true;
@@ -350,13 +350,13 @@ namespace ZombiePlugin
                         try
                         {
                             z.Player.Level = ZombieLevel;
-                            z.LastLoc = z.Player.Level.SpawnPos*32;
-                            z.Player.oldPos = z.Player.Level.SpawnPos*32;
-                            short x = (short) ((0.5 + ZombieLevel.SpawnPos.x)*32);
-                            short y = (short) ((1 + ZombieLevel.SpawnPos.y)*32);
-                            short m = (short) ((0.5 + ZombieLevel.SpawnPos.z)*32);
+                            z.LastLoc = z.Player.Level.CWMap.SpawnPos*32;
+                            z.Player.oldPos = z.Player.Level.CWMap.SpawnPos*32;
+                            short x = (short) ((0.5 + ZombieLevel.CWMap.SpawnPos.x)*32);
+                            short y = (short) ((1 + ZombieLevel.CWMap.SpawnPos.y)*32);
+                            short m = (short) ((0.5 + ZombieLevel.CWMap.SpawnPos.z)*32);
                             z.Player.Pos = new Vector3S(x, m, y);
-                            z.Player.Rot = ZombieLevel.SpawnRot;
+                            z.Player.Rot = ZombieLevel.CWMap.SpawnRotation;
                             z.Player.oldPos = z.Player.Pos;
                             z.Player.oldRot = z.Player.Rot;
                             z.Player.SendSpawn(z.Player);
@@ -628,7 +628,7 @@ namespace ZombiePlugin
                     if (temp.Spawning == false)
                     {
                         temp.Spawning = true;
-                        Player.SendToPos(Player.oldPos, Player.Rot);
+                        Player.SendToPos(Player.oldPos);
                         return;
                     }
                 }
@@ -637,7 +637,7 @@ namespace ZombiePlugin
                     if (temp.Spawning == false)
                     {
                         temp.Spawning = true;
-                        Player.SendToPos(Player.oldPos, Player.Rot);
+                        Player.SendToPos(Player.oldPos);
                         return;
                     }
                 }
@@ -652,7 +652,7 @@ namespace ZombiePlugin
 
                 try
                 {
-                    if (Player.Pos.y > 64 && !temp.Referee && (Player.Pos.y / 32) < Player.Level.Size.y)
+                    if (Player.Pos.y > 64 && !temp.Referee && (Player.Pos.y / 32) < Player.Level.CWMap.Size.y)
                     {
                         if (Block.CanWalkThrough(Player.Level.GetBlock((Player.Pos.x / 32), (Player.Pos.z / 32), (Player.Pos.y / 32) - 2)) &&
                             Block.CanWalkThrough(Player.Level.GetBlock((Player.Pos.x / 32), (Player.Pos.z / 32), (Player.Pos.y / 32) - 3)) &&
@@ -689,7 +689,7 @@ namespace ZombiePlugin
 
                 try
                 {
-                    if ((Player.Pos.y / 32) < Player.Level.Size.y)
+                    if ((Player.Pos.y / 32) < Player.Level.CWMap.Size.y)
                     {
                         if (!Block.CanWalkThrough(Player.Level.GetBlock((Player.Pos.x / 32), (Player.Pos.z / 32), (Player.Pos.y / 32))) && !temp.Referee && !temp.Player.IsLoggedIn && !temp.Player.IsLoading)
                         {

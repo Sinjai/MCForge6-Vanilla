@@ -13,7 +13,7 @@ or implied. See the Licenses for the specific language governing
 permissions and limitations under the Licenses.
 */
 //Troll
-using ClassicWorld_NET;
+using MCForge.World;
 using System;
 using System.Collections.Generic;
 using System.Drawing;

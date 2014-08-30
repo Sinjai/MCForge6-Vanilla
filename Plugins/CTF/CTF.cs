@@ -938,11 +938,11 @@ namespace CTF
             zz = p.Pos.y;
             if ((int)p.ExtraData["team"] == 2)
             {
-                p.SendToPos(redSpawn, p.Rot);
+                p.SendToPos(redSpawn);
             }
             else
             {
-                p.SendToPos(blueSpawn, p.Rot);
+                p.SendToPos(blueSpawn);
             }
             Thread dropThread = new Thread(new ThreadStart(delegate
             {

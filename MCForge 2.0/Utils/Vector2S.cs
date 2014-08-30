@@ -42,12 +42,13 @@ namespace MCForge.Utils {
         public static Vector2S operator /(Vector2S a, Vector2S b) {
             return new Vector2S((short)(a.x / b.x), (short)(a.z / b.z));
         }
-        public static bool operator ==(Vector2S a, Vector2S b) {
+        /*public static bool operator ==(Vector2S a, Vector2S b) {
             return (a.x == b.x && a.z == b.z);
         }
-        public static bool operator !=(Vector2S a, Vector2S b) {
+        public static bool operator !=(Vector2S a, Vector2S b)
+        {
             return !(a.x == b.x && a.z == b.z);
-        }
+        }*/
         public Vector2S GetMove(short distance, Vector2S towards) {
             Vector2S ret = new Vector2S(x, z);
             ret.Move(distance, towards);

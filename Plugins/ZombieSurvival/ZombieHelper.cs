@@ -214,9 +214,9 @@ namespace ZombiePlugin
         {
             for (int i = 0; i < Random.Next(5,9); i++)
             {
-                short x = (short)Random.Next(32, Level.Size.x * 32);
-                short y = (short)((Level.Size.y - 4) * 32);
-                short z = (short)Random.Next(32, Level.Size.z * 32);
+                short x = (short)Random.Next(32, Level.CWMap.Size.x * 32);
+                short y = (short)((Level.CWMap.Size.y - 4) * 32);
+                short z = (short)Random.Next(32, Level.CWMap.Size.z * 32);
                 Bot ZombieBot = new Bot("UndeaadBot" + i, new Vector3S(x, z, y), new byte[] { 0, 0 }, Level, false, false, false);
                 ZombieBot.Player.DisplayName = "";
                 ZombieBot.Player.IsHeadFlipped = true;

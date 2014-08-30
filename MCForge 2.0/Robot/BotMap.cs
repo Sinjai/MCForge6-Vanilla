@@ -19,9 +19,10 @@ using MCForge.World;
 namespace MCForge.Robot {
     public class BotMap {
         public BotMap(Level l) {
-            AirMap = new TriBool[l.Size.x, l.Size.z, l.Size.y];//return x + z * Size.x + y * Size.x * Size.z;
-            Size = l.Size;
-            for (int i = 0; i < l.Data.Length; i++) {
+            AirMap = new TriBool[l.CWMap.Size.x, l.CWMap.Size.z, l.CWMap.Size.y];//return x + z * Size.x + y * Size.x * Size.z;
+            Size = l.CWMap.Size;
+            for (int i = 0; i < l.CWMap.BlockData.Length; i++)
+            {
                 Vector3S pos = l.IntToPos(i);
                 if (isAir(l.GetBlock(i)))
                     AirMap[pos.x, pos.z, pos.y] = true;

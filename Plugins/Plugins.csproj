@@ -48,6 +48,10 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="MCForge, Version=6.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\MCForge 2.0\bin\Debug\MCForge.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -102,12 +106,6 @@
     <Compile Include="Zones\PluginZones.cs" />
     <Compile Include="Zones\Zone.cs" />
     <Compile Include="Zones\ZoneList.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\MCForge 2.0\MCForge.csproj">
-      <Project>{EDC9892F-BBA2-4043-9FD9-94C0BA7D9552}</Project>
-      <Name>MCForge</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.0">

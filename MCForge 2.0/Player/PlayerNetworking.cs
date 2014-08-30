@@ -216,7 +216,7 @@ namespace MCForge.Entity
                 if (length == 0) {
                     p.CloseConnection();
                     if (!p.IsBeingKicked) {
-                        UniversalChat(p.Color + p.Username + Server.DefaultColor + " has disconnected.");
+                        UniversalChat(p.Color + p.Username + " " + Server.DefaultColor + "has disconnected.");
                         p.GlobalDie();
                     }
                     if (Server.ReviewList.Contains(p)) {
@@ -409,10 +409,10 @@ namespace MCForge.Entity
                 Logger.Log("[System]: " + Ip + " logging in as " + Username + ".", System.Drawing.Color.Green, System.Drawing.Color.Black);
                 try
                 {
-                    Server.IRC.SendMessage(Username + " joined the game!");
+                    Server.IRC.SendMessage(Username + " joined the game.");
                 }
                 catch { }
-                UniversalChat(Username + " joined the game!");
+                UniversalChat(Username + " joined the game.");
 
                 //WOM.SendJoin(Username);
 
@@ -457,12 +457,12 @@ namespace MCForge.Entity
                     goto Gotos_Are_The_Devil; 
                                          //Gotos are literally the devil, but it works here so two players dont login at once
                 UpgradeConnectionToPlayer();
-                short x = (short)((0.5 + Level.SpawnPos.x) * 32);
-                short y = (short)((1 + Level.SpawnPos.y) * 32);
-                short z = (short)((0.5 + Level.SpawnPos.z) * 32);
+                short x = (short)((0.5 + Level.CWMap.SpawnPos.x) * 32);
+                short y = (short)((1 + Level.CWMap.SpawnPos.y) * 32);
+                short z = (short)((0.5 + Level.CWMap.SpawnPos.z) * 32);
 
                 Pos = new Vector3S(x, z, y);
-                Rot = Level.SpawnRot;
+                Rot = Level.CWMap.SpawnRotation;
                 oldPos = Pos;
                 oldRot = Rot;
 
@@ -516,7 +516,7 @@ namespace MCForge.Entity
             }
 
             byte currentType = 50;
-            if (y < Level.Size.y) {
+            if (y < Level.CWMap.Size.y) {
                 currentType = Level.GetBlock(x, z, y);
                 if (!Block.IsValidBlock(currentType) && currentType != 255) {
                     Kick("HACKED SERVER!");
@@ -569,7 +569,7 @@ namespace MCForge.Entity
             Pos.y = (short)y;
             Pos.z = (short)z;
             oldRot = Rot;
-            Rot = new byte[2] { rotx, roty };
+            Rot = new Vector2S(rotx, roty);
             bool needsOwnPos = false;
             if (!(fromPosition.x == Pos.x && fromPosition.y == Pos.y && fromPosition.z == Pos.z))
             {
@@ -605,18 +605,18 @@ namespace MCForge.Entity
                     }
                 }
             }
-            if (oldRot[0] != Rot[0] || oldRot[1] != Rot[1])
+            if (oldRot.x != Rot.x || oldRot.z != Rot.z)
             {
-                RotateEventArgs eargs = new RotateEventArgs(Rot[0], Rot[1]);
+                RotateEventArgs eargs = new RotateEventArgs((byte)Rot.x, (byte)Rot.z);
                 eargs = OnPlayerRotate.Call(this, eargs, OnAllPlayersRotate);
                 if (eargs.Canceled)
                 {
-                    Rot = eargs.Rot;
+                    Rot = new Vector2S(eargs.Rot[0], eargs.Rot[1]);
                     needsOwnPos = true;
                 }
                 else
                 {
-                    Rot = eargs.Rot;
+                    Rot = new Vector2S(eargs.Rot[0], eargs.Rot[1]);
                 }
             }
             if (needsOwnPos)
@@ -1028,15 +1028,15 @@ namespace MCForge.Entity
                 byte block; //A block byte outside the loop, we save cycles by not making this for every loop iteration
                 Level.ForEachBlock(pos =>
                 {
-                    //Here we loop through the whole map and check/convert the blocks as necesary
-                    //We then add them to our blocks array so we can send them to the player
+                   // //Here we loop through the whole map and check/convert the blocks as necesary
+                  //  //We then add them to our blocks array so we can send them to the player
                     if(!extension)
                     {
-                        block = Block.ConvertCPE(Level.Map.BlockData[pos]);
+                        block = Block.ConvertCPE(Level.CWMap.BlockData[pos]);
                     }
                     else
                     {
-                        block = Level.Map.BlockData[pos];
+                        block = Level.CWMap.BlockData[pos];
                     }
                     //TODO ADD CHECKING
                     blocks[pos] = block;
@@ -1071,9 +1071,9 @@ namespace MCForge.Entity
 
                 pa = new Packet();
                 pa.Add(Packet.Types.MapEnd);
-                pa.Add((short)Level.Size.x);
-                pa.Add((short)Level.Size.y);
-                pa.Add((short)Level.Size.z);
+                pa.Add((short)Level.CWMap.Size.x);
+                pa.Add((short)Level.CWMap.Size.y);
+                pa.Add((short)Level.CWMap.Size.z);
                 SendPacket(pa);
 
                 IsLoading = false;
@@ -1096,7 +1096,7 @@ namespace MCForge.Entity
             pa.Add(p.Pos.x);
             pa.Add((ushort)(p.Pos.y + ((ID == 0xFF) ? -21 : 3)));
             pa.Add(p.Pos.z);
-            pa.Add(p.Rot);
+            pa.Add(new byte[2] { (byte)p.Rot.x, (byte)p.Rot.z });
             SendPacket(pa);
             p.UpdatePosition(true);
         }
@@ -1120,7 +1120,7 @@ namespace MCForge.Entity
         /// <param name="type"> The type of block that will be placed.</param>
         public void SendBlockChange(ushort x, ushort z, ushort y, byte type)
         {
-            if (x >= Level.Size.x || y >= Level.Size.y || z >= Level.Size.z) return;
+            if (x >= Level.CWMap.Size.x || y >= Level.CWMap.Size.y || z >= Level.CWMap.Size.z) return;
             Packet pa = new Packet();
             pa.Add(Packet.Types.SendBlockchange);
             pa.Add(x);
@@ -1257,7 +1257,7 @@ namespace MCForge.Entity
             pa.Add(Pos.x);
             pa.Add(Pos.y);
             pa.Add(Pos.z);
-            pa.Add(Rot);
+            pa.Add(new byte[2] { (byte)Rot.x, (byte)Rot.z } );
             SendPacket(pa);
         }
         /// <summary>
@@ -1280,17 +1280,24 @@ namespace MCForge.Entity
             SendKick(message);
             //CloseConnection();
         }
-        /// <summary>
+
+
+        public void SendExtInfo(short count)
+        {
+            SendPacket(pingPacket);   
+        }
+        
+              /// <summary>
         /// Sends the specified player to the specified coordinates.
         /// </summary>
         /// <param name="_pos"></param>Vector3 coordinate to send to.
         /// <param name="_rot"></param>Rot to send to.
-        public void SendToPos(Vector3S _pos, byte[] _rot)
+        public void SendToPos(Vector3S _pos)
         {
             oldPos = Pos; oldRot = Rot;
-            _pos.x = (_pos.x < 0) ? (short)32 : (_pos.x > Level.Size.x * 32) ? (short)(Level.Size.x * 32 - 32) : (_pos.x > 32767) ? (short)32730 : _pos.x;
-            _pos.z = (_pos.z < 0) ? (short)32 : (_pos.z > Level.Size.z * 32) ? (short)(Level.Size.z * 32 - 32) : (_pos.z > 32767) ? (short)32730 : _pos.z;
-            _pos.y = (_pos.y < 0) ? (short)32 : (_pos.y > Level.Size.y * 32) ? (short)(Level.Size.y * 32 - 32) : (_pos.y > 32767) ? (short)32730 : _pos.y;
+            _pos.x = (_pos.x < 0) ? (short)32 : (_pos.x > Level.CWMap.Size.x * 32) ? (short)(Level.CWMap.Size.x * 32 - 32) : (_pos.x > 32767) ? (short)32730 : _pos.x;
+            _pos.z = (_pos.z < 0) ? (short)32 : (_pos.z > Level.CWMap.Size.z * 32) ? (short)(Level.CWMap.Size.z * 32 - 32) : (_pos.z > 32767) ? (short)32730 : _pos.z;
+            _pos.y = (_pos.y < 0) ? (short)32 : (_pos.y > Level.CWMap.Size.y * 32) ? (short)(Level.CWMap.Size.y * 32 - 32) : (_pos.y > 32767) ? (short)32730 : _pos.y;
 
 
             Packet pa = new Packet();
@@ -1299,8 +1306,30 @@ namespace MCForge.Entity
             pa.Add(_pos.x);
             pa.Add(_pos.y);
             pa.Add(_pos.z);
-            pa.Add(Rot);
+            pa.Add(new byte[2] { (byte)Rot.x, (byte)Rot.z });
+            SendPacket(pa);
+        }
+        
+        /// <summary>
+        /// Sends the specified player to the specified coordinates.
+        /// </summary>
+        /// <param name="_pos"></param>Vector3 coordinate to send to.
+        /// <param name="_rot"></param>Rot to send to.
+        public void SendToPos(Vector3S _pos, byte[] _rot)
+        {
+            oldPos = Pos; oldRot = Rot;
+            _pos.x = (_pos.x < 0) ? (short)32 : (_pos.x > Level.CWMap.Size.x * 32) ? (short)(Level.CWMap.Size.x * 32 - 32) : (_pos.x > 32767) ? (short)32730 : _pos.x;
+            _pos.z = (_pos.z < 0) ? (short)32 : (_pos.z > Level.CWMap.Size.z * 32) ? (short)(Level.CWMap.Size.z * 32 - 32) : (_pos.z > 32767) ? (short)32730 : _pos.z;
+            _pos.y = (_pos.y < 0) ? (short)32 : (_pos.y > Level.CWMap.Size.y * 32) ? (short)(Level.CWMap.Size.y * 32 - 32) : (_pos.y > 32767) ? (short)32730 : _pos.y;
 
+
+            Packet pa = new Packet();
+            pa.Add(Packet.Types.SendTeleport);
+            pa.Add(unchecked((byte)-1)); //If the ID is not greater than one it doesn't work :c
+            pa.Add(_pos.x);
+            pa.Add(_pos.y);
+            pa.Add(_pos.z);
+            pa.Add(new byte[2] { (byte)Rot.x, (byte)Rot.z });
             SendPacket(pa);
         }
 
@@ -1308,11 +1337,11 @@ namespace MCForge.Entity
         {
             Vector3S tempOldPos = new Vector3S(oldPos);
             Vector3S tempPos = new Vector3S(Pos);
-            byte[] tempRot = Rot;
-            byte[] tempOldRot = oldRot;
-            if (tempOldRot == null) tempOldRot = new byte[2];
+            Vector2S tempRot = Rot;
+            Vector2S tempOldRot = oldRot;
+            if (tempOldRot == null) tempOldRot = new Vector2S();
             if (IsHeadFlipped)
-                tempRot[1] = 125;
+                tempRot.z = 125;
 
             oldPos = tempPos;
             oldRot = tempRot;
@@ -1320,8 +1349,8 @@ namespace MCForge.Entity
             short diffX = (short)(tempPos.x - tempOldPos.x);
             short diffZ = (short)(tempPos.z - tempOldPos.z);
             short diffY = (short)(tempPos.y - tempOldPos.y);
-            int diffR0 = tempRot[0] - tempOldRot[0];
-            int diffR1 = tempRot[1] - tempOldRot[1];
+            int diffR0 = tempRot.x - tempOldRot.x;
+            int diffR1 = tempRot.z - tempOldRot.z;
 
             //TODO rewrite local pos change code
             if (diffX == 0 && diffY == 0 && diffZ == 0 && diffR0 == 0 && diffR1 == 0)
@@ -1338,7 +1367,7 @@ namespace MCForge.Entity
                 pa.Add(tempPos.x);
                 pa.Add((short)(tempPos.y + 3));
                 pa.Add(tempPos.z);
-                pa.Add(tempRot);
+                pa.Add(new byte[2] { (byte)tempRot.x, (byte)tempRot.z });
             }
             else
             {
@@ -1351,13 +1380,13 @@ namespace MCForge.Entity
                     pa.Add((sbyte)diffX);
                     pa.Add((sbyte)diffY);
                     pa.Add((sbyte)diffZ);
-                    pa.Add(tempRot);
+                    pa.Add(new byte[2] { (byte)tempRot.x, (byte)tempRot.z });
                 }
                 else if (rotupdate)
                 {
                     pa.Add(Packet.Types.SendRotChange);
                     pa.Add(ID);
-                    pa.Add(tempRot);
+                    pa.Add(new byte[2] { (byte)tempRot.x, (byte)tempRot.z });
                 }
                 else if (posupdate)
                 {
@@ -1378,16 +1407,7 @@ namespace MCForge.Entity
                 }
             });
         }
-
-        public void SendExtInfo(short count)
-        {
-            SendPacket(pingPacket);
-            Packet pa = new Packet();
-            pa.Add(Packet.Types.ExtInfo);
-            pa.Add("MCForge-Redux", 64);
-            pa.Add(count);
-            SendPacket(pa);
-        }
+        
         public void SendExtEntry(string name, int version)
         {
             Packet pa = new Packet();

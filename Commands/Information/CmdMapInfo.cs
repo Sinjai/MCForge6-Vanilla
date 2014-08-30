@@ -37,9 +37,9 @@ namespace MCForge.Commands {
             if (l == null) { p.SendMessage("Could not find specified level."); return; }
 
             p.SendMessage(String.Concat(Colors.yellow, "Map Name: ", Colors.white, l.Name));
-            p.SendMessage(String.Concat(Colors.yellow, "Map Size: ", Colors.white, l.Size));
+            p.SendMessage(String.Concat(Colors.yellow, "Map Size: ", Colors.white, l.CWMap.Size));
             p.SendMessage(String.Concat(Colors.yellow, "Total Blocks: ", Colors.white, l.TotalBlocks));
-            p.SendMessage(String.Concat(Colors.yellow, "Spawn Pos: ", Colors.white, l.SpawnPos));
+            p.SendMessage(String.Concat(Colors.yellow, "Spawn Pos: ", Colors.white, l.CWMap.SpawnPos));
             p.SendMessage(String.Concat(Colors.yellow, "Physics Tick: ", Colors.white, l.PhysicsTick));
             p.SendMessage(String.Concat("To see a list of players currently on ", l.Name, ", type \"yes\"."));
             //OnPlayerChat.Register(plist, MCForge.API.Priority.Normal, l, p);

@@ -231,11 +231,11 @@ namespace MCForge.Entity {
         /// <summary>
         /// The players current rotation
         /// </summary>
-        public byte[] Rot { get; set; }
+        public Vector2S Rot { get; set; }
         /// <summary>
         /// The players last known rotation
         /// </summary>
-        public byte[] oldRot { get; set; }
+        public Vector2S oldRot { get; set; }
         /// <summary>
         /// The players last known click
         /// </summary>
@@ -859,21 +859,21 @@ namespace MCForge.Entity {
         #endregion
 
         public Vector3S GetBlockFromView() {
-            double hori = (Math.PI / 128) * Rot[0];
-            double vert = (Math.PI / 128) * Rot[1];
+            double hori = (Math.PI / 128) * Rot.x;
+            double vert = (Math.PI / 128) * Rot.z;
             double cosHori = Math.Cos(hori);
             double sinHori = Math.Sin(hori);
             double cosVert = Math.Cos(vert);
             double sinVert = Math.Sin(vert);
             double length = 0.1; //TODO: Adjust length after first possible block is found to the distance (Player.Pos-FirstBlock).Length
-            for (double i = 1; i < ((Rot[0] < 64 || Rot[0] > 192) ? Level.Size.z - Pos.z / 32 : Pos.z / 32); i += length) {
+            for (double i = 1; i < ((Rot.x < 64 || Rot.x > 192) ? Level.CWMap.Size.z - Pos.z / 32 : Pos.z / 32); i += length) {
                 double h = i / cosHori;
                 double x = -sinHori * h;
                 h = h / cosVert;
                 double y = sinVert * h;
-                short X = (short)(Math.Round((double)(Pos.x - 16) / 32 + x * ((Rot[0] < 64 || Rot[0] > 192) ? -1 : 1)));
-                short Z = (short)(Math.Round((double)(Pos.z - 16) / 32 + i * ((Rot[0] < 64 || Rot[0] > 192) ? -1 : 1)));
-                short Y = (short)(Math.Round((double)(Pos.y - 32) / 32 + y * ((Rot[0] < 64 || Rot[0] > 192) ? -1 : 1)));
+                short X = (short)(Math.Round((double)(Pos.x - 16) / 32 + x * ((Rot.x < 64 || Rot.x > 192) ? -1 : 1)));
+                short Z = (short)(Math.Round((double)(Pos.z - 16) / 32 + i * ((Rot.x < 64 || Rot.x > 192) ? -1 : 1)));
+                short Y = (short)(Math.Round((double)(Pos.y - 32) / 32 + y * ((Rot.x < 64 || Rot.x > 192) ? -1 : 1)));
                 Vector3S ret = new Vector3S(X, Z, Y);
                 if (Level.GetBlock(ret) != 0)
                     return ret;

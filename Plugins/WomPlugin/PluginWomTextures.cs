@@ -228,7 +228,7 @@ namespace Plugins.WoMPlugin
             if (!(bool)(p.ExtraData.GetIfExist<object, object>("WoMCompass") ?? false)) { return; }
             else
             {
-                WOM.SendDetail(p, "(" + SubstringLoop(p.Rot[0] / (int)(255 / (compass.Length - 1))) + ")");
+                WOM.SendDetail(p, "(" + SubstringLoop(p.Rot.x / (int)(255 / (compass.Length - 1))) + ")");
             }
         }
 
@@ -250,8 +250,8 @@ namespace Plugins.WoMPlugin
             sb.Replace("$y", p.Pos.y.ToString());
             sb.Replace("$level", p.Level.Name);
             sb.Replace("$world", p.Level.Name);
-            sb.Replace("$yaw", p.Rot[0].ToString());
-            sb.Replace("$pitch", p.Rot[1].ToString());
+            sb.Replace("$yaw", p.Rot.x.ToString());
+            sb.Replace("$pitch", p.Rot.z.ToString());
             sb.Replace("$belowPos", ((p.belowBlock).ToString()) ?? "Null.");
             if (detail.Contains("$ExtraData"))
             {

@@ -83,9 +83,6 @@
     <CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ClassicWorld.NET">
-      <HintPath>.\ClassicWorld.NET.dll</HintPath>
-    </Reference>
     <Reference Include="fNbt">
       <HintPath>.\fNbt.dll</HintPath>
     </Reference>
@@ -347,6 +344,7 @@
     <Compile Include="World\Blocks\Physics\DefaultPhysicBlocks\Gravel.cs" />
     <Compile Include="World\Blocks\Physics\DefaultPhysicBlocks\Sand.cs" />
     <Compile Include="Utils\Cuboid.cs" />
+    <Compile Include="World\ClassicWorld.cs" />
     <Compile Include="World\Drawing\CubeBrush.cs" />
     <Compile Include="World\Drawing\Fonts.cs" />
     <Compile Include="World\Drawing\IBrush.cs" />

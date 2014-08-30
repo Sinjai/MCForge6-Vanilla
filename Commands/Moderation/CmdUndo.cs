@@ -155,7 +155,7 @@ namespace MCForge.Commands.Moderation {
         void OnAllLevelsLoadUnload_Normal(Level sender, API.Events.LevelLoadEventArgs args) {
             if (args.Loaded) {
                 if (!BlockChangeHistory.Load(sender.Name)) {
-                    BlockChangeHistory.SetLevel(sender.Name, (ushort)sender.Size.x, (ushort)sender.Size.z, (ushort)sender.Size.y, sender.Data);
+                    BlockChangeHistory.SetLevel(sender.Name, (ushort)sender.CWMap.Size.x, (ushort)sender.CWMap.Size.z, (ushort)sender.CWMap.Size.y, sender.CWMap.BlockData);
                 }
             }
             else

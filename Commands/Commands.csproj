@@ -50,6 +50,10 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="MCForge, Version=6.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\MCForge 2.0\bin\Debug\MCForge.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -181,10 +185,6 @@
     <Compile Include="CmdTest.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MCForge 2.0\MCForge.csproj">
-      <Project>{EDC9892F-BBA2-4043-9FD9-94C0BA7D9552}</Project>
-      <Name>MCForge</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Plugins\Plugins.csproj">
       <Project>{48C20652-75A0-487A-926D-53696D1F7DB4}</Project>
       <Name>Plugins</Name>

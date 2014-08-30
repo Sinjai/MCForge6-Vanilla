@@ -44,7 +44,7 @@ namespace MCForge.Commands
 					{
 						if (pl.Level == p.Level && pl != p && p.Group.Permission > pl.Group.Permission) //Missing permissions
 						{
-							pl.SendToPos(p.Pos, p.Rot);
+							pl.SendToPos(p.Pos);
                             pl.SendMessage("You were summoned by " + p.Color+ p.Username + Server.DefaultColor + ".");
 						}
 					});
@@ -83,7 +83,7 @@ namespace MCForge.Commands
                             }
                         }
                     }
-                    who.SendToPos(p.Pos, p.Rot);
+                    who.SendToPos(p.Pos);
                 }
                 return;
             }

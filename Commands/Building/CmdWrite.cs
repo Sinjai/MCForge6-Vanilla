@@ -49,7 +49,7 @@ namespace MCForge.Commands {
             //string direction = null;
             sender.OnPlayerBlockChange.Normal -= BlockChange2;
             CatchPos cpos = (CatchPos)sender.GetDatapass(this.Name);
-            foreach (Vector3S v in BlockString(cpos.message, cpos.pos, new Vector3S(args.X, args.Z, args.Y), sender.Level.Size)) {
+            foreach (Vector3S v in BlockString(cpos.message, cpos.pos, new Vector3S(args.X, args.Z, args.Y), sender.Level.CWMap.Size)) {
                 BlockQueue.Addblock(sender, (ushort)v.x, (ushort)v.y, (ushort)v.z, args.Holding);
             }
             args.Cancel();

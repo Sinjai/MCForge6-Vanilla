@@ -36,8 +36,8 @@ namespace MCForge.Commands
                 return;
             }
             Vector3S meep = new Vector3S((short)(p.Pos.x / 32), (short)(p.Pos.z / 32), (short)(p.Pos.y / 32));
-            p.Level.SpawnPos = meep;
-            p.Level.SpawnRot = p.Rot;
+            p.Level.CWMap.SpawnPos = meep;
+            p.Level.CWMap.SpawnRotation = p.Rot;
             p.SendMessage("Spawn location changed.");
         }
 

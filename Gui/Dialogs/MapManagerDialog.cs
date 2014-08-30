@@ -90,7 +90,7 @@ namespace MCForge.Gui.Dialogs {
         #region Data Grid View Utils
 
         string[] GetRowDataFromLevel(Level level) {
-            return new[] {level.Name, string.Format("{0} x {1} x  {2}", level.Size.x, level.Size.y, level.Size.z), "True", level.Players.Count.ToString() };
+            return new[] {level.Name, string.Format("{0} x {1} x  {2}", level.CWMap.Size.x, level.CWMap.Size.y, level.CWMap.Size.z), "True", level.Players.Count.ToString() };
         }
 
         int GetRowIndexFromLevel(Level level) {

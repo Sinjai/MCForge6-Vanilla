@@ -150,7 +150,7 @@ namespace MCForge.World {
             Level finalLevel = new Level(new Vector3S(32, 32, 32));
             finalLevel.Name = levelName;
             try {
-                BinaryReader Binary = null;
+               BinaryReader Binary = null;
                 try {
                     Binary = new BinaryReader(File.Open(levelName, FileMode.Open));
                 }
@@ -173,14 +173,15 @@ namespace MCForge.World {
                     }
                 }
                 Binary.Close();
-                //Binary.Dispose();
-                //finalLevel.HandleMetaData();
-                //Logger.Log("[Level] " + levelName + " was loaded");
+               // Binary.Dispose();
+         //      finalLevel.HandleMetaData();
+          //      Logger.Log("[Level] " + levelName + " was loaded");
                 return finalLevel;
             }
             catch (Exception e) { 
-                //Logger.Log(e.Message); Logger.Log(e.StackTrace); } 
+                Logger.Log(e.Message); Logger.Log(e.StackTrace);
                 return null;
+
             }
         }
 
@@ -208,7 +209,7 @@ namespace MCForge.World {
                 Binary.Write(1); //The version
                 Binary.Write(Size.x + "@" + Size.y + "@" + Size.z);
                 Binary.Write(SpawnPos.x + "!" + SpawnPos.y + "!" + SpawnPos.z); //Unused
-                Binary.Write(SpawnRot[0] + "~" + SpawnRot[1]); //Unused
+                Binary.Write(SpawnRot.x + "~" + SpawnRot.z); //Unused
                 Binary.Write(ExtraData.Count); //No extra data
                 lock (ExtraData) {
                     foreach (KeyValuePair<object, object> pair in ExtraData) {

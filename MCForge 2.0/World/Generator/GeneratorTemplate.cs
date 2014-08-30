@@ -28,7 +28,7 @@ namespace MCForge.World.Generator {
         /// </summary>
         public static GeneratorArgs Hell(Level level) {
             return new GeneratorArgs() {
-                MaxLevelGenerationHeight = level.Size.y,
+                MaxLevelGenerationHeight = level.CWMap.Size.y,
                 MinLevelGenerationHeight = 0,
                 MaxDepth = 2,
                 MinDepth = 7,

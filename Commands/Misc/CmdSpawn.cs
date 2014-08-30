@@ -36,14 +36,14 @@ namespace MCForge.Commands
                 Help(p);
                 return;
             }
-            Vector3S meep = new Vector3S((short)(16 + p.Level.SpawnPos.x * 32), (short)(16 + p.Level.SpawnPos.z * 32), (short)(p.Level.SpawnPos.y * 32));
+            Vector3S meep = new Vector3S((short)(16 + p.Level.CWMap.SpawnPos.x * 32), (short)(16 + p.Level.CWMap.SpawnPos.z * 32), (short)(p.Level.CWMap.SpawnPos.y * 32));
             Packet pa = new Packet();
             pa.Add(Packet.Types.SendTeleport);
             pa.Add((byte)0xff);
             pa.Add(meep.x);
             pa.Add(meep.y);
             pa.Add(meep.z);
-            pa.Add(p.Level.SpawnRot);
+            pa.Add(new byte[2] { (byte)p.Level.CWMap.SpawnRotation.x, (byte)p.Level.CWMap.SpawnRotation.z });
             p.SendPacket(pa);
         }
         public void Help(Player p)
