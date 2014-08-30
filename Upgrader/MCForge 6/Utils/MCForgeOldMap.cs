@@ -18,7 +18,6 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using System.IO.Compression;
-using MCForge.World;
 using MCForge.Utils;
 
 namespace MCForge.World.Loading_and_Saving {

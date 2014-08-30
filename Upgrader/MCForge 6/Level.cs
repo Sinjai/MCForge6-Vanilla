@@ -29,7 +29,7 @@ namespace MCForge.World {
     /// This is a slimmed down version for upgrading
     /// </summary>
     public class Level {
-
+        public ClassicWorld CWMap;
         internal const long MAGIC_NUMBER = 28542713840690029;
         //As a note, the coordinates are right, it is xzy, its based on the users view, not the map itself.
         //WIDTH = X, LENGTH = Z, DEPTH = Y
@@ -196,7 +196,7 @@ namespace MCForge.World {
 
         /// <summary>
         /// Saves this world to a given directory
-        /// in the MCForge-only binary format.
+        /// in the ClassiCube World format
         /// </summary>
         /// <remarks>The resulting files are not compatible with the official Minecraft software.</remarks>
         public bool SaveToBinary() {
@@ -209,7 +209,7 @@ namespace MCForge.World {
                 Binary.Write(1); //The version
                 Binary.Write(Size.x + "@" + Size.y + "@" + Size.z);
                 Binary.Write(SpawnPos.x + "!" + SpawnPos.y + "!" + SpawnPos.z); //Unused
-                Binary.Write(SpawnRot.x + "~" + SpawnRot.z); //Unused
+                Binary.Write(SpawnRot[0] + "~" + SpawnRot[1]); //Unused
                 Binary.Write(ExtraData.Count); //No extra data
                 lock (ExtraData) {
                     foreach (KeyValuePair<object, object> pair in ExtraData) {
