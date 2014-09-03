@@ -65,12 +65,7 @@ namespace MCForge.Commands
                 return;
             }
 
-            if (p.Level.ExtraData.ContainsKey("perbuild"))
-            {
-                p.Level.ExtraData["perbuild"] = perBuild;
-            }
-            else
-                p.Level.ExtraData.Add("perbuild", perBuild);
+                p.Level.Settings.perbuild = perBuild;
 
             if (g != null)
             {
@@ -97,17 +92,15 @@ namespace MCForge.Commands
         {
             byte perBuild = 0;
 
-            if (sender.Level.ExtraData.ContainsKey("perbuild"))
-            {
+            
                 try
                 {
-                    perBuild = (byte)sender.Level.ExtraData["perbuild"];
+                    perBuild = (byte)sender.Level.Settings.perbuild;
                 }
                 catch
                 {
-                    perBuild = 0;
                 }
-            }
+            
 
             if (sender.Group.Permission < perBuild)
             {
@@ -130,17 +123,15 @@ namespace MCForge.Commands
 
             byte perBuild = 0;
 
-            if (sender.Level.ExtraData.ContainsKey("perbuild"))
+
+            try
             {
-                try
-                {
-                    perBuild = (byte)sender.Level.ExtraData["perbuild"];
-                }
-                catch
-                {
-                    perBuild = 0;
-                }
+                perBuild = (byte)sender.Level.Settings.perbuild;
             }
+            catch
+            {
+            }
+            
 
             if (cmd == null) return;
 

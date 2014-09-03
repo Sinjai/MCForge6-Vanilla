@@ -65,7 +65,7 @@ namespace MCForge.Commands
                 return;
             }
 
-            if (p.Level.ExtraData.ContainsKey("perbuild"))
+            if (p.Level.ExtraData.ContainsKey("perbuildmax"))
             {
                 p.Level.ExtraData["perbuildmax"] = perBuildMax;
             }

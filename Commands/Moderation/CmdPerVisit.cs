@@ -74,12 +74,8 @@ namespace MCForge.Commands
                 return;
             }
 
-            if (l.ExtraData.ContainsKey("pervisit"))
-            {
-                l.ExtraData["pervisit"] = perVisit;
-            }
-            else
-                l.ExtraData.Add("pervisit", perVisit);
+
+            l.Settings.pervisit = perVisit;
 
             if (g != null)
             {
@@ -122,17 +118,16 @@ namespace MCForge.Commands
             if (l == null)
                 return;
 
-            if (l.ExtraData.ContainsKey("pervisit"))
-            {
+            
                 try
                 {
-                    PerVisit = (byte)l.ExtraData["pervisit"];
+                    PerVisit = (byte)l.Settings.pervisit;
                 }
                 catch
                 {
                     PerVisit = 0;
                 }
-            }
+            
 
             if (sender.Group.Permission <= PerVisit)
             {

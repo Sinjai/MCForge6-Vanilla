@@ -1,4 +1,5 @@
-﻿using System;
+﻿using fNbt;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -21,6 +22,38 @@ using MCForge.API.Events;
 
 namespace MCForge.World
 {
+    public struct Metadata : IMetadataStructure
+    {
+        public byte perbuild;
+        public byte pervisit;
+        public NbtCompound Read(NbtCompound metadata)
+        {
+            var Data = metadata.Get<NbtCompound>("MCForge");
+
+            if (Data != null)
+            {
+                perbuild = Data["perbuild"].ByteValue;
+                pervisit = Data["pervisit"].ByteValue;
+                Logger.Log(perbuild.ToString());
+                metadata.Remove(Data);
+            }
+
+            return metadata;
+        }
+
+        public NbtCompound Write()
+        {
+           
+            var Base = new NbtCompound("MCForge")
+            {
+                new NbtByte("perbuild", perbuild),
+                new NbtByte("pervisit", pervisit)
+            };
+            Logger.Log(perbuild.ToString());
+            return Base;
+        }
+    }
+
     /// <summary>
     /// This class is used for loading/saving/handling/manipulation of server levels.
     /// </summary>
@@ -31,7 +64,7 @@ namespace MCForge.World
         //As a note, the coordinates are right, it is xzy, its based on the users view, not the map itself.
         //WIDTH = X, LENGTH = Z, DEPTH = Y
         //NEST ORDER IS XZY
-
+        public Metadata Settings;
         /// <summary>
         /// List of levels on the server (loaded)
         /// </summary>
@@ -151,13 +184,40 @@ namespace MCForge.World
         {
             CWMap = new ClassicWorld(size.x, size.z, size.y)
             {
-                SpawnPos = new Vector3S((short) (size.x/2),
-                (short) (size.y/2),
-                (short) (size.z/2)),
-                SpawnRotation = new Vector2S( 128,128),
-                BlockData = new byte[size.x*size.y*size.z]
-            };
-            //data = new byte[Size.x, Size.z, Size.y];
+                SpawnPos = new Vector3S((short)(size.x / 2),
+                (short)(size.y / 2),
+                (short)(size.z / 2)),
+                SpawnRotation = new Vector2S(128, 128),
+                BlockData = new byte[size.x * size.y * size.z]
+            };
+
+            Settings = new Metadata(); // -- Hypercube specific settings, woo.
+            Settings.perbuild = 0; // -- Enable building, history and physics by default.
+            Settings.pervisit = 0;
+
+           
+
+            CWMap.MetadataParsers.Add("MCForge", Settings); // -- Add the parser so it will save with the map :)
+
+
+            CWMap.GeneratingSoftware = "MCForge";
+            CWMap.GeneratorName = "Blank";
+            CWMap.CreatingService = "Classicube";
+            CWMap.CreatingUsername = "[SERVER]";
+
+            var myRef = (CPEMetadata)CWMap.MetadataParsers["CPE"];
+
+            if (myRef.CustomBlocksFallback == null)
+            {
+                myRef.CustomBlocksLevel = 1;
+                myRef.CustomBlocksVersion = 1;
+                myRef.CustomBlocksFallback = new byte[256];
+
+                
+
+                CWMap.MetadataParsers["CPE"] = myRef;
+            }
+   //         a = new byte[CWMap.Size.x, CWMap.Size.z, CWMap.Size.y];
             BackupLevel = true;
             ExtraData = new ExtraData<object, object>();
         }
@@ -377,7 +437,24 @@ namespace MCForge.World
                 {
                     finalLevel.CWMap = new ClassicWorld(Name);
 
-                    finalLevel.CWMap.Load();
+                    finalLevel.Settings = new Metadata(); // -- Create our HC Specific finalLevel.Settings
+                    finalLevel.CWMap.MetadataParsers.Add("MCForge", finalLevel.Settings); // -- Register it with the finalLevel.CWMap loader
+                    finalLevel.CWMap.Load(); // -- Load the finalLevel.CWMap
+
+                    finalLevel.Settings = (Metadata)finalLevel.CWMap.MetadataParsers["MCForge"];
+                    
+
+                    // -- Creates HC Metadata if it does not exist.
+                    if (finalLevel.Settings.perbuild == null)
+                    {
+                        finalLevel.Settings.perbuild = 0;
+                    }
+
+                    if (finalLevel.Settings.pervisit == null)
+                    {
+                        finalLevel.Settings.pervisit = 0;
+                    }
+
                     finalLevel.HandleMetaData();
                     Level.OnAllLevelsLoad.Call(finalLevel, new LevelLoadEventArgs(true));
                     Logger.Log("[Level] " + levelName + " was loaded");
@@ -412,6 +489,7 @@ namespace MCForge.World
         {
             string Name = "levels/" + this.Name + ".cw";
             if (!Directory.Exists("levels")) Directory.CreateDirectory("levels");
+            CWMap.MapName = this.Name;
             CWMap.Save(Name);
             /*var Binary = new BinaryWriter(File.Open(Name, FileMode.Create));
 

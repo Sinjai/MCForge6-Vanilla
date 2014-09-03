@@ -261,8 +261,8 @@ namespace MCForge.World
             BlockData = null;
             FormatVersion = Basetag["FormatVersion"].ByteValue;
 
-            if (FormatVersion != 1)
-                throw new FormatException("Unsupported format version: " + FormatVersion.ToString());
+          if (FormatVersion != 1)
+               throw new FormatException("Unsupported format version: " + FormatVersion.ToString());
 
             Foreignmeta = new ForeignMeta();
 
