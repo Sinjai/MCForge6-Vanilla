@@ -26,31 +26,29 @@ namespace MCForge.World
     {
         public byte perbuild;
         public byte pervisit;
-        public NbtCompound Read(NbtCompound metadata)
-        {
-            var Data = metadata.Get<NbtCompound>("MCForge");
-
-            if (Data != null)
-            {
-                perbuild = Data["perbuild"].ByteValue;
-                pervisit = Data["pervisit"].ByteValue;
-                Logger.Log(perbuild.ToString());
-                metadata.Remove(Data);
-            }
-
-            return metadata;
-        }
 
         public NbtCompound Write()
         {
-           
+
             var Base = new NbtCompound("MCForge")
             {
                 new NbtByte("perbuild", perbuild),
                 new NbtByte("pervisit", pervisit)
             };
-            Logger.Log(perbuild.ToString());
             return Base;
+        }
+        public NbtCompound Read(NbtCompound metadata)
+        {
+            var Data = metadata.Get<NbtCompound>("MCForge");
+            Logger.Log(Data["perbuild"].ToString());
+            if (Data != null)
+            {
+                perbuild = Data["perbuild"].ByteValue;
+                pervisit = Data["pervisit"].ByteValue;
+                metadata.Remove(Data);
+            }
+
+            return metadata;
         }
     }
 
@@ -490,6 +488,7 @@ namespace MCForge.World
             string Name = "levels/" + this.Name + ".cw";
             if (!Directory.Exists("levels")) Directory.CreateDirectory("levels");
             CWMap.MapName = this.Name;
+            CWMap.MetadataParsers["MCForge"] = Settings;
             CWMap.Save(Name);
             /*var Binary = new BinaryWriter(File.Open(Name, FileMode.Create));
 
