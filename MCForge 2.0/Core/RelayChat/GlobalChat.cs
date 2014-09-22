@@ -22,7 +22,7 @@ using System.Net;
 
 namespace MCForge.Core.RelayChat
 {
-    public class GlobalChat
+    public class UniversalChat
     {
         private Connection connection;
         private string gcServer = "irc.geekshed.net";
@@ -34,7 +34,7 @@ namespace MCForge.Core.RelayChat
         /// <summary>
         /// 
         /// </summary>
-        public GlobalChat()
+        public UniversalChat()
         {
             this.connection = new Connection();
             ServerSettings.OnSettingChanged += ServerSettings_OnSettingChanged;

@@ -395,6 +395,11 @@ namespace MCForge.Entity {
             }
         }
 
+        public void HandleDeath(string customMessage = "")
+        {
+            LevelChat(this, this.Color + (string)this.ExtraData["Title"] + this._displayName + Server.DefaultColor + customMessage);
+            Command.All["spawn"].Use(this, null);
+        }
 
         /// <summary>
         /// Send this player a message

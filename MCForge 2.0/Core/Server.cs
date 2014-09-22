@@ -216,7 +216,7 @@ namespace MCForge.Core {
         /// <summary>
         /// The IRC GC client for the server
         /// </summary>
-        public static GlobalChat GC { get; set; }
+        public static UniversalChat GC { get; set; }
         /// <summary>
         /// The Remote Console
         /// </summary>
@@ -272,6 +272,9 @@ namespace MCForge.Core {
         /// Occurs when [on server finish setup].
         /// </summary>
         public static event ServerFinishSetup OnServerFinishSetup;
+
+        ///<summary>For the AutoSaver</summary>
+        public static Thread blockThread;
 
         /// <summary>
         /// Inits this instance.
@@ -332,7 +335,25 @@ namespace MCForge.Core {
 
             if (OnServerFinishSetup != null)
                 OnServerFinishSetup();
-
+            blockThread = new Thread(new ThreadStart(delegate
+            {
+                while (true)
+                {
+                    Thread.Sleep(60000);
+                    Level.Levels.ForEach(delegate(Level l)
+                    {
+                        try
+                        {
+                                l.SaveToBinary();
+                        }
+                        catch (Exception e)
+                        {
+                            Logger.LogError(e);
+                        }
+                    });
+                }
+            }));
+            blockThread.Start();
             Logger.Log("[Important]: Server Started.", Color.Black, Color.White);
             if (!ServerSettings.GetSettingBoolean("VerifyNames"))
                 Logger.Log("[Important]: The server is running with verify names off! This could lead to bad things! Please turn on verify names if you dont know the risk and dont want these bad things to happen!", LogType.Critical);
@@ -352,7 +373,7 @@ namespace MCForge.Core {
             
             if (ServerSettings.GetSettingBoolean("GC-Enabled"))
             {
-                GC = new GlobalChat();
+                GC = new UniversalChat();
                 try
                 {
                     GC.Connect();

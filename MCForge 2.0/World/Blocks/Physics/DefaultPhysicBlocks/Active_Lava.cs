@@ -31,7 +31,7 @@ namespace MCForge.World.Physics
         }
         public override byte Permission
         {
-            get { return 80; }
+            get { return 120; }
         }
         public Active_Lava(int x, int z, int y)
             : base(x, z, y)
