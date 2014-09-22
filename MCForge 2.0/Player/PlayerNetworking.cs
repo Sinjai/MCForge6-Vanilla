@@ -871,8 +871,8 @@ namespace MCForge.Entity
                 return;
             }
 
-            ExtraData.CreateIfNotExist("UniversalChat", false);
-            if (incomingText[0] == '~' || (bool)ExtraData.GetIfExist("UniversalChat")) //Admin chat
+            ExtraData.CreateIfNotExist("GlobalChat", false);
+            if (incomingText[0] == '~' || (bool)ExtraData.GetIfExist("GlobalChat")) //Admin chat
             {
                 if(incomingText.StartsWith("~"))
                     incomingText = incomingText.Remove(0, 1);
