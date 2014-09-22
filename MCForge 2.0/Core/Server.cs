@@ -216,7 +216,7 @@ namespace MCForge.Core {
         /// <summary>
         /// The IRC GC client for the server
         /// </summary>
-        public static UniversalChat GC { get; set; }
+        public static GlobalChat GC { get; set; }
         /// <summary>
         /// The Remote Console
         /// </summary>
@@ -373,7 +373,7 @@ namespace MCForge.Core {
             
             if (ServerSettings.GetSettingBoolean("GC-Enabled"))
             {
-                GC = new UniversalChat();
+                GC = new GlobalChat();
                 try
                 {
                     GC.Connect();
