@@ -56,14 +56,14 @@ namespace MCForge.Commands
             sender.ExtraData["RunCounter"] = 0;
             Vector3S tmpPos = new Vector3S(args.FromPosition);
             tmpPos.Horizontal = tmpPos.Horizontal.GetMove(320, args.ToPosition.Horizontal);
-            if (tmpPos.x < 32 || tmpPos.z < 32 || tmpPos.x > (sender.Level.Size.x - 1) * 32 || tmpPos.z > (sender.Level.Size.z - 1) * 32) return;
+            if (tmpPos.x < 32 || tmpPos.z < 32 || tmpPos.x > (sender.Level.CWMap.Size.x - 1) * 32 || tmpPos.z > (sender.Level.CWMap.Size.z - 1) * 32) return;
             Packet pa = new Packet();
             pa.Add(Packet.Types.SendTeleport);
             pa.Add((sbyte)-1);
             pa.Add(tmpPos.x);
             pa.Add((short)(tmpPos.y));
             pa.Add(tmpPos.z);
-            pa.Add(sender.Rot);
+            pa.Add(new byte[2] { (byte)sender.Rot.x, (byte)sender.Rot.z });
             sender.oldPos = tmpPos;
             sender.Pos = tmpPos;
             sender.oldRot = sender.Rot;

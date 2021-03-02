@@ -21,6 +21,7 @@
     <SourceAnalysisOverrideSettingsFile>C:\Users\Eddie\Documents\GitHub\MCForge-Vanilla\MCForge 2.0\Settings.SourceAnalysis</SourceAnalysisOverrideSettingsFile>
     <RunCodeAnalysis>False</RunCodeAnalysis>
     <RunSourceAnalysis>False</RunSourceAnalysis>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -33,7 +34,6 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
@@ -41,7 +41,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>Full</DebugType>
-    <Optimize>false</Optimize>
+    <Optimize>true</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
@@ -50,6 +50,9 @@
     </DocumentationFile>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <RegisterForComInterop>False</RegisterForComInterop>
+    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
+    <BaseAddress>4194304</BaseAddress>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -62,8 +65,10 @@
     <DocumentationFile>bin\Release\MCForge.xml</DocumentationFile>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <UseVSHostingProcess>false</UseVSHostingProcess>
-    <DebugSymbols>false</DebugSymbols>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <RegisterForComInterop>False</RegisterForComInterop>
+    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
+    <BaseAddress>4194304</BaseAddress>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>MCForge.ico</ApplicationIcon>
@@ -73,9 +78,6 @@
     <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
     <BaseAddress>4194304</BaseAddress>
   </PropertyGroup>
-  <PropertyGroup>
-    <SignAssembly>false</SignAssembly>
-  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
   </PropertyGroup>
@@ -83,14 +85,17 @@
     <CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="fNbt">
+      <HintPath>fNbt.dll</HintPath>
+    </Reference>
     <Reference Include="MySql.Data">
       <HintPath>MySql.Data.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Data.SQLite, Version=1.0.80.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=x86">
+    <Reference Include="System.Data.SQLite, Version=1.0.66.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Data.SQLite.dll</HintPath>
+      <HintPath>bin\Debug\System.Data.SQLite.dll</HintPath>
     </Reference>
     <Reference Include="System.Design" />
     <Reference Include="System.Web" />
@@ -102,6 +107,12 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
+    <Reference Include="System.Data.SQLite">
+      <HintPath>..\..\Downloads\System.Data.SQLite.dll</HintPath>
+    </Reference>
+    <Reference Include="MCForge.HtmlData">
+      <HintPath>bin\Debug\MCForge.HtmlData.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="API\Events\Event.cs" />
@@ -161,7 +172,6 @@
     <Compile Include="Player\Networking\Packets\PlayerPositionAndOrientation.cs" />
     <Compile Include="Player\Networking\Packets\PlayerPositionAndOrientationUpdate.cs" />
     <Compile Include="Player\Networking\PacketWriter.cs" />
-    <Compile Include="Player\NewPlayer.cs" />
     <Compile Include="Player\PlayerEnumerations.cs" />
     <Compile Include="Player\Sender.cs" />
     <Compile Include="Remote\Networking\PacketData.cs" />
@@ -186,22 +196,27 @@
     <Compile Include="Robot\MinHeap.cs" />
     <Compile Include="Robot\PathFinder.cs" />
     <Compile Include="Robot\Point3D.cs" />
-    <Compile Include="System\Backup.cs" />
-    <Compile Include="System\Economy.cs" />
-    <Compile Include="System\Updater.cs" />
+    <Compile Include="Core\Backup.cs" />
+    <Compile Include="Core\Economy.cs" />
+    <Compile Include="Core\Heartbeat\CBeat.cs" />
+    <Compile Include="Core\RelayChat\Core\Connection.cs" />
+    <Compile Include="Core\RelayChat\Core\User.cs" />
+    <Compile Include="Core\RelayChat\GlobalChat.cs" />
+    <Compile Include="Core\RelayChat\Core\IrcHelper.cs" />
+    <Compile Include="Core\RelayChat\ServerChat.cs" />
+    <Compile Include="Core\Remote\ConsoleListener.cs" />
+    <Compile Include="Core\Updater.cs" />
     <Compile Include="Utils\BinaryUtils.cs" />
     <Compile Include="Utils\BlockChangeHistory.cs" />
     <Compile Include="Utils\FileUtils.cs" />
-    <Compile Include="System\Heartbeat\Heart.cs" />
-    <Compile Include="System\Heartbeat\Heartbeat.cs" />
-    <Compile Include="System\Heartbeat\MBeat.cs" />
-    <Compile Include="System\Heartbeat\WBeat.cs" />
-    <Compile Include="System\IRC.cs" />
-    <Compile Include="System\Logger.cs" />
-    <Compile Include="System\Settings\ExtraSettings.cs" />
-    <Compile Include="System\Settings\GroupSettings.cs" />
-    <Compile Include="System\Settings\LevelSettings.cs" />
-    <Compile Include="System\UPnP.cs" />
+    <Compile Include="Core\Heartbeat\Heart.cs" />
+    <Compile Include="Core\Heartbeat\Heartbeat.cs" />
+    <Compile Include="Core\Heartbeat\MBeat.cs" />
+    <Compile Include="Core\Logger.cs" />
+    <Compile Include="Core\Settings\ExtraSettings.cs" />
+    <Compile Include="Core\Settings\GroupSettings.cs" />
+    <Compile Include="Core\Settings\LevelSettings.cs" />
+    <Compile Include="Core\UPnP.cs" />
     <Compile Include="Utils\ColorUtils.cs" />
     <Compile Include="Utils\ExtraData.cs" />
     <Compile Include="Utils\InetUtils.cs" />
@@ -212,43 +227,99 @@
     <Compile Include="Utils\Vector2D.cs" />
     <Compile Include="Utils\Vector2S.cs" />
     <Compile Include="Utils\Vector3D.cs" />
+    <Compile Include="Utils\Vector3F.cs" />
+    <Compile Include="Utils\Vector3I.cs" />
     <Compile Include="Utils\Vector3S.cs" />
+    <Compile Include="World\BlockQueue.cs" />
     <Compile Include="World\Blocks\BlockChange.cs" />
+    <Compile Include="World\Blocks\Custom\ActiveDeathLava.cs" />
+    <Compile Include="World\Blocks\Custom\ActiveDeathWater.cs" />
+    <Compile Include="World\Blocks\Custom\BigTNT.cs" />
+    <Compile Include="World\Blocks\Custom\Bird.cs" />
+    <Compile Include="World\Blocks\Custom\blueFlag.cs" />
+    <Compile Include="World\Blocks\Custom\c4.cs" />
+    <Compile Include="World\Blocks\Custom\C4Detonate.cs" />
+    <Compile Include="World\Blocks\Custom\Creeper.cs" />
+    <Compile Include="World\Blocks\Custom\DeathAir.cs" />
+    <Compile Include="World\Blocks\Custom\DeathLava.cs" />
+    <Compile Include="World\Blocks\Custom\DeathWater.cs" />
+    <Compile Include="World\Blocks\Custom\fastdeathlava.cs" />
+    <Compile Include="World\Blocks\Custom\FiniteLava.cs" />
+    <Compile Include="World\Blocks\Custom\FiniteWater.cs" />
+    <Compile Include="World\Blocks\Custom\Firework.cs" />
+    <Compile Include="World\Blocks\Custom\Fish.cs" />
+    <Compile Include="World\Blocks\Custom\Geyser.cs" />
     <Compile Include="World\Blocks\Custom\Griefer_stone.cs" />
+    <Compile Include="World\Blocks\Custom\LavaDown.cs" />
+    <Compile Include="World\Blocks\Custom\LavaFaucet.cs" />
+    <Compile Include="World\Blocks\Custom\LavaFire.cs" />
+    <Compile Include="World\Blocks\Custom\MagmaLava.cs" />
+    <Compile Include="World\Blocks\Custom\NukeTNT.cs" />
+    <Compile Include="World\Blocks\Custom\op_brick.cs" />
+    <Compile Include="World\Blocks\Custom\OP_CobbleStone.cs" />
+    <Compile Include="World\Blocks\Custom\OP_Stone.cs" />
+    <Compile Include="World\Blocks\Custom\redFlag.cs" />
+    <Compile Include="World\Blocks\Custom\RocketBody.cs" />
+    <Compile Include="World\Blocks\Custom\RocketStart.cs" />
+    <Compile Include="World\Blocks\Custom\SmallTNT.cs" />
+    <Compile Include="World\Blocks\Custom\Snake.cs" />
+    <Compile Include="World\Blocks\Custom\SnakeTail.cs" />
+    <Compile Include="World\Blocks\Custom\TNTExplosion.cs" />
+    <Compile Include="World\Blocks\Custom\Train.cs" />
+    <Compile Include="World\Blocks\Custom\WaterDown.cs" />
+    <Compile Include="World\Blocks\Custom\WaterFaucet.cs" />
+    <Compile Include="World\Blocks\Custom\ZombieBody.cs" />
+    <Compile Include="World\Blocks\Custom\ZombieHead.cs" />
     <Compile Include="World\Blocks\DefaultBlocks\Black.cs" />
     <Compile Include="World\Blocks\DefaultBlocks\Blue.cs" />
     <Compile Include="World\Blocks\DefaultBlocks\BlueViolet.cs" />
     <Compile Include="World\Blocks\DefaultBlocks\Bookcase.cs" />
     <Compile Include="World\Blocks\DefaultBlocks\Brick.cs" />
+    <Compile Include="World\Blocks\DefaultBlocks\Brown.cs" />
     <Compile Include="World\Blocks\DefaultBlocks\BrownShroom.cs" />
+    <Compile Include="World\Blocks\DefaultBlocks\CeramicTile.cs" />
     <Compile Include="World\Blocks\DefaultBlocks\Coal.cs" />
+    <Compile Include="World\Blocks\DefaultBlocks\CobblestoneSlab.cs" />
+    <Compile Include="World\Blocks\DefaultBlocks\Crate.cs" />
     <Compile Include="World\Blocks\DefaultBlocks\Cyan.cs" />
+    <Compile Include="World\Blocks\DefaultBlocks\DeepBlue.cs" />
     <Compile Include="World\Blocks\DefaultBlocks\Dirt.cs" />
     <Compile Include="World\Blocks\DefaultBlocks\DoubleStair.cs" />
+    <Compile Include="World\Blocks\DefaultBlocks\Fire.cs" />
+    <Compile Include="World\Blocks\DefaultBlocks\ForestGreen.cs" />
     <Compile Include="World\Blocks\DefaultBlocks\Glass.cs" />
     <Compile Include="World\Blocks\DefaultBlocks\Gold.cs" />
     <Compile Include="World\Blocks\DefaultBlocks\Green.cs" />
     <Compile Include="World\Blocks\DefaultBlocks\GreenYellow.cs" />
     <Compile Include="World\Blocks\DefaultBlocks\Gray.cs" />
+    <Compile Include="World\Blocks\DefaultBlocks\Ice.cs" />
     <Compile Include="World\Blocks\DefaultBlocks\Indigo.cs" />
     <Compile Include="World\Blocks\DefaultBlocks\Iron.cs" />
     <Compile Include="World\Blocks\DefaultBlocks\Iron_Ore.cs" />
     <Compile Include="World\Blocks\DefaultBlocks\Leaves.cs" />
+    <Compile Include="World\Blocks\DefaultBlocks\LightPink.cs" />
     <Compile Include="World\Blocks\DefaultBlocks\Magenta.cs" />
+    <Compile Include="World\Blocks\DefaultBlocks\MagmaBlock.cs" />
     <Compile Include="World\Blocks\DefaultBlocks\MossyCobbleStone.cs" />
     <Compile Include="World\Blocks\DefaultBlocks\Navy.cs" />
     <Compile Include="World\Blocks\DefaultBlocks\Obsidian.cs" />
     <Compile Include="World\Blocks\DefaultBlocks\Orange.cs" />
+    <Compile Include="World\Blocks\DefaultBlocks\Pillar.cs" />
     <Compile Include="World\Blocks\DefaultBlocks\Pink.cs" />
     <Compile Include="World\Blocks\DefaultBlocks\Purple.cs" />
     <Compile Include="World\Blocks\DefaultBlocks\Red.cs" />
     <Compile Include="World\Blocks\DefaultBlocks\RedFlower.cs" />
     <Compile Include="World\Blocks\DefaultBlocks\RedShroom.cs" />
+    <Compile Include="World\Blocks\DefaultBlocks\Rope.cs" />
+    <Compile Include="World\Blocks\DefaultBlocks\SandStone.cs" />
+    <Compile Include="World\Blocks\DefaultBlocks\Snow.cs" />
     <Compile Include="World\Blocks\DefaultBlocks\Sponge.cs" />
     <Compile Include="World\Blocks\DefaultBlocks\SpringGreen.cs" />
     <Compile Include="World\Blocks\DefaultBlocks\Stair.cs" />
+    <Compile Include="World\Blocks\DefaultBlocks\StoneBrick.cs" />
     <Compile Include="World\Blocks\DefaultBlocks\TNT.cs" />
     <Compile Include="World\Blocks\DefaultBlocks\Tree.cs" />
+    <Compile Include="World\Blocks\DefaultBlocks\Turquoise.cs" />
     <Compile Include="World\Blocks\DefaultBlocks\UNKNOWN.cs" />
     <Compile Include="World\Blocks\DefaultBlocks\White.cs" />
     <Compile Include="World\Blocks\DefaultBlocks\Yellow.cs" />
@@ -262,6 +333,9 @@
     <Compile Include="Player\Player.cs" />
     <Compile Include="World\Blocks\Block.cs" />
     <Compile Include="World\Blocks\OldMCForgeToNewMCForge.cs" />
+    <Compile Include="World\Blocks\Custom\Opsidian.cs" />
+    <Compile Include="World\Blocks\Custom\op_glass.cs" />
+    <Compile Include="World\Blocks\Physics\CustomPhysicsBlocks\Train.cs" />
     <Compile Include="World\Blocks\Physics\DefaultPhysicBlocks\Active_Lava.cs" />
     <Compile Include="World\Blocks\Physics\DefaultPhysicBlocks\Active_Water.cs" />
     <Compile Include="World\Blocks\DefaultBlocks\Adminium.cs" />
@@ -278,6 +352,7 @@
     <Compile Include="World\Blocks\Physics\DefaultPhysicBlocks\Gravel.cs" />
     <Compile Include="World\Blocks\Physics\DefaultPhysicBlocks\Sand.cs" />
     <Compile Include="Utils\Cuboid.cs" />
+    <Compile Include="World\ClassicWorld.cs" />
     <Compile Include="World\Drawing\CubeBrush.cs" />
     <Compile Include="World\Drawing\Fonts.cs" />
     <Compile Include="World\Drawing\IBrush.cs" />
@@ -288,12 +363,12 @@
     <Compile Include="World\Generator\LevelGenerator.cs" />
     <Compile Include="World\Generator\Noise.cs" />
     <Compile Include="World\Level.cs" />
-    <Compile Include="System\LoadedData.cs" />
-    <Compile Include="System\MiscStructs.cs" />
+    <Compile Include="Core\LoadedData.cs" />
+    <Compile Include="Core\MiscStructs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="System\Server.cs" />
+    <Compile Include="Core\Server.cs" />
     <Compile Include="World\Blocks\Physics\PhysicsBlock.cs" />
-    <Compile Include="System\Settings\ServerSettings.cs" />
+    <Compile Include="Core\Settings\ServerSettings.cs" />
     <Compile Include="World\Loading and Saving\IMap.cs" />
     <Compile Include="World\Loading and Saving\MCForgeOldMap.cs" />
     <Compile Include="World\WorldComponents.cs" />

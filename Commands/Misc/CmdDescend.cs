@@ -36,7 +36,7 @@ namespace MCForge.Commands
             bool tpd = false;
             while (y > 0) { y--;
                 if (p.Level.GetBlock(x, z, y) == Block.BlockList.AIR && p.Level.GetBlock(x, z, (ushort)(y + 1)) == Block.BlockList.AIR && !blocks.Contains(p.Level.GetBlock(x, z, (ushort)(y - 1)))) {
-                    try { p.SendToPos(new Vector3S((ushort)(p.Pos.x), (ushort)(p.Pos.z), (ushort)((y + 1) * 32)), p.Rot); }
+                    try { p.SendToPos(new Vector3S((ushort)(p.Pos.x), (ushort)(p.Pos.z), (ushort)((y + 1) * 32))); }
                     catch { p.SendMessage("Error while trying to descend!"); return; }
                     p.SendMessage("You have descended!"); tpd = true;
                     break;

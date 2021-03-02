@@ -12,6 +12,7 @@
     <AssemblyName>Commands</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -24,14 +25,13 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
+    <Optimize>true</Optimize>
     <OutputPath>..\MCForge 2.0\bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
@@ -49,6 +49,10 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="MCForge, Version=6.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\MCForge 2.0\bin\Debug\MCForge.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -63,6 +67,7 @@
     <Compile Include="Building\CmdBrush.cs" />
     <Compile Include="Building\CmdClick.cs" />
     <Compile Include="Building\CmdCuboid.cs" />
+    <Compile Include="Building\CmdDoor.cs" />
     <Compile Include="Building\CmdLayer.cs" />
     <Compile Include="Building\CmdLine.cs" />
     <Compile Include="Building\CmdPlace.cs" />
@@ -78,6 +83,7 @@
     <Compile Include="Information\CmdLevels.cs" />
     <Compile Include="Information\CmdUnloaded.cs" />
     <Compile Include="Misc\CmdEconomy.cs" />
+    <Compile Include="Misc\CmdGC.cs" />
     <Compile Include="Misc\CmdPortal.cs" />
     <Compile Include="Moderation\CmdClearBlockChanges.cs" />
     <Compile Include="Moderation\CmdHighlight.cs" />
@@ -178,13 +184,13 @@
     <Compile Include="CmdTest.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MCForge 2.0\MCForge.csproj">
-      <Project>{EDC9892F-BBA2-4043-9FD9-94C0BA7D9552}</Project>
-      <Name>MCForge</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Plugins\Plugins.csproj">
       <Project>{48C20652-75A0-487A-926D-53696D1F7DB4}</Project>
       <Name>Plugins</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MCForge 2.0\MCForge.csproj">
+      <Project>{EDC9892F-BBA2-4043-9FD9-94C0BA7D9552}</Project>
+      <Name>MCForge</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

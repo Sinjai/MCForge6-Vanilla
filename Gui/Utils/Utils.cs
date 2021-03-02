@@ -55,10 +55,10 @@ namespace MCForge.Gui.Utils {
         /// <returns></returns>
         public static IEnumerable<string> GetUnloadedLevels() {
            DirectoryInfo info = new DirectoryInfo(FileUtils.LevelsPath);
-           FileInfo[] Files = info.GetFiles("*.lvl");
+           FileInfo[] Files = info.GetFiles("*.cw");
 
            for ( int i = 0; i < Files.Length; i++ ) {
-               yield return Files[i].Name.Replace(".lvl", string.Empty);
+               yield return Files[i].Name.Replace(".cw", string.Empty);
            }
         }
     }

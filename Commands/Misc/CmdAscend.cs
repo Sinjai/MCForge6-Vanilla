@@ -32,11 +32,11 @@ namespace MCForge.Commands
         public void Use(Player p, string[] args)
         {
             List<Block> blocks = new List<Block>(new Block[] { Block.BlockList.AIR, Block.BlockList.RED_MUSHROOM, Block.BlockList.BROWN_MUSHROOM, Block.BlockList.RED_FLOWER, Block.BlockList.YELLOW_FLOWER, Block.BlockList.ACTIVE_LAVA, Block.BlockList.ACTIVE_WATER, Block.BlockList.WATER, Block.BlockList.LAVA });
-            ushort top = (ushort)(p.Level.Size.y), x = (ushort)(p.Pos.x / 32), y = (ushort)(p.Pos.y / 32), z = (ushort)(p.Pos.z / 32); ;
+            ushort top = (ushort)(p.Level.CWMap.Size.y), x = (ushort)(p.Pos.x / 32), y = (ushort)(p.Pos.y / 32), z = (ushort)(p.Pos.z / 32); ;
             bool tpd = false;
             while (y < top) { y++;
                 if (p.Level.GetBlock(x, z, y) == Block.BlockList.AIR && p.Level.GetBlock(x, z, (ushort)(y + 1)) == Block.BlockList.AIR && !blocks.Contains(p.Level.GetBlock(x, z, (ushort)(y - 1)))) {
-                    try { p.SendToPos(new Vector3S((ushort)(p.Pos.x), (ushort)(p.Pos.z), (ushort)((y + 1) * 32)), p.Rot); }
+                    try { p.SendToPos(new Vector3S((ushort)(p.Pos.x), (ushort)(p.Pos.z), (ushort)((y + 1) * 32))); }
                     catch { p.SendMessage("An error has occured while trying to ascend!"); return; }
                     p.SendMessage("You have ascended!"); tpd = true;
                     break;

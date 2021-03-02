@@ -49,10 +49,10 @@ namespace MCForge.Commands
                 }
                 string margs = ArrayToString(fargs.ToArray());
                 margs = margs.Replace('%', '&');
-                Bot TemporaryPlayer = new Bot(margs, p.Pos, p.Rot, p.Level, false, false, false);
+                Bot TemporaryPlayer = new Bot(margs, p.Pos, new byte[2] { (byte)p.Rot.x, (byte)p.Rot.z }, p.Level, false, false, false);
                 TemporaryPlayer.Player.Level.ExtraData.Add("Bot" + Random.Next(0, 9999999), margs + " " + TemporaryPlayer.FollowPlayers + " " + TemporaryPlayer.BreakBlocks + " " + TemporaryPlayer.Jumping +
                     " " + TemporaryPlayer.Player.Pos.x + " " + TemporaryPlayer.Player.Pos.y + " " + TemporaryPlayer.Player.Pos.z + " "
-                    + TemporaryPlayer.Player.Rot[0] + " " + TemporaryPlayer.Player.Rot[1]); //Add bot to level metadata
+                    + TemporaryPlayer.Player.Rot.x + " " + TemporaryPlayer.Player.Rot.z); //Add bot to level metadata
                                                                                             //This enables cross server bot transfer
                                                                                             //And returns when level is loaded
                 p.SendMessage("Spawned " + ArrayToString(fargs.ToArray()) + Server.DefaultColor + "!");
@@ -208,7 +208,7 @@ namespace MCForge.Commands
 
                 Bot.Player.Level.ExtraData.Add("Bot" + Random.Next(0, 9999999), margs + " " + Bot.FollowPlayers + " " + Bot.BreakBlocks +
                     " " + Bot.Player.Pos.x + " " + Bot.Player.Pos.y + " " + Bot.Player.Pos.z + " "
-                    + Bot.Player.Rot[0] + " " + Bot.Player.Rot[1]);
+                    + Bot.Player.Rot.x + " " + Bot.Player.Rot.z);
             }
         }
 

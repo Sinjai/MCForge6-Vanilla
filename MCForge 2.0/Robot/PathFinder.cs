@@ -48,7 +48,7 @@ namespace MCForge.Robot
         private static BreadCrumb FindPathReversed(Level world, BotMap level, Point3D start, Point3D end)
         {
             MinHeap<BreadCrumb> openList = new MinHeap<BreadCrumb>(256);
-            BreadCrumb[, ,] brWorld = new BreadCrumb[world.Size.x, world.Size.y, world.Size.z];
+            BreadCrumb[, ,] brWorld = new BreadCrumb[world.CWMap.Size.x, world.CWMap.Size.y, world.CWMap.Size.z];
             BreadCrumb node;
             Point3D tmp;
             int cost;

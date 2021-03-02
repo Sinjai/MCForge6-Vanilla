@@ -31,7 +31,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
+    <Optimize>true</Optimize>
     <OutputPath>..\MCForge 2.0\bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
@@ -48,6 +48,10 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="MCForge, Version=6.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\MCForge 2.0\bin\Debug\MCForge.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -62,6 +66,12 @@
     <Compile Include="AntiGriefing\Helper.cs" />
     <Compile Include="AntiGriefing\PlayerInfo.cs" />
     <Compile Include="AntiGriefing\PluginAntiGrief.cs" />
+    <Compile Include="CTF\Commands\CmdJoin.cs" />
+    <Compile Include="CTF\CTF.cs" />
+    <Compile Include="CTF\EXPDB.cs" />
+    <Compile Include="CTF\EXPLevel.cs" />
+    <Compile Include="CTF\ExtraPlayerData.cs" />
+    <Compile Include="CTF\ServerCTF.cs" />
     <Compile Include="PluginAutoBlockChange.cs" />
     <Compile Include="PluginMessageBlock.cs" />
     <Compile Include="PluginMessageViewer.cs" />
@@ -75,16 +85,27 @@
     </Compile>
     <Compile Include="WomPlugin\WOM.cs" />
     <Compile Include="WomPlugin\WoMPluginSettings.cs" />
+    <Compile Include="ZombieSurvival\Commands\CmdAka.cs" />
+    <Compile Include="ZombieSurvival\Commands\CmdAlive.cs" />
+    <Compile Include="ZombieSurvival\Commands\CmdDisinfect.cs" />
+    <Compile Include="ZombieSurvival\Commands\CmdEndRound.cs" />
+    <Compile Include="ZombieSurvival\Commands\CmdInfect.cs" />
+    <Compile Include="ZombieSurvival\Commands\CmdInfected.cs" />
+    <Compile Include="ZombieSurvival\Commands\CmdQueue.cs" />
+    <Compile Include="ZombieSurvival\Commands\CmdReferee.cs" />
+    <Compile Include="ZombieSurvival\Commands\CmdStartRound.cs" />
+    <Compile Include="ZombieSurvival\Commands\CmdStore.cs" />
+    <Compile Include="ZombieSurvival\Commands\CmdSurvivor.cs" />
+    <Compile Include="ZombieSurvival\Commands\CmdTime.cs" />
+    <Compile Include="ZombieSurvival\Commands\CmdZombieHelp.cs" />
+    <Compile Include="ZombieSurvival\ExtraPlayerData.cs" />
+    <Compile Include="ZombieSurvival\WOM.cs" />
+    <Compile Include="ZombieSurvival\ZombieHelper.cs" />
+    <Compile Include="ZombieSurvival\ZombiePlugin.cs" />
     <Compile Include="Zones\CmdZone.cs" />
     <Compile Include="Zones\PluginZones.cs" />
     <Compile Include="Zones\Zone.cs" />
     <Compile Include="Zones\ZoneList.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\MCForge 2.0\MCForge.csproj">
-      <Project>{EDC9892F-BBA2-4043-9FD9-94C0BA7D9552}</Project>
-      <Name>MCForge</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.0">
@@ -117,4 +138,10 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <ItemGroup>
+    <ProjectReference Include="..\MCForge 2.0\MCForge.csproj">
+      <Project>{EDC9892F-BBA2-4043-9FD9-94C0BA7D9552}</Project>
+      <Name>MCForge</Name>
+    </ProjectReference>
+  </ItemGroup>
 </Project>

@@ -75,7 +75,7 @@ namespace MCForge.Robot
             Player.Username = Username;
             Player.Pos = Position;
             Player.oldPos = new Vector3S(Position.x, Position.z, Position.y);
-            Player.Rot = Rotation;
+            Player.Rot = new Vector2S(Rotation[0], Rotation[1]);
             Player.Level = level;
             Player.ID = FreeId();
             Server.Bots.Add(this);
@@ -105,7 +105,7 @@ namespace MCForge.Robot
                     {
                         #region Find Closest Player
                         bool HitAPlayer = false;
-                        Vector3S ClosestLocation = Bot.Player.Level.Size * 32;
+                        Vector3S ClosestLocation = Bot.Player.Level.CWMap.Size * 32;
                         foreach (Player p in Server.Players)
                         {
                             if (p.Level == Bot.Player.Level)
@@ -270,7 +270,7 @@ namespace MCForge.Robot
             }
         }
 
-        protected byte FreeId()
+        byte FreeId()
         {
             List<byte> usedIds = new List<byte>();
 
@@ -287,7 +287,7 @@ namespace MCForge.Robot
             return 254;
         }
 
-        protected void SpawnThisBotToOtherPlayers(Bot z)
+        void SpawnThisBotToOtherPlayers(Bot z)
         {
             Server.ForeachPlayer(delegate(Player p)
             {

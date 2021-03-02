@@ -108,10 +108,23 @@ namespace MCForge.World.Physics
             Level.OnAllLevelsLoad.SystemLvl += OnAllLevelsLoad_SystemLvl;
         }
 
+        private static List<PhysicsBlock> toDelete = new List<PhysicsBlock>();
+
         static void OnAllLevelsLoad_SystemLvl(Level sender, API.Events.LevelLoadEventArgs args) {
             sender.PhysicsThread = new Thread(() => {
                 while (!Server.ShuttingDown) {
-                    sender.pblocks.ForEach((pb) => pb.Tick(sender));
+                    Thread.Sleep(300);
+                    sender.pblocks.ForEach((pb) => {
+                        if(pb is Door)
+                            if((pb as Door).time >= 256)
+                                toDelete.Add(pb);
+                        pb.Tick(sender);
+                    });
+
+                    toDelete.ForEach(item => {
+                        sender.pblocks.Remove(item);
+                    });
+                    toDelete.Clear();
                     Thread.Sleep(sender.PhysicsTick);
                 }
             });

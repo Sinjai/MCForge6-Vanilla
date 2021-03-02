@@ -94,9 +94,9 @@ namespace MCForge.Commands {
             if (testValue < 0)
                 return false;
 
-            if (testValue >= p.Level.Size.x && dimension == 0) return false;
-            else if (testValue >= p.Level.Size.z && dimension == 1) return false;
-            else if (testValue >= p.Level.Size.y && dimension == 2) return false;
+            if (testValue >= p.Level.CWMap.Size.x && dimension == 0) return false;
+            else if (testValue >= p.Level.CWMap.Size.z && dimension == 1) return false;
+            else if (testValue >= p.Level.CWMap.Size.y && dimension == 2) return false;
             return true;
         }
 

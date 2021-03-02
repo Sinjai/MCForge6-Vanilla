@@ -130,7 +130,7 @@ namespace MCForge.Commands
             p.SendMessage(buffer.Count.ToString() + " blocks.");
             buffer.ForEach(delegate(Pos pos)
             {
-                p.Level.BlockChange((ushort)(pos.pos.x), (ushort)(pos.pos.z), (ushort)(pos.pos.y), cpos.newType, p);
+                BlockQueue.Addblock(p, (ushort)(pos.pos.x), (ushort)(pos.pos.y), (ushort)(pos.pos.z), cpos.newType);
             });
         }
 

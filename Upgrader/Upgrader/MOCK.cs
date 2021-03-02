@@ -143,7 +143,7 @@ namespace MCForge_.Gui
                     
                     Console.WriteLine("Converting Level data..");
                     MySQL.execute("CREATE TABLE if not exists Blocks (UID INTEGER, X MEDIUMINT, Y MEDIUMINT, Z MEDIUMINT, Level VARCHAR(100), Deleted VARCHAR(30), Block TEXT, Date DATETIME, Was TEXT);");
-                    foreach (string levelfile in Directory.GetFiles("levels", "*.lvl"))
+                    foreach (string levelfile in Directory.GetFiles("levels", "*.cw"))
                     {
                         try {
                             //Get level name
@@ -173,7 +173,7 @@ namespace MCForge_.Gui
                             }
                             //TODO Add zones, mb, and portals once those are in
                             //Snowl panned them to be in the Level.ExtraData
-                            //(it allows for portability of the .lvl so you can move it from server to server without requiring MySQL)
+                            //(it allows for portability of the .cw so you can move it from server to server without requiring MySQL)
                         }
                         catch (Exception e) {
                             Console.ForegroundColor = ConsoleColor.Red;
@@ -203,7 +203,7 @@ namespace MCForge_.Gui
                         
                         Console.WriteLine("Converting Level data..");
                         SQLite.execute("CREATE TABLE if not exists Blocks (UID INTEGER, X MEDIUMINT, Y MEDIUMINT, Z MEDIUMINT, Level VARCHAR(100), Deleted VARCHAR(30), Block TEXT, Date DATETIME, Was TEXT);");
-                        foreach (string levelfile in Directory.GetFiles("levels", "*.lvl"))
+                        foreach (string levelfile in Directory.GetFiles("levels", "*.cw"))
                         {
                             try {
                                 //Convert Block History
@@ -246,7 +246,7 @@ namespace MCForge_.Gui
                     }
                 }
                 Console.ForegroundColor = ConsoleColor.Green;
-                foreach (string level in Directory.GetFiles("levels", "*.lvl"))
+                foreach (string level in Directory.GetFiles("levels", "*.cw"))
                 {
                     try {
                         Console.ForegroundColor = ConsoleColor.Green;
@@ -285,7 +285,7 @@ namespace MCForge_.Gui
                         else
                         {
                             Console.ForegroundColor = ConsoleColor.Yellow;
-                            Console.WriteLine("Level didnt load, must be a MCForge 6 level..");
+                            Console.WriteLine("Level didnt load, must be a MCForge 7 level..");
                         }
                     }
                     catch (Exception e) {

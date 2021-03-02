@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyDescription("Console Interface for MCForge")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("MCForge")]
-[assembly: AssemblyProduct("MCForge 6")]
+[assembly: AssemblyProduct("MCForge 7")]
 [assembly: AssemblyCopyright("Copyright ©  2012 MCForge")]
 [assembly: AssemblyTrademark("Forging the Way!")]
 [assembly: AssemblyCulture("")]

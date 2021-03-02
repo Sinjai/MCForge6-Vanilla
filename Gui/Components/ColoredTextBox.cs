@@ -151,18 +151,22 @@ namespace MCForge.Gui.Components {
                 return;
             }
 
-            SelectionStart = TextLength;
-            SelectionLength = 0;
-            SelectionColor = foreColor;
-            SelectionBackColor = bgColor;
-            AppendText( text );
-            SelectionBackColor = BackColor;
-            SelectionColor = ForeColor;
-
+            try
+            {
+                SelectionStart = TextLength;
+                SelectionLength = 0;
+                SelectionColor = foreColor;
+                SelectionBackColor = bgColor;
+                AppendText(text);
+                SelectionBackColor = BackColor;
+                SelectionColor = ForeColor;
+            }
+            catch { } //because it can cause a crash on shutdown
         }
 
         private void ColoredReader_LinkClicked( object sender, System.Windows.Forms.LinkClickedEventArgs e ) {
-            if ( !e.LinkText.StartsWith( "http://www.minecraft.net/classic/play/" ) ) {
+            if (!e.LinkText.Contains("minecraft.net") && !e.LinkText.Contains("classicube.net"))
+            {
                 if ( MessageBox.Show( "Never open links from people that you don't trust!", "Warning!!", MessageBoxButtons.OKCancel ) == DialogResult.Cancel )
                     return;
             }

@@ -18,11 +18,10 @@ using System.Diagnostics;
 using MCForge.Core;
 using MCForge.World;
 using System.Reflection;
+using MCForge.Core.RelayChat;
 
 namespace MCForge.Gui.Forms {
     public partial class FormMainScreen : AeroForm, IFormSharer {
-
-        private bool _restarting;
 
         public FormMainScreen() {
             InitializeComponent();
@@ -74,9 +73,9 @@ namespace MCForge.Gui.Forms {
         }
 
         private void FormMainScreen_Shown(object sender, EventArgs e) {
-            if ( GuiSettings.GetSettingBoolean(GuiSettings.SHOW_NEWS_KEY) )
+            /*if ( GuiSettings.GetSettingBoolean(GuiSettings.SHOW_NEWS_KEY) )
                 using ( var news = new NewsDialog() )
-                    news.ShowDialog();
+                    news.ShowDialog();*/
         }
 
         private void txtMessage_KeyDown(object sender, KeyEventArgs e) {
@@ -94,6 +93,7 @@ namespace MCForge.Gui.Forms {
                     if (cmd == null)
                     {
                         Logger.Log("Command not found!");
+                        txtMessage.Text = "";
                         return; // cannot run the command
                     }
                     if (cp == null)
@@ -125,7 +125,14 @@ namespace MCForge.Gui.Forms {
                     Logger.Log("<AdminChat> &5[&1Console&5]: &1" + txtMessage.Text);
                     txtMessage.InHintState = true;
                 }
+                else if (cmbChatType.Text == "GlobalChat")
+                {
+                    Server.GC.SendConsoleMessage(txtMessage.Text);
+                    Logger.Log("<GC> &0[&2Console&0]: " + txtMessage.Text);
+                    txtMessage.Text = "";
+                }
                 else {
+                    Server.IRC.SendConsoleMessage(txtMessage.Text);
                     Player.UniversalChat("&a[&fConsole&a]:&f " + txtMessage.Text);
                     Logger.Log("&0[&2Console&0]: " + txtMessage.Text);
                     txtMessage.InHintState = true;
@@ -266,15 +273,15 @@ namespace MCForge.Gui.Forms {
 
 
         private void visitForumsToolStripMenuItem_Click(object sender, EventArgs e) {
-            Process.Start("http://mcforge.net/forums/");
+            Process.Start("http://mcforge.org/forums/");
         }
 
         private void reportAProblemToolStripMenuItem_Click(object sender, EventArgs e) {
-            Process.Start("http://www.mcforge.net/forums/forumdisplay.php?fid=5");
+            Process.Start("http://mcforge.org/forums/viewforum.php?f=8");
         }
 
         private void documentationToolStripMenuItem_Click(object sender, EventArgs e) {
-            Process.Start("https://github.com/MCForge/MCForge-Vanilla/wiki");
+            Process.Start("https://github.com/MCForge/MCForge7-Vanilla");
         }
 
         private void shutdownToolStripMenuItem_Click(object sender, EventArgs e) {
@@ -282,7 +289,6 @@ namespace MCForge.Gui.Forms {
         }
 
         private void restartToolStripMenuItem_Click(object sender, EventArgs e) {
-            _restarting = true;
             Close();
             Server.Restart();
         }
@@ -301,22 +307,31 @@ namespace MCForge.Gui.Forms {
         }
 
         private void newsToolStripMenuItem_Click(object sender, EventArgs e) {
-            using ( var news = new NewsDialog() )
-                news.ShowDialog();
+            try
+            {
+                Process.Start("http://mcforge.org/forums/viewforum.php?f=3");
+            }
+            catch { }
         }
 
         private void changelogToolStripMenuItem_Click(object sender, EventArgs e) {
-            using ( TextOnlyDialog dialog = new TextOnlyDialog() ) {
-                dialog.Text = "ChangeLog";
-                dialog.ContentText = "Logs of change\nLogs of changyyy\nOMGESUS";
-                dialog.ShowDialog();
+            try
+            {
+                Process.Start("http://mcforge.org/changelog");
             }
+            catch { }
         }
 
         private void makerToolStripMenuItem_Click(object sender, EventArgs e)
         {
             using (CommandMaker dialog = new CommandMaker())
                 dialog.ShowDialog();
+        }
+
+        private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using (ServerSettingsDialog settings = new ServerSettingsDialog())
+                settings.ShowDialog();
         }
 
         #endregion
@@ -338,6 +353,53 @@ namespace MCForge.Gui.Forms {
             }
 
             public void WriteLine(string line, string replyChannel) {}
+        }
+
+        private void kickAllToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            foreach (Player p in Server.Players.ToArray())
+                p.Kick("Console kicking ALL players");
+        }
+
+        private void kickNonopsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            foreach (Player p in Server.Players.Where(p => !p.IsAdmin).ToArray())
+                p.Kick("Console kicking ALL players");
+        }
+
+        private void pluginsManagerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //TODO
+        }
+
+        private void unloadAllToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            foreach (Level l in Level.Levels.ToArray())
+                l.Unload(true);
+        }
+
+        private void reloadEmptyToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            foreach (Level l in Level.Levels.Where(l => l.Players.Count() == 0).ToArray())
+            {
+                l.Unload(true);
+                Level.LoadLevel(l.Name);
+            }
+        }
+
+        private void reloadAllToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            foreach (Level l in Level.Levels.ToArray())
+            {
+                l.Unload(true);
+                Level.LoadLevel(l.Name);
+            }
+        }
+
+        private void unloadEmptyToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            foreach (Level l in Level.Levels.Where(l => l.Players.Count() == 0).ToArray())
+                l.Unload(true);
         }
     }
 }

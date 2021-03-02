@@ -36,8 +36,8 @@ namespace MCForge.Commands
             switch (args.Length)
             {
                 case 0:
-                    Vector3S meep = new Vector3S((short)(p.Level.SpawnPos.x * 32 + 16), (short)(p.Level.SpawnPos.z * 32 + 16), (short)(p.Level.SpawnPos.y * 32));
-                    p.SendToPos(meep, p.Level.SpawnRot);
+                    Vector3S meep = new Vector3S((short)(p.Level.CWMap.SpawnPos.x * 32 + 16), (short)(p.Level.CWMap.SpawnPos.z * 32 + 16), (short)(p.Level.CWMap.SpawnPos.y * 32));
+                    p.SendToPos(meep, new byte[2] { (byte)p.Rot.x, (byte)p.Rot.z });
                     break;
                 case 1:
                     Player who = Player.Find(args[0]);
@@ -70,7 +70,7 @@ namespace MCForge.Commands
                             }
                         }
                     }
-                    p.SendToPos(who.Pos, who.Rot);
+                    p.SendToPos(who.Pos, new byte[2] { (byte)who.Rot.x, (byte)who.Rot.z });
                     break;
                 case 2:
                     Player one = Player.Find(args[0]);
@@ -110,7 +110,7 @@ namespace MCForge.Commands
                             }
                         }
                     }
-                    one.SendToPos(two.Pos, two.Rot);
+                    one.SendToPos(two.Pos);
                     p.SendMessage(one.Username + " has been succesfully teleported to " + two.Username + "!");
                     break;
                 case 3: {
@@ -121,7 +121,7 @@ namespace MCForge.Commands
                             return;
                         }
                         else {
-                            p.SendToPos(new Vector3S(x, z, y), p.Rot);
+                            p.SendToPos(new Vector3S(x, z, y), new byte[2] { (byte)p.Rot.x, (byte)p.Rot.z });
                             p.SendMessage(string.Format("Succesfully teleported to {0}, {1}, {2}!", x, z, y));
                         }
                         break;
@@ -137,7 +137,7 @@ namespace MCForge.Commands
                             ICommand g = Command.Find("goto");
                             if (g == null) { p.SendMessage("You can't teleport to another level"); return; }
                             g.Use(p, new string[] { args[3] });
-                            p.SendToPos(new Vector3S(x, z, y), p.Rot);
+                            p.SendToPos(new Vector3S(x, z, y), new byte[2] { (byte)p.Rot.x, (byte)p.Rot.z });
                             p.SendMessage(string.Format("Succesfully teleported to {0}, {1}, {2}!", x, z, y));
                         }
                         break;

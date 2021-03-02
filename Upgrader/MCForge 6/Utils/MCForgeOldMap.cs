@@ -60,14 +60,14 @@ namespace MCForge.World.Loading_and_Saving {
                     finalLevel.Size = new Vector3S((short)vars[0], (short)vars[1], (short)vars[2]);
                     finalLevel.SpawnPos = new Vector3S((short)vars[3], (short)vars[4], (short)vars[5]);
                     finalLevel.SpawnRot = new byte[2] { rot[0], rot[1] };
-                    finalLevel.TotalBlocks = finalLevel.Size.x * finalLevel.Size.z * finalLevel.Size.y;
+                    finalLevel.TotalBlocks = finalLevel.CWMap.Size.x * finalLevel.CWMap.Size.z * finalLevel.CWMap.Size.y;
 
-                    byte[] blocks = new byte[finalLevel.Size.x * finalLevel.Size.z * finalLevel.Size.y];
+                    byte[] blocks = new byte[finalLevel.CWMap.Size.x * finalLevel.CWMap.Size.z * finalLevel.CWMap.Size.y];
                     gs.Read(blocks, 0, blocks.Length);
                     finalLevel.Data = new byte[finalLevel.TotalBlocks];
-                    for (int x = 0; x < finalLevel.Size.x; x++)
-                        for (int y = 0; y < finalLevel.Size.y; y++)
-                            for (int z = 0; z < finalLevel.Size.z; z++)
+                    for (int x = 0; x < finalLevel.CWMap.Size.x; x++)
+                        for (int y = 0; y < finalLevel.CWMap.Size.y; y++)
+                            for (int z = 0; z < finalLevel.CWMap.Size.z; z++)
                                 finalLevel.SetBlock(x, z, y, (byte)OldMCForgeToNewMCForge.Convert(blocks[finalLevel.PosToInt((ushort)x, (ushort)z, (ushort)y)]));  //Converts all custom blocks to normal blocks.
 
                 }

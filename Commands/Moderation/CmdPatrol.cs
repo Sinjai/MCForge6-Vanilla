@@ -73,7 +73,7 @@ namespace MCForge.Commands.Moderation
             while (p.IsLoading) {
                 Thread.Sleep(5);
             } // until event works.
-            p.SendToPos(found.Pos, found.Rot);
+            p.SendToPos(found.Pos);
         }
 
         public void Help(Player p)

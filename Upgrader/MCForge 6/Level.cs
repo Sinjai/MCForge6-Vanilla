@@ -29,7 +29,7 @@ namespace MCForge.World {
     /// This is a slimmed down version for upgrading
     /// </summary>
     public class Level {
-
+        public ClassicWorld CWMap;
         internal const long MAGIC_NUMBER = 28542713840690029;
         //As a note, the coordinates are right, it is xzy, its based on the users view, not the map itself.
         //WIDTH = X, LENGTH = Z, DEPTH = Y
@@ -146,11 +146,11 @@ namespace MCForge.World {
             //    return null;
             string name = levelName.Split('\\')[1].Split('.')[0];
             Console.WriteLine("Converting " + name);
-            //string Name = "levels\\" + levelName + ".lvl";
+            //string Name = "levels\\" + levelName + ".cw";
             Level finalLevel = new Level(new Vector3S(32, 32, 32));
             finalLevel.Name = levelName;
             try {
-                BinaryReader Binary = null;
+               BinaryReader Binary = null;
                 try {
                     Binary = new BinaryReader(File.Open(levelName, FileMode.Open));
                 }
@@ -173,14 +173,15 @@ namespace MCForge.World {
                     }
                 }
                 Binary.Close();
-                //Binary.Dispose();
-                //finalLevel.HandleMetaData();
-                //Logger.Log("[Level] " + levelName + " was loaded");
+               // Binary.Dispose();
+         //      finalLevel.HandleMetaData();
+          //      Logger.Log("[Level] " + levelName + " was loaded");
                 return finalLevel;
             }
             catch (Exception e) { 
-                //Logger.Log(e.Message); Logger.Log(e.StackTrace); } 
+                Logger.Log(e.Message); Logger.Log(e.StackTrace);
                 return null;
+
             }
         }
 
@@ -195,11 +196,11 @@ namespace MCForge.World {
 
         /// <summary>
         /// Saves this world to a given directory
-        /// in the MCForge-only binary format.
+        /// in the ClassiCube World format
         /// </summary>
         /// <remarks>The resulting files are not compatible with the official Minecraft software.</remarks>
         public bool SaveToBinary() {
-            string Name = "levels\\" + this.Name + ".lvl";
+            string Name = "levels\\" + this.Name + ".cw";
             if (!Directory.Exists("levels")) Directory.CreateDirectory("levels");
             var Binary = new BinaryWriter(File.Open(Name, FileMode.Create));
 

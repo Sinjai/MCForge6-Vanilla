@@ -64,6 +64,7 @@ namespace MCForge.Commands
             }
 
             if (temp == null) { p.SendMessage("Level creation failed"); return; } // something is wrong if you get this
+            temp.CWMap.MapName = temp.Name;
             temp.SaveToBinary();
             temp=Level.LoadLevel(args[0]); //calls level load event
             Level.AddLevel(temp);

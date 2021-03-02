@@ -98,7 +98,7 @@ namespace MCForge.Commands
 
         public void Initialize()
         {
-            Command.AddReference(this, "pervisit");
+            Command.AddReference(this, "pervisitmax");
             Player.OnAllPlayersCommand.Normal += new Event<Player, CommandEventArgs>.EventHandler(OnAllPlayersCommand_Normal);
         }
         public void OnAllPlayersCommand_Normal(Player sender, CommandEventArgs evt)

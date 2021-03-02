@@ -10,7 +10,7 @@ using MCForge.Utils;
 namespace MCForge.Groups
 {
 	/// <summary>
-	/// MCForge 6 Player Group Properties saver
+	/// MCForge 7 Player Group Properties saver
 	/// </summary>
     class PlayerGroupProperties
     {

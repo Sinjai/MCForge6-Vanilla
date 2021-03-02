@@ -12,6 +12,7 @@ BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
 or implied. See the Licenses for the specific language governing
 permissions and limitations under the Licenses.
 */
+using MCForge.World;
 using System;
 using System.Collections.Generic;
 using MCForge.Entity;
@@ -77,7 +78,7 @@ namespace MCForge.Commands
             List<Vector3S> buffer = new List<Vector3S>();
 
             int currentBlock = 0;
-            foreach (byte b in p.Level.Data)
+            foreach (byte b in p.Level.CWMap.BlockData)
             {
                 if (oldType.Contains(b))
                     buffer.Add(p.Level.IntToPos(currentBlock));
@@ -87,7 +88,7 @@ namespace MCForge.Commands
             p.SendMessage(buffer.Count.ToString() + " blocks.");
             buffer.ForEach(delegate(Vector3S pos)
             {
-                p.Level.BlockChange((ushort)(pos.x), (ushort)(pos.z), (ushort)(pos.y), newType, p);
+                BlockQueue.Addblock(p, (ushort)(pos.x), (ushort)(pos.y), (ushort)(pos.z), newType);
             });
             p.SendMessage("&4/replaceall finished!");
         }

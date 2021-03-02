@@ -1,8 +1,10 @@
 #MCForge Vanilla
 
-![MCForge Logo](http://www.mcforge.net/community/public/style_images/4_logo.png)
+![MCForge Logo](http://mcforge.org/style/img/MCForge.png)
 
 Minecraft Classic Custom Server Software
+
+Please note that some of these links may not be functional at this time. 
 
 ##Important stuff for Modders / Forkers
 - [Example Code Lists](https://github.com/headdetect/MCForge-Examples) - by headdetect
@@ -16,7 +18,7 @@ Minecraft Classic Custom Server Software
 
 MCForge Vanilla is a Minecraft Classic Custom Server Software. It has been released under an open-source license to allow the community to help us develop it further.  We welcome all pull requests and will merge them in at our own discretion.
 
-The official website for MCForge is [mcforge.net][1]
+The official website for MCForge is [mcforge.org][1]
 
 ##Copyright/License
 
@@ -39,6 +41,6 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License, version 3
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-[1]: http://www.mcforge.net
+[1]: http://www.mcforge.com
 [2]: http://www.gnu.org/licenses/gpl-3.0.html
 [3]: http://www.opensource.org/licenses/ecl2.php

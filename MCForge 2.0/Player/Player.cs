@@ -18,6 +18,7 @@ using System.Data;
 using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Text.RegularExpressions;
+using System.Timers;
 using System.Threading;
 using MCForge.API.Events;
 using MCForge.Core;
@@ -145,6 +146,21 @@ namespace MCForge.Entity {
         private byte[] buffer = new byte[0];
         private byte[] tempBuffer = new byte[0xFFF];
 
+        public bool HasExtension(string extName)
+        {
+            if (!extension)
+                return false;
+
+            return ExtEntry.FindAll(cpe => cpe.name == extName) != null;
+        }
+        public struct CPE { public string name; public int version; }
+        public List<CPE> ExtEntry = new List<CPE>();
+        public string appName;
+        public int extensionCount;
+        public List<string> extensions = new List<string>();
+        public int customBlockSupportLevel;
+        public bool extension;
+
         /// <summary>
         /// The player's color
         /// </summary>
@@ -215,11 +231,11 @@ namespace MCForge.Entity {
         /// <summary>
         /// The players current rotation
         /// </summary>
-        public byte[] Rot { get; set; }
+        public Vector2S Rot { get; set; }
         /// <summary>
         /// The players last known rotation
         /// </summary>
-        public byte[] oldRot { get; set; }
+        public Vector2S oldRot { get; set; }
         /// <summary>
         /// The players last known click
         /// </summary>
@@ -304,6 +320,15 @@ namespace MCForge.Entity {
 
         }
 
+        public System.Timers.Timer deathTimer;
+        public void resetDeathTimer(object sender, ElapsedEventArgs e)
+        {
+            this.ExtraData.ChangeOrCreate("deathtimeron", false);
+            deathTimer.Dispose();
+            deathTimer.Enabled = false;
+            deathTimer.Stop();
+        }
+
         #region Special Chat Handlers
         private void HandleCommand(string[] args) {
             string[] sendArgs = new string[0];
@@ -370,6 +395,11 @@ namespace MCForge.Entity {
             }
         }
 
+        public void HandleDeath(string customMessage = "")
+        {
+            LevelChat(this, this.Color + (string)this.ExtraData["Title"] + this._displayName + Server.DefaultColor + customMessage);
+            Command.All["spawn"].Use(this, null);
+        }
 
         /// <summary>
         /// Send this player a message
@@ -608,13 +638,29 @@ namespace MCForge.Entity {
             return false;
         }
         private bool VerifyAccount(string name, string verify) {
+            bool verified = false;
             if (!ServerSettings.GetSettingBoolean("offline") && Ip != "127.0.0.1") {
                 if (Server.PlayerCount >= ServerSettings.GetSettingInt("maxplayers")) {
                     SKick("Server is full, please try again later!");
                     return false;
                 }
-
-                if (verify == null || verify == "" || verify == "--" || (verify != BitConverter.ToString(md5.ComputeHash(enc.GetBytes(ServerSettings.Salt + name))).Replace("-", "").ToLower().TrimStart('0') && verify != BitConverter.ToString(md5.ComputeHash(enc.GetBytes(ServerSettings.Salt + name))).Replace("-", "").ToLower().TrimStart('0'))) {
+                if (verify == null || verify == "" || verify == "--" || (verify != BitConverter.ToString(md5.ComputeHash(enc.GetBytes(ServerSettings.Salt2 + name))).Replace("-", "").ToLower() && verify != BitConverter.ToString(md5.ComputeHash(enc.GetBytes(ServerSettings.Salt2 + name))).Replace("-", "").ToLower()))
+                {
+                    if (ServerSettings.GetSettingBoolean("VerifyNames"))
+                    {
+                        SKick("Account could not be verified, try again.");
+                        //Logger.Log("'" + verify + "' != '" + BitConverter.ToString(md5.ComputeHash(enc.GetBytes(ServerSettings.salt + name))).Replace("-", "").ToLower().TrimStart('0') + "'");
+                        return false;
+                    }
+                }
+                else
+                {
+                    name += "+";
+                    _displayName += "+";
+                    Username += "+";
+                    verified = true;
+                }
+                if (verified == false && (verify == null || verify == "" || verify == "--" || (verify != BitConverter.ToString(md5.ComputeHash(enc.GetBytes(ServerSettings.Salt + name))).Replace("-", "").ToLower().TrimStart('0') && verify != BitConverter.ToString(md5.ComputeHash(enc.GetBytes(ServerSettings.Salt + name))).Replace("-", "").ToLower().TrimStart('0')))) {
                     if (ServerSettings.GetSettingBoolean("VerifyNames")) {
                         SKick("Account could not be verified, try again.");
                         //Logger.Log("'" + verify + "' != '" + BitConverter.ToString(md5.ComputeHash(enc.GetBytes(ServerSettings.salt + name))).Replace("-", "").ToLower().TrimStart('0') + "'");
@@ -622,7 +668,7 @@ namespace MCForge.Entity {
                     }
                 }
             }
-            if (name.Length > 16 || !ValidName(name)) {
+            if (name.Length > 50 || !ValidName(name)) {
                 SKick("Illegal name!");
                 return false;
             }
@@ -635,7 +681,7 @@ namespace MCForge.Entity {
         /// <param name="name">the name to check</param>
         /// <returns>returns true if name is valid</returns>
         public static bool ValidName(string name) {
-            const string allowedchars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234567890._";
+            const string allowedchars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234567890._+@";
             foreach (char ch in name) { if (allowedchars.IndexOf(ch) == -1) { return false; } } return true;
         }
         #endregion
@@ -818,21 +864,21 @@ namespace MCForge.Entity {
         #endregion
 
         public Vector3S GetBlockFromView() {
-            double hori = (Math.PI / 128) * Rot[0];
-            double vert = (Math.PI / 128) * Rot[1];
+            double hori = (Math.PI / 128) * Rot.x;
+            double vert = (Math.PI / 128) * Rot.z;
             double cosHori = Math.Cos(hori);
             double sinHori = Math.Sin(hori);
             double cosVert = Math.Cos(vert);
             double sinVert = Math.Sin(vert);
             double length = 0.1; //TODO: Adjust length after first possible block is found to the distance (Player.Pos-FirstBlock).Length
-            for (double i = 1; i < ((Rot[0] < 64 || Rot[0] > 192) ? Level.Size.z - Pos.z / 32 : Pos.z / 32); i += length) {
+            for (double i = 1; i < ((Rot.x < 64 || Rot.x > 192) ? Level.CWMap.Size.z - Pos.z / 32 : Pos.z / 32); i += length) {
                 double h = i / cosHori;
                 double x = -sinHori * h;
                 h = h / cosVert;
                 double y = sinVert * h;
-                short X = (short)(Math.Round((double)(Pos.x - 16) / 32 + x * ((Rot[0] < 64 || Rot[0] > 192) ? -1 : 1)));
-                short Z = (short)(Math.Round((double)(Pos.z - 16) / 32 + i * ((Rot[0] < 64 || Rot[0] > 192) ? -1 : 1)));
-                short Y = (short)(Math.Round((double)(Pos.y - 32) / 32 + y * ((Rot[0] < 64 || Rot[0] > 192) ? -1 : 1)));
+                short X = (short)(Math.Round((double)(Pos.x - 16) / 32 + x * ((Rot.x < 64 || Rot.x > 192) ? -1 : 1)));
+                short Z = (short)(Math.Round((double)(Pos.z - 16) / 32 + i * ((Rot.x < 64 || Rot.x > 192) ? -1 : 1)));
+                short Y = (short)(Math.Round((double)(Pos.y - 32) / 32 + y * ((Rot.x < 64 || Rot.x > 192) ? -1 : 1)));
                 Vector3S ret = new Vector3S(X, Z, Y);
                 if (Level.GetBlock(ret) != 0)
                     return ret;

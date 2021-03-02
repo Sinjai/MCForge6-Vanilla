@@ -57,7 +57,7 @@ namespace MCForge.World.Physics
                 return;
             }
             
-            bool north = l.GetBlock(X + 1, Z, Y) == Block.BlockList.AIR;
+           /* bool north = l.GetBlock(X + 1, Z, Y) == Block.BlockList.AIR;
             bool south = l.GetBlock(X - 1, Z, Y) == Block.BlockList.AIR;
             bool east = l.GetBlock(X, Z + 1, Y) == Block.BlockList.AIR;
             bool west = l.GetBlock(X, Z - 1, Y) == Block.BlockList.AIR;
@@ -107,7 +107,7 @@ namespace MCForge.World.Physics
                     l.BlockChange((ushort)X, (ushort)Z, (ushort)Y, Block.BlockList.AIR);
                     return;
                 }
-            }
+            }*/
         }
     }
 }

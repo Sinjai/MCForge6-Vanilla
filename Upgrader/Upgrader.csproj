@@ -38,7 +38,7 @@
     <PlatformTarget>x86</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>pdbonly</DebugType>
-    <Optimize>false</Optimize>
+    <Optimize>true</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
@@ -63,6 +63,12 @@
   <PropertyGroup />
   <PropertyGroup />
   <ItemGroup>
+    <Reference Include="fNbt">
+      <HintPath>..\MCForge 2.0\fNbt.dll</HintPath>
+    </Reference>
+    <Reference Include="MCForge">
+      <HintPath>..\MCForge 2.0\bin\Debug\MCForge.dll</HintPath>
+    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
@@ -98,6 +104,7 @@
     <Compile Include="MCForge 5\Properties.cs" />
     <Compile Include="MCForge 5\Server.cs" />
     <Compile Include="MCForge 5\SQLite.cs" />
+    <Compile Include="MCForge 6\ClassicWorld.cs" />
     <Compile Include="MCForge 6\IMap.cs" />
     <Compile Include="MCForge 6\Level.cs" />
     <Compile Include="MCForge 6\PlayerGroup.cs" />
@@ -146,13 +153,7 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="MCForge 6" />
-    <Folder Include="MCForge 6\Zones" />
-    <Folder Include="MCForge 6\Utils" />
-    <Folder Include="MCForge 5" />
-    <Folder Include="Upgrader" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

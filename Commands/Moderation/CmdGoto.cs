@@ -41,11 +41,11 @@ namespace MCForge.Commands
                 p.GlobalDie();
                 p.IsLoading = true;
                 p.Level = tempLevel;
-                short x = (short)((0.5 + tempLevel.SpawnPos.x) * 32);
-                short y = (short)((1 + tempLevel.SpawnPos.y) * 32);
-                short z = (short)((0.5 + tempLevel.SpawnPos.z) * 32);
+                short x = (short)((0.5 + tempLevel.CWMap.SpawnPos.x) * 32);
+                short y = (short)((1 + tempLevel.CWMap.SpawnPos.y) * 32);
+                short z = (short)((0.5 + tempLevel.CWMap.SpawnPos.z) * 32);
                 p.Pos = new Vector3S(x, z, y);
-                p.Rot = tempLevel.SpawnRot;
+                p.Rot = tempLevel.CWMap.SpawnRotation;
                 p.oldPos = p.Pos;
                 p.oldRot = p.Rot;
                 p.SendSpawn(p);

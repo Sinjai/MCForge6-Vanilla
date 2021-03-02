@@ -1,0 +1,629 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <title>Settings</title>
+        <!--
+            Copyright 2014 UclCommander
+            Dual-licensed under the Educational Community License, Version 2.0 and
+            the GNU General Public License, Version 3 (the "Licenses"); you may
+            not use this file except in compliance with the Licenses. You may
+            obtain a copy of the Licenses at
+            http://www.opensource.org/licenses/ecl2.php
+            http://www.gnu.org/licenses/gpl-3.0.html
+            Unless required by applicable law or agreed to in writing,
+            software distributed under the Licenses are distributed on an "AS IS"
+            BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+            or implied. See the Licenses for the specific language governing
+            permissions and limitations under the Licenses.
+        -->
+        <link rel="stylesheet" href="css/foundation.min.css"/>
+        <link rel="stylesheet" href="css/font-awesome.css"/>
+        <link rel="stylesheet" href="css/main.css"/>
+
+        <script src="js/modernizr.js"></script>
+    </head>
+    <body>
+        <section id="menu-bar" class="fixed">
+            <a class="tiny button" data-show-all>Show All</a>
+        </section>
+        <section id="wrapper">
+            <form data-abide method="post" id="form">
+                <input type="hidden" name="XID" value="{{{XID}}}"/>
+                <h3 id="module-title"></h3>
+
+                <section id="server-module" class="module">
+                    <div class="row">
+                        <div class="medium-4 columns">
+                            <label class="inline right" for="servername">Server Name</label>
+                        </div>
+                        <div class="medium-8 columns">
+                            <input type="text" value="{{{servername}}}" id="servername" name="servername" required/>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="medium-4 columns">
+                            <label class="inline right" for="port">Server Port</label>
+                        </div>
+                        <div class="medium-8 columns">
+                            <input type="text" value="{{{port}}}" id="port" name="port" required maxlength="5"/>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="medium-4 columns">
+                            <label class="inline right" for="motd">MOTD</label>
+                        </div>
+                        <div class="medium-8 columns">
+                            <input type="text" value="{{{motd}}}" id="motd" name="motd" required />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="medium-4 columns">
+                            <label class="inline right" for="serverowner">Server Owner</label>
+                        </div>
+                        <div class="medium-8 columns">
+                            <input type="text" value="{{{serverowner}}}" id="serverowner" name="serverowner" required />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="medium-4 columns">
+                            <label class="inline right" for="main-level">Main Level</label>
+                        </div>
+                        <div class="medium-8 columns">
+                            <input type="text" value="{{{main-level}}}" id="main-level" name="main-level" required />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="medium-4 columns">
+                            <label class="inline right">Public</label>
+                        </div>
+                        <div class="medium-8 columns">
+                            <input type="hidden" name="public" value="false" />
+                            <div class="switch">
+                                <script>var public_checked = "{{{public}}}";</script>
+                                <input id="is-public" type="checkbox" name="public">
+                                <label for="is-public"></label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="medium-4 columns">
+                            <label class="inline right">Load <strong>ALL</strong> Levels</label>
+                        </div>
+                        <div class="medium-8 columns">
+                            <input type="hidden" name="loadalllevels" value="false" />
+                            <div class="switch">
+                                <script>var loadalllevels_checked = "{{{loadalllevels}}}";</script>
+                                <input id="loadalllevels" type="checkbox" name="loadalllevels">
+                                <label for="loadalllevels"></label>
+                            </div>
+                        </div>
+                    </div>
+                    <hr/>
+                    <div class="row">
+                        <div class="medium-4 columns">
+                            <label class="right" for="welcomemessage">Welcome Message<br/><small>To signify a line break use "&lt;br&gt;"</small></label>
+                        </div>
+                        <div class="medium-8 columns">
+                            <input type="text" value="{{{welcomemessage}}}" id="welcomemessage" name="welcomemessage" required />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="medium-4 columns">
+                            <label class="inline right" for="shutdownmessage">Shutdown Message</label>
+                        </div>
+                        <div class="medium-8 columns">
+                            <input type="text" value="{{{shutdownmessage}}}" id="shutdownmessage" name="shutdownmessage" required />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="medium-4 columns">
+                            <label class="inline right" for="moneyname">Money Name</label>
+                        </div>
+                        <div class="medium-8 columns">
+                            <input type="text" value="{{{moneyname}}}" id="moneyname" name="moneyname" required />
+                        </div>
+                    </div>
+                </section>
+
+                <section id="irc-module" class="module">
+                    <div class="row">
+                        <div class="medium-4 columns">
+                            <label class="inline right">Enable IRC</label>
+                        </div>
+                        <div class="medium-8 columns">
+                            <input type="hidden" name="irc-enabled" value="false" />
+                            <div class="switch">
+                                <script>var irc_enabled_checked = "{{{irc-enabled}}}";</script>
+                                <input id="irc-enabled" type="checkbox" name="irc-enabled">
+                                <label for="irc-enabled"></label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="medium-4 columns">
+                            <label class="inline right" for="irc-server">Server</label>
+                        </div>
+                        <div class="medium-8 columns">
+                            <input type="text" value="{{{irc-server}}}" id="irc-server" name="irc-server" required />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="medium-4 columns">
+                            <label class="inline right" for="irc-port">Port</label>
+                        </div>
+                        <div class="medium-8 columns">
+                            <input type="number" value="{{{irc-port}}}" id="irc-port" name="irc-port" required maxlength="5" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="medium-4 columns">
+                            <label class="inline right" for="irc-nickname">Nickname</label>
+                        </div>
+                        <div class="medium-8 columns">
+                            <input type="text" value="{{{irc-nickname}}}" id="irc-nickname" name="irc-nickname" required />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="medium-4 columns">
+                            <label class="inline right" for="irc-channel">Channel</label>
+                        </div>
+                        <div class="medium-8 columns">
+                            <input type="text" value="{{{irc-channel}}}" id="irc-channel" name="irc-channel" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="medium-4 columns">
+                            <label class="inline right" for="irc-opchannel">OP Channel</label>
+                        </div>
+                        <div class="medium-8 columns">
+                            <input type="text" value="{{{irc-opchannel}}}" id="irc-opchannel" name="irc-opchannel" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="medium-4 columns">
+                            <label class="inline right" for="irc-nickserv">NickServ Password</label>
+                        </div>
+                        <div class="medium-8 columns">
+                            <input type="text" value="{{{irc-nickserv}}}" id="irc-nickserv" name="irc-nickserv" />
+                        </div>
+                    </div>
+                    <hr/>
+                    <div class="row">
+                        <div class="medium-4 columns">
+                            <label class="inline right">Enable Global Chat</label>
+                        </div>
+                        <div class="medium-8 columns">
+                            <input type="hidden" name="irc-enabled" value="false" />
+                            <div class="switch">
+                                <script>var gc_enabled_checked = "{{{gc-enabled}}}";</script>
+                                <input id="gc-enabled" type="checkbox" name="gc-enabled">
+                                <label for="gc-enabled"></label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="medium-4 columns">
+                            <label class="inline right" for="gc-nick">Global Chat Nickname</label>
+                        </div>
+                        <div class="medium-8 columns">
+                            <input type="text" value="{{{gc-nick}}}" id="gc-nick" name="gc-nick" required />
+                        </div>
+                    </div>
+                </section>
+
+                <section id="database-module" class="module">
+                    <div class="row">
+                        <div class="medium-4 columns">
+                            <label class="inline right" for="databasetype">Database Type</label>
+                        </div>
+                        <div class="medium-8 columns">
+                            <select name="databasetype" id="databasetype" data-db-select data-current-value="{{{databasetype}}}">
+                                <option value="sqlite">SQLite</option>
+                                <option value="mysql">MySQL</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="medium-4 columns">
+                            <label class="inline right">Database Queuing</label>
+                        </div>
+                        <div class="medium-8 columns">
+                            <input type="hidden" name="database-queuing" value="false" />
+                            <div class="switch">
+                                <script>var database_queuing_checked = "{{{database-queuing}}}";</script>
+                                <input id="database-queuing" type="checkbox" name="database-queuing">
+                                <label for="database-queuing"></label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="medium-4 columns">
+                            <label class="inline right" for="database-flush_interval">Database Flush Interval</label>
+                        </div>
+                        <div class="medium-8 columns">
+                            <input type="number" value="{{{database-flush_interval}}}" id="database-flush_interval" name="database-flush_interval" required/>
+                        </div>
+                    </div>
+                    <hr/>
+                    <section id="database-sqlite" style="display: none;" class="db-item">
+                        <div class="row">
+                            <div class="medium-4 columns">
+                                <label class="inline right">Save SQLite to memory</label>
+                            </div>
+                            <div class="medium-8 columns">
+                                <input type="hidden" name="sqlite-inmemory" value="false" />
+                                <div class="switch">
+                                    <script>var sqlite_inmemory_checked = "{{{sqlite-inmemory}}}";</script>
+                                    <input id="sqlite-inmemory" type="checkbox" name="sqlite-inmemory">
+                                    <label for="sqlite-inmemory"></label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="medium-4 columns">
+                                <label class="inline right" for="sqlite-filepath">SQLite DB Path</label>
+                            </div>
+                            <div class="medium-8 columns">
+                                <input type="text" value="{{{sqlite-filepath}}}" id="sqlite-filepath" name="sqlite-filepath" required/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="medium-4 columns">
+                                <label class="inline right">SQLite Pooling</label>
+                            </div>
+                            <div class="medium-8 columns">
+                                <input type="hidden" name="sqlite-pooling" value="false" />
+                                <div class="switch">
+                                    <script>var sqlite_pooling_checked = "{{{sqlite-pooling}}}";</script>
+                                    <input id="sqlite-pooling" type="checkbox" name="sqlite-pooling">
+                                    <label for="sqlite-pooling"></label>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    <section id="database-mysql" style="display: none;" class="db-item">
+                        <div class="row">
+                            <div class="medium-4 columns">
+                                <label class="inline right" for="mysql-ip">MySQL IP</label>
+                            </div>
+                            <div class="medium-8 columns">
+                                <input type="text" value="{{{mysql-ip}}}" id="mysql-ip" name="mysql-ip" required/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="medium-4 columns">
+                                <label class="inline right" for="mysql-port">MySQL Port</label>
+                            </div>
+                            <div class="medium-8 columns">
+                                <input type="number" value="{{{mysql-port}}}" id="mysql-port" name="mysql-port" required maxlength="5" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="medium-4 columns">
+                                <label class="inline right" for="mysql-username">MySQL User</label>
+                            </div>
+                            <div class="medium-8 columns">
+                                <input type="text" value="{{{mysql-username}}}" id="mysql-username" name="mysql-username" required/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="medium-4 columns">
+                                <label class="inline right" for="mysql-password">MySQL Password</label>
+                            </div>
+                            <div class="medium-8 columns">
+                                <input type="text" value="{{{mysql-password}}}" id="mysql-password" name="mysql-password" required/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="medium-4 columns">
+                                <label class="inline right" for="mysql-dbname">MySQL Database</label>
+                            </div>
+                            <div class="medium-8 columns">
+                                <input type="text" value="{{{mysql-dbname}}}" id="mysql-dbname" name="mysql-dbname" required/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="medium-4 columns">
+                                <label class="inline right">MySQL Pooling</label>
+                            </div>
+                            <div class="medium-8 columns">
+                                <input type="hidden" name="mysql-pooling" value="false" />
+                                <div class="switch">
+                                    <script>var mysql_pooling_checked = "{{{mysql-pooling}}}";</script>
+                                    <input id="mysql-pooling" type="checkbox" name="mysql-pooling">
+                                    <label for="mysql-pooling"></label>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </section>
+
+                <section id="updates-module" class="module">
+                    <div class="row">
+                        <div class="medium-4 columns">
+                            <label class="right" for="updatecheck-interval">Update check interval<br/><small>(in Minutes)</small></label>
+                        </div>
+                        <div class="medium-8 columns">
+                            <input type="number" name="updatecheck-interval" id="updatecheck-interval" value="{{{updatecheck-interval}}}"/>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="medium-4 columns">
+                            <label class="inline right">Check For Core Updates</label>
+                        </div>
+                        <div class="medium-8 columns">
+                            <input type="hidden" name="check-core-updates" value="false" />
+                            <div class="switch">
+                                <script>var check_for_core_updates_checked = "{{{check-core-updates}}}";</script>
+                                <input id="check-core-updates" type="checkbox" name="check-core-updates">
+                                <label for="check-core-updates"></label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="medium-4 columns">
+                            <label class="inline right">Check For Misc Updates</label>
+                        </div>
+                        <div class="medium-8 columns">
+                            <input type="hidden" name="check-misc-updates" value="false" />
+                            <div class="switch">
+                                <script>var check_misc_updates_checked = "{{{check-misc-updates}}}";</script>
+                                <input id="check-misc-updates" type="checkbox" name="check-misc-updates">
+                                <label for="check-misc-updates"></label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="medium-4 columns">
+                            <label class="inline right">Allow Patch Updates</label>
+                        </div>
+                        <div class="medium-8 columns">
+                            <input type="hidden" name="check-misc-updates" value="false" />
+                            <div class="switch">
+                                <script>var allow_patch_updates_checked = "{{{allow-patch-updates}}}";</script>
+                                <input id="allow-patch-updates" type="checkbox" name="allow-patch-updates">
+                                <label for="allow-patch-updates"></label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="medium-4 columns">
+                            <label class="right">Auto Update<br/><small>Ignored if Silent Update is enabled</small></label>
+                        </div>
+                        <div class="medium-8 columns">
+                            <input type="hidden" name="auto-update" value="false" />
+                            <div class="switch">
+                                <script>var allow_update_checked = "{{{auto-update}}}";</script>
+                                <input id="auto-update" type="checkbox" name="auto-update">
+                                <label for="auto-update"></label>
+                            </div>
+                        </div>
+                    </div>
+                    <hr />
+                    <div class="row">
+                        <div class="medium-4 columns">
+                            <label class="inline right">Ask Before Doing a Core Update</label>
+                        </div>
+                        <div class="medium-8 columns">
+                            <input type="hidden" name="ask-before-core" value="false" />
+                            <div class="switch">
+                                <script>var ask_before_core_checked = "{{{ask-before-core}}}";</script>
+                                <input id="ask-before-core" type="checkbox" name="ask-before-core">
+                                <label for="ask-before-core"></label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="medium-4 columns">
+                            <label class="right">Ask before updating Commands and Plugins</label>
+                        </div>
+                        <div class="medium-8 columns">
+                            <input type="hidden" name="ask-before-misc" value="false" />
+                            <div class="switch">
+                                <script>var ask_before_misc_checked = "{{{ask-before-misc}}}";</script>
+                                <input id="ask-before-misc" type="checkbox" name="ask-before-misc">
+                                <label for="ask-before-misc"></label>
+                            </div>
+                        </div>
+                    </div>
+                    <hr/>
+                    <div class="row">
+                        <div class="medium-4 columns">
+                            <label class="inline right">Silent Update</label>
+                        </div>
+                        <div class="medium-8 columns">
+                            <input type="hidden" name="silent-update" value="false" />
+                            <div class="switch">
+                                <script>var silent_update_checked = "{{{silent-update}}}";</script>
+                                <input id="silent-update" type="checkbox" name="silent-update">
+                                <label for="silent-update"></label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="medium-4 columns">
+                            <label class="inline right">Silent Core Update</label>
+                        </div>
+                        <div class="medium-8 columns">
+                            <input type="hidden" name="silent-core-update" value="false" />
+                            <div class="switch">
+                                <script>var silent_core_update_checked = "{{{silent-core-update}}}";</script>
+                                <input id="silent-core-update" type="checkbox" name="silent-core-update">
+                                <label for="silent-core-update"></label>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="advanced-module" class="module">
+                    <div class="row">
+                        <div class="medium-4 columns">
+                            <label class="right">
+                                Use Console (CLI)<br/><small>Requires Restart.</small>
+                            </label>
+                        </div>
+                        <div class="medium-3 columns">
+                            <input type="hidden" name="usingconsole" value="false" />
+                            <div class="switch">
+                                <script>var usingconsole_checked = "{{{usingconsole}}}";</script>
+                                <input id="usingconsole" type="checkbox" name="usingconsole">
+                                <label for="usingconsole"></label>
+                            </div>
+                        </div>
+                        <div class="medium-5 columns">
+                            <small>You can still access this GUI in a browser <a href="javascript:window.open(window.location);return false;">Here</a></small>
+                        </div>
+                    </div>
+                    <hr/>
+                    <div class="row">
+                        <div class="medium-4 columns">
+                            <label class="right" for="configpath">
+                                Config File Path<br/>
+                                <small>Do <strong>not</strong> mess with unless you know what you are doing</small>
+                            </label>
+                        </div>
+                        <div class="medium-8 columns">
+                            <input type="text" name="configpath" id="configpath" value="{{{configpath}}}"/>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="player-module" class="module">
+                    <div class="row">
+                        <div class="medium-4 columns">
+                            <label class="inline right" for="maxplayers">Max Players</label>
+                        </div>
+                        <div class="medium-8 columns">
+                            <input type="number" value="{{{maxplayers}}}" id="maxplayers" name="maxplayers" required/>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="medium-4 columns">
+                            <label class="inline right">Verify Names</label>
+                        </div>
+                        <div class="medium-8 columns">
+                            <input type="hidden" name="verifynames" value="false" />
+                            <div class="switch">
+                                <script>var verifynames_checked = "{{{verifynames}}}";</script>
+                                <input id="verifynames" type="checkbox" name="verifynames">
+                                <label for="verifynames"></label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="medium-4 columns">
+                            <label class="inline right" for="verifying">Verifying <small>Use /pass when logging into server?</small></label>
+                        </div>
+                        <div class="medium-8 columns">
+                            <input type="hidden" name="verifying" value="false" />
+                            <div class="switch">
+                                <script>var verifying_checked = "{{{verifying}}}";</script>
+                                <input id="verifying" type="checkbox" name="verifying">
+                                <label for="verifying"></label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="medium-4 columns">
+                            <label class="inline right" for="verifygroup">Verifying Group</label>
+                        </div>
+                        <div class="medium-8 columns">
+                            <select name="verifygroup" id="verifygroup" data-group-list="option" data-option-value="name" data-current-value="{{{verifygroup}}}"></select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="medium-4 columns">
+                            <label class="inline right" for="defaultgroup">Default Group</label>
+                        </div>
+                        <div class="medium-8 columns">
+                            <select name="defaultgroup" id="defaultgroup" data-group-list="option" data-option-value="name" data-current-value="{{{defaultgroup}}}"></select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="medium-4 columns">
+                            <label class="inline right" for="verifying">Force agree to rules</label>
+                        </div>
+                        <div class="medium-8 columns">
+                            <input type="hidden" name="agreeingtorules" value="false" />
+                            <div class="switch">
+                                <script>var agreeingtorules_checked = "{{{agreeingtorules}}}";</script>
+                                <input id="agreeingtorules" type="checkbox" name="agreeingtorules">
+                                <label for="agreeingtorules"></label>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <section id="main">
+                    <div class="group">
+                        <h3 class="group-header">General Settings</h3>
+                        <ul class="medium-block-grid-5">
+                            <li class="settings-node" data-show-module="server" data-module-title="Server">
+                                <i class="fa fa-cog fa-3x"></i>
+                                Server
+                            </li>
+                            <li class="settings-node" data-show-module="irc" data-module-title="IRC">
+                                <i class="fa fa-comment fa-3x"></i>
+                                IRC
+                            </li>
+                            <li class="settings-node" data-show-module="database" data-module-title="Database">
+                                <i class="fa fa-database fa-3x"></i>
+                                Database
+                            </li>
+                            <li class="settings-node" data-show-module="updates" data-module-title="Updates">
+                                <i class="fa fa-download fa-3x"></i>
+                                Updates
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="group">
+                        <h3 class="group-header">Players & Groups</h3>
+                        <ul class="medium-block-grid-5">
+                            <li class="settings-node" data-show-module="player" data-module-title="Players">
+                                <i class="fa fa-user fa-3x"></i>
+                                Players
+                            </li>
+                            <li class="settings-node" data-show-module="permission" data-module-title="Permissions">
+                                <i class="fa fa-key fa-3x"></i>
+                                Permissions
+                            </li>
+                            <li class="settings-node" data-show-module="groups" data-module-title="Groups">
+                                <i class="fa fa-users fa-3x"></i>
+                                Groups
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="group">
+                        <h3 class="group-header">Backups & Advanced</h3>
+                        <ul class="medium-block-grid-5">
+                            <li class="settings-node" data-show-module="backups" data-module-title="Backups">
+                                <i class="fa fa-tasks fa-3x"></i>
+                                Backups
+                            </li>
+                            <li class="settings-node" data-show-module="remote-console" data-module-title="Remote Console">
+                                <i class="fa fa-mobile-phone fa-3x"></i>
+                                Remote Console
+                            </li>
+                            <li class="settings-node" data-show-module="advanced" data-module-title="Advanced">
+                                <i class="fa fa-cogs fa-3x"></i>
+                                Advanced
+                            </li>
+                        </ul>
+                    </div>
+                </section>
+            </form>
+        </section>
+        <section id="save-bar" class="fixed">
+            <button type="submit" class="tiny success button right" id="save-settings">Save Settings</button>
+        </section>
+
+        <script src="js/jquery.js"></script>
+        <script src="js/foundation.min.js"></script>
+        <script>
+            var GROUPS = $.parseJSON('{{{GROUP_JSON}}}');
+        </script>
+        <script src="js/main.js"></script>
+    </body>
+</html>

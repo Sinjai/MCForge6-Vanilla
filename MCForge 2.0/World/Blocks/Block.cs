@@ -42,7 +42,7 @@ namespace MCForge.World {
              new Gold_Ore(),
              new Iron_Ore(),
              new Coal(),
-             new Tree(),
+             new Trunk(),
              new Leaves(),
              new Sponge(),
              new Glass(),
@@ -74,7 +74,23 @@ namespace MCForge.World {
              new TNT(),
              new Bookcase(),
              new MossyCobbleStone(),
-             new Obsidian()
+             new Obsidian(),
+             new CobblestoneSlab(),
+             new Rope(),
+             new SandStone(),
+             new Snow(),
+             new Fire(),
+             new LightPink(),
+             new ForestGreen(),
+             new Brown(),
+             new DeepBlue(),
+             new Turquoise(),
+             new Ice(),
+             new CeramicTile(),
+             new MagmaBlock(),
+             new Pillar(),
+             new Crate(),
+             new StoneBrick()
     };
         internal static readonly List<Block> CustomBlockList = new List<Block>();
         public abstract byte VisibleBlock { get; }
@@ -155,7 +171,7 @@ namespace MCForge.World {
         /// Converts a byte to a Block
         /// </summary>
         public static implicit operator Block(byte b) {
-            if (b >= 49)
+            if (b >= 66)
                 return UnknownBlock;
             return Blocks[b];
         }
@@ -166,7 +182,7 @@ namespace MCForge.World {
         /// <param name="blockToCheck">Byte or block to check its validness</param>
         /// <returns>A boolean stating whether its valid</returns>
         public static bool IsValidBlock(byte blockToCheck) {
-            return (blockToCheck < 50);
+            return (blockToCheck < 66);
         }
 
         public static bool CanWalkThrough(byte blockToCheck) {
@@ -179,7 +195,7 @@ namespace MCForge.World {
                 blockToCheck == BlockList.RED_MUSHROOM ||
                 blockToCheck == BlockList.YELLOW_FLOWER ||
                 blockToCheck == BlockList.BROWN_MUSHROOM ||
-                blockToCheck == BlockList.SAPLING);
+                blockToCheck == BlockList.SAPLING || blockToCheck == BlockList.fire || blockToCheck == BlockList.rope);
         }
 
         public static bool CanPassLight(byte blockToCheck) {
@@ -201,13 +217,39 @@ namespace MCForge.World {
             return (blockToCheck == BlockList.WATER ||
                 blockToCheck == BlockList.LAVA ||
                 blockToCheck == BlockList.ACTIVE_LAVA ||
-                blockToCheck == BlockList.ACTIVE_WATER);
+                blockToCheck == BlockList.ACTIVE_WATER || blockToCheck == BlockList.rope);
         }
 
         public static bool IsOPBlock(byte blockToCheck) {
             return blockToCheck == Block.BlockList.BEDROCK;
         }
-
+        /// <summary>
+        /// Converts the ClassiCube blocks into non-CPE client fallbacks
+        /// </summary>
+        public static byte ConvertCPE(byte b)
+        {
+            switch (b)
+            {
+                case BlockList.cobblestoneslab: return BlockList.STAIR;
+                case BlockList.rope: return BlockList.BROWN_MUSHROOM;
+                case BlockList.sandstone: return BlockList.SAND;
+                case BlockList.snow: return BlockList.AIR;
+                case BlockList.fire: return BlockList.LAVA;
+                case BlockList.lightpinkwool: return BlockList.PINK_CLOTH;
+                case BlockList.forestgreenwool: return BlockList.GREEN_CLOTH;
+                case BlockList.brownwool: return BlockList.DIRT;
+                case BlockList.deepblue: return BlockList.PURPLE_CLOTH;
+                case BlockList.turquoise: return BlockList.BLUE_CLOTH;
+                case BlockList.ice: return BlockList.GLASS;
+                case BlockList.ceramictile: return BlockList.IRON_BLOCK;
+                case BlockList.magma: return BlockList.OBSIDIAN;
+                case BlockList.pillar: return BlockList.WHITE_CLOTH;
+                case BlockList.crate: return BlockList.WOOD;
+                case BlockList.stonebrick: return BlockList.STONE;
+                default:
+                    return b;
+            }
+        }
         /// <summary>
         /// List of blocks (in the form of a byte)
         /// </summary>
@@ -413,6 +455,24 @@ namespace MCForge.World {
             /// </summary>
             public const byte OBSIDIAN = 49;
 
+            public const byte cobblestoneslab = (byte)50;
+            public const byte rope = (byte)51;
+            public const byte sandstone = (byte)52;
+            public const byte snow = (byte)53;
+            public const byte fire = (byte)54;
+            public const byte lightpinkwool = (byte)55;
+            public const byte forestgreenwool = (byte)56;
+            public const byte brownwool = (byte)57;
+            public const byte deepblue = (byte)58;
+            public const byte turquoise = (byte)59;
+            public const byte ice = (byte)60;
+            public const byte ceramictile = (byte)61;
+            public const byte magma = (byte)62;
+            public const byte pillar = (byte)63;
+            public const byte crate = (byte)64;
+            public const byte stonebrick = (byte)65;
+            public const byte redflag = (byte)66;
+            public const byte blueflag = (byte)67;
             /// <summary>
             /// Unknown Block
             /// </summary>

@@ -14,6 +14,7 @@ permissions and limitations under the Licenses.
 */
 using MCForge.Entity;
 using MCForge.Interface.Command;
+using MCForge.World;
 
 namespace MCForge.Commands
 {
@@ -44,7 +45,11 @@ namespace MCForge.Commands
                 p.ExtraData["HasMarked"] = false;
             if (p.ExtraData.ContainsKey("IsFlying"))
                 p.ExtraData["IsFlying"] = null;
-
+            try
+            {
+                p.Level.blockqueue.RemoveAll((BlockQueue.block b) => { if (b.p == p) return true; return false; });
+            }
+            finally { BlockQueue.resume(); }
             p.SendMessage("Every toggled action has been diabled.");
         }
 
